@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 data class Train(
     val num: String,
-    val route: String,
+    val routeName: String,
     val stops: List<Stop>
 )
 

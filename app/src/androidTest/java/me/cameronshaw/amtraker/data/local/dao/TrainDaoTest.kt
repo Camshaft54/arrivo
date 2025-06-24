@@ -49,8 +49,8 @@ class TrainDaoTest {
         val train = TrainEntity("546", "Capitol Corridor")
         val stop1 = StopEntity("1", "Stop 1", "546")
         val trainWithStops = TrainWithStops(train, listOf(stop1))
-        trainDao.insertTrain(train)
-        trainDao.insertStops(listOf(stop1))
+        trainDao.insertOrReplaceTrain(train)
+        trainDao.insertOrReplaceStops(listOf(stop1))
         val withStops = trainDao.loadWithStops("546")
         assertThat(withStops.first(), equalTo(trainWithStops))
     }

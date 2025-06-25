@@ -2,9 +2,9 @@ package me.cameronshaw.amtraker.data.local.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
 
 @Entity(
+    primaryKeys = ["code", "trainOwnerNum"],
     foreignKeys = [
         ForeignKey(
             entity = TrainEntity::class,
@@ -15,7 +15,7 @@ import androidx.room.PrimaryKey
     ]
 )
 data class StopEntity(
-    @PrimaryKey val code: String,
+    val code: String,
     val name: String,
     val trainOwnerNum: String // Foreign key referencing the train this stop belongs to
 )

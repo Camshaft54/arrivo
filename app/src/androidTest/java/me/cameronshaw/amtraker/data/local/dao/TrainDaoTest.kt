@@ -44,7 +44,7 @@ class TrainDaoTest {
         db.close()
     }
 
-    private fun createTestTrain(id: String, routeName: String) = TrainEntity(id, routeName)
+    private fun createTestTrain(id: String, routeName: String?) = TrainEntity(id, routeName)
 
     private fun TrainEntity.createTestStop(code: String, name: String) = StopEntity(code, name, num)
 
@@ -65,6 +65,14 @@ class TrainDaoTest {
     private val normalTrainWithStops2 = TrainWithStops(normalTrain2, normalStops2)
 
     @Test
+    fun testInsertTrain_noRoute() = runTest {
+        trainDao.insertOrReplaceTrain(normalTrain1.copy(routeName = null))
+        trainDao.insertOrReplaceStops(normalStops1)
+        val withStops = trainDao.getTrainWithStops(normalTrain1.num)
+        assertThat(withStops.first(), equalTo(normalTrainWithStops1.copy(train = normalTrain1.copy(routeName = null))))
+    }
+
+    @Test
     fun testInsertTrain_duplicateStops() = runTest {
         trainDao.insertOrReplaceTrain(normalTrain1)
         trainDao.insertOrReplaceStops(normalStops1)
@@ -78,7 +86,7 @@ class TrainDaoTest {
 
     @Test
     fun testInsertTrain_duplicateTrain() = runTest {
-        val duplicateNumTrain = normalTrain1.copy(routeName = "Different Route")
+        val duplicateNumTrain = createTestTrain("101", "Different Route")
         trainDao.insertOrReplaceTrain(duplicateNumTrain)
         trainDao.insertOrReplaceTrain(normalTrain1)
         trainDao.insertOrReplaceStops(normalStops1)

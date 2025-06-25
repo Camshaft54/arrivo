@@ -51,19 +51,19 @@ interface TrainDao {
      * For UI to load all the trains the user has
      */
     @Query("SELECT * FROM TrainEntity ORDER BY num ASC")
-    fun loadAll(): Flow<List<TrainEntity>>
+    fun getAllTrains(): Flow<List<TrainEntity>>
 
     /**
      * For UI to load detailed view of a train
      */
     @Transaction
     @Query("SELECT * FROM TrainEntity WHERE num = :num")
-    fun loadWithStops(num: String): Flow<TrainWithStops>
+    fun getTrainWithStops(num: String): Flow<TrainWithStops>
 
     /**
      * For widget to load all trains
      */
     @Transaction
     @Query("SELECT * FROM TrainEntity ORDER BY num ASC")
-    fun loadAllWithStops(): Flow<List<TrainWithStops>>
+    fun getAllTrainsWithStops(): Flow<List<TrainWithStops>>
 }

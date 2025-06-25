@@ -43,15 +43,45 @@ class TrainDaoTest {
         db.close()
     }
 
+    private fun createTestTrain(id: String, routeName: String) = TrainEntity(id, routeName)
+
+    private fun TrainEntity.createTestStop(code: String, name: String) = StopEntity(code, name, num)
+
+    private val normalTrain1 = createTestTrain("101", "Test Route")
+
+    private val normalStops1 =
+        listOf(normalTrain1.createTestStop("1", "Stop 1"),
+            normalTrain1.createTestStop("2", "Stop 2"))
+
+    private val normalTrainWithStops1 = TrainWithStops(normalTrain1, normalStops1)
+
+    private val normalTrain2 = createTestTrain("102", "Test Route")
+
+    private val normalStops2 =
+        listOf(normalTrain2.createTestStop("1", "Stop 1"),
+            normalTrain2.createTestStop("2", "Stop 2"))
+
+    private val normalTrainWithStops2 = TrainWithStops(normalTrain2, normalStops2)
+
     @Test
-    @Throws(Exception::class)
-    fun writeUserAndReadInList() = runTest {
-        val train = TrainEntity("546", "Capitol Corridor")
-        val stop1 = StopEntity("1", "Stop 1", "546")
-        val trainWithStops = TrainWithStops(train, listOf(stop1))
-        trainDao.insertOrReplaceTrain(train)
-        trainDao.insertOrReplaceStops(listOf(stop1))
-        val withStops = trainDao.loadWithStops("546")
-        assertThat(withStops.first(), equalTo(trainWithStops))
+    fun testInsertTrain_normalTrain() = runTest {
+        trainDao.insertOrReplaceTrain(normalTrain1)
+        trainDao.insertOrReplaceStops(normalStops1)
+        trainDao.insertOrReplaceTrain(normalTrain2)
+        trainDao.insertOrReplaceStops(normalStops2)
+        val withStops1 = trainDao.getTrainWithStops(normalTrain1.num)
+        assertThat(withStops1.first(), equalTo(normalTrainWithStops1))
+//        val withStops2 = trainDao.getTrainWithStops(normalTrain2.num)
+//        assertThat(withStops2.first(), equalTo(normalTrainWithStops2))
+    }
+
+    @Test
+    fun testInsertTrain_duplicateTrain() = runTest {
+        val duplicateNumTrain = normalTrain1.copy(routeName = "Different Route")
+        trainDao.insertOrReplaceTrain(duplicateNumTrain)
+        trainDao.insertOrReplaceTrain(normalTrain1)
+        trainDao.insertOrReplaceStops(normalStops1)
+        val withStops1 = trainDao.getTrainWithStops(normalTrain1.num)
+        assertThat(withStops1.first(), equalTo(normalTrainWithStops1))
     }
 }

@@ -58,8 +58,6 @@ interface TrainDao {
     @Query("SELECT * FROM TrainEntity ORDER BY num ASC")
     fun getAllTrains(): Flow<List<TrainEntity>>
 
-
-
     /**
      * For UI to load detailed view of a train
      */

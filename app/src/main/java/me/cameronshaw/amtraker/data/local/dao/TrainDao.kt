@@ -2,7 +2,6 @@ package me.cameronshaw.amtraker.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.DeleteTable
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -43,13 +42,13 @@ interface TrainDao {
     suspend fun deleteAllTrains()
 
     /**
-     * To be used when fetching train data from remote
+     * To be used when updating a single train's data from remote
      */
     @Transaction
-    suspend fun updateTrainData(train: TrainEntity, stops: List<StopEntity>) {
-        insertOrReplaceTrain(train)
-        deleteStopsForTrain(train.num)
-        insertOrReplaceStops(stops)
+    suspend fun updateTrainData(train: TrainWithStops) {
+        insertOrReplaceTrain(train.train)
+        deleteStopsForTrain(train.train.num)
+        insertOrReplaceStops(train.stops)
     }
 
     /**

@@ -2,6 +2,8 @@ package me.cameronshaw.amtraker.data.local.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import me.cameronshaw.amtraker.data.model.Train
+import me.cameronshaw.amtraker.data.util.toLocalDateTime
 
 @Entity(
     primaryKeys = ["code", "trainOwnerNum"],
@@ -17,5 +19,15 @@ import androidx.room.ForeignKey
 data class StopEntity(
     val code: String,
     val name: String,
+    val arrival: String,
+    val departure: String,
     val trainOwnerNum: String // Foreign key referencing the train this stop belongs to
 )
+
+fun StopEntity.toDomain(): Train.Stop =
+    Train.Stop(
+        code = code,
+        name = name,
+        arrival = arrival.toLocalDateTime(),
+        departure = departure.toLocalDateTime()
+    )

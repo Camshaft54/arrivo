@@ -173,7 +173,7 @@ class TrainDaoTest {
             normalTrain1.createTestStop("3", "Stop 3"),
             normalTrain1.createTestStop("4", "Stop 4")
         )
-        trainDao.updateTrainData(normalTrain1, newStops)
+        trainDao.updateTrainData(TrainWithStops(normalTrain1, newStops))
         val withStops = trainDao.getTrainWithStops(normalTrain1.num).first()
         assertThat(withStops.stops, equalTo(newStops))
     }

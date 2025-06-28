@@ -4,7 +4,12 @@ import dagger.Module
 import dagger.Provides
 import me.cameronshaw.amtraker.data.local.dao.StationDao
 import me.cameronshaw.amtraker.data.local.dao.TrainDao
+import me.cameronshaw.amtraker.data.local.datasource.StationLocalDataSource
+import me.cameronshaw.amtraker.data.local.datasource.TrainLocalDataSource
+import me.cameronshaw.amtraker.data.remote.api.StationApiService
 import me.cameronshaw.amtraker.data.remote.api.TrainApiService
+import me.cameronshaw.amtraker.data.remote.datasource.StationRemoteDataSource
+import me.cameronshaw.amtraker.data.remote.datasource.TrainRemoteDataSource
 import javax.inject.Singleton
 
 @Module
@@ -28,6 +33,12 @@ object AppModule {
     @Singleton
     fun provideStationLocalDataSource(stationDao: StationDao): StationLocalDataSource {
         return StationLocalDataSource(stationDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideStationRemoteDataSource(apiService: StationApiService): StationRemoteDataSource {
+        return StationRemoteDataSource(apiService)
     }
 
 

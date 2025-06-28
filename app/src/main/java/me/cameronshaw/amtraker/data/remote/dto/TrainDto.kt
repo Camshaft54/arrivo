@@ -11,7 +11,7 @@ data class TrainDto(
     @SerializedName("lon") val lon: Double,
     @SerializedName("trainTimely") val trainTimely: String,
     @SerializedName("iconColor") val iconColor: String,
-    @SerializedName("stations") val stations: List<StationDto>,
+    @SerializedName("stations") val stops: List<StopDto>,
     @SerializedName("heading") val heading: String,
     @SerializedName("eventCode") val eventCode: String,
     @SerializedName("eventTZ") val eventTZ: String,
@@ -25,16 +25,32 @@ data class TrainDto(
     @SerializedName("trainState") val trainState: String,
     @SerializedName("velocity") val velocity: Double,
     @SerializedName("statusMsg") val statusMsg: String,
-
-    // Timestamps are strings in the JSON, so they are kept as String here.
-    // They can be converted to more specific Date/Time objects in the repository layer.
     @SerializedName("createdAt") val createdAt: String,
     @SerializedName("updatedAt") val updatedAt: String,
     @SerializedName("lastValTS") val lastValTS: String,
-
     @SerializedName("objectID") val objectID: Long,
     @SerializedName("provider") val provider: String,
     @SerializedName("providerShort") val providerShort: String,
     @SerializedName("onlyOfTrainNum") val onlyOfTrainNum: Boolean,
     @SerializedName("alerts") val alerts: List<TrainAlertDto>
-)
+) {
+    data class TrainAlertDto(
+        @SerializedName("message")
+        val message: String
+    )
+
+    data class StopDto(
+        @SerializedName("name") val name: String,
+        @SerializedName("code") val code: String,
+        @SerializedName("tz") val tz: String,
+        @SerializedName("bus") val bus: Boolean,
+        @SerializedName("schArr") val schArr: String?,
+        @SerializedName("schDep") val schDep: String?,
+        @SerializedName("arr") val arr: String?,
+        @SerializedName("dep") val dep: String?,
+        @SerializedName("arrCmnt") val arrCmnt: String?,
+        @SerializedName("depCmnt") val depCmnt: String?,
+        @SerializedName("platform") val platform: String?,
+        @SerializedName("status") val status: String
+    )
+}

@@ -12,6 +12,10 @@ import me.cameronshaw.amtraker.data.remote.api.StationApiService
 import me.cameronshaw.amtraker.data.remote.api.TrainApiService
 import me.cameronshaw.amtraker.data.remote.datasource.StationRemoteDataSource
 import me.cameronshaw.amtraker.data.remote.datasource.TrainRemoteDataSource
+import me.cameronshaw.amtraker.data.repository.StationRepository
+import me.cameronshaw.amtraker.data.repository.StationRepositoryImpl
+import me.cameronshaw.amtraker.data.repository.TrainRepository
+import me.cameronshaw.amtraker.data.repository.TrainRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -47,21 +51,21 @@ object AppModule {
 
     // --- REPOSITORIES ---
 
-//    @Provides
-//    @Singleton
-//    fun provideTrainRepository(
-//        localDataSource: TrainLocalDataSource,
-//        remoteDataSource: TrainRemoteDataSource
-//    ): TrainRepository {
-//        // Note: We provide the implementation, but return the interface type
-//        return TrainRepositoryImpl(localDataSource, remoteDataSource)
-//    }
-//
-//    @Provides
-//    @Singleton
-//    fun provideStationRepository(
-//        localDataSource: StationLocalDataSource
-//    ): StationRepository {
-//        return StationRepositoryImpl(localDataSource)
-//    }
+    @Provides
+    @Singleton
+    fun provideTrainRepository(
+        localDataSource: TrainLocalDataSource,
+        remoteDataSource: TrainRemoteDataSource
+    ): TrainRepository {
+        return TrainRepositoryImpl(localDataSource, remoteDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideStationRepository(
+        localDataSource: StationLocalDataSource,
+        remoteDataSource: StationRemoteDataSource
+    ): StationRepository {
+        return StationRepositoryImpl(localDataSource, remoteDataSource)
+    }
 }

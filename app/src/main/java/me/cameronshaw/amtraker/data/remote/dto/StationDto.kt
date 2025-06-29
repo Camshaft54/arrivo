@@ -1,6 +1,7 @@
 package me.cameronshaw.amtraker.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
+import me.cameronshaw.amtraker.data.model.Station
 
 data class StationDto(
     @SerializedName("name") val name: String,
@@ -15,4 +16,9 @@ data class StationDto(
     @SerializedName("state") val state: String?,
     @SerializedName("zip") val zip: Int?,
     @SerializedName("trains") val trains: List<String>
+)
+
+fun StationDto.toDomain() = Station(
+    name = name,
+    code = code
 )

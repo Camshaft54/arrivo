@@ -1,5 +1,9 @@
 package me.cameronshaw.amtraker.data.model
 
+import me.cameronshaw.amtraker.data.local.model.StopEntity
+import me.cameronshaw.amtraker.data.local.model.TrainEntity
+import me.cameronshaw.amtraker.data.local.model.TrainWithStops
+import me.cameronshaw.amtraker.data.util.toDbString
 import java.time.LocalDateTime
 
 data class Train(
@@ -13,5 +17,17 @@ data class Train(
         val arrival: LocalDateTime,
         val departure: LocalDateTime
     )
-
 }
+
+fun Train.toEntity() = TrainWithStops(
+    TrainEntity(num = num, routeName = routeName),
+    stops.map {
+        StopEntity(
+            code = it.code,
+            name = it.name,
+            arrival = it.arrival.toDbString(),
+            departure = it.departure.toDbString(),
+            trainOwnerNum = num
+        )
+    }
+)

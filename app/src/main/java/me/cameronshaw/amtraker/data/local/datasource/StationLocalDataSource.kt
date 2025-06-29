@@ -25,8 +25,5 @@ class StationLocalDataSource(
             stationDao.deleteStation(station)
         }
 
-    suspend fun getAllStations() =
-        withContext(ioDispatcher) {
-            stationDao.getAllStations()
-        }
+    fun getAllStations() = stationDao.getAllStations()
 }

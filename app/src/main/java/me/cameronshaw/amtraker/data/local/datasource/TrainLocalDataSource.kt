@@ -32,13 +32,7 @@ class TrainLocalDataSource(
         }
     }
 
-    suspend fun getAllTrains() =
-        withContext(ioDispatcher) {
-            trainDao.getAllTrains()
-        }
+    fun getAllTrains() = trainDao.getAllTrains()
 
-    suspend fun getAllTrainsWithStops() =
-        withContext(ioDispatcher) {
-            trainDao.getAllTrainsWithStops()
-        }
+    fun getAllTrainsWithStops() = trainDao.getAllTrainsWithStops()
 }

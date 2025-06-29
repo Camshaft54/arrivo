@@ -10,8 +10,9 @@ class StationRemoteDataSource(
     private val stationApi: StationApiService,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
-    suspend fun getStation(stationId: String): StationDto =
+    suspend fun getStation(stationId: String): StationDto? =
         withContext(ioDispatcher) {
-            stationApi.getStation(stationId)
+            val responseMap = stationApi.getStation(stationId)
+            responseMap[stationId]
         }
 }

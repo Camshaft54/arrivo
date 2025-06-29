@@ -2,6 +2,8 @@ package me.cameronshaw.amtraker.di
 
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import me.cameronshaw.amtraker.data.local.dao.StationDao
 import me.cameronshaw.amtraker.data.local.dao.TrainDao
 import me.cameronshaw.amtraker.data.local.datasource.StationLocalDataSource
@@ -13,6 +15,7 @@ import me.cameronshaw.amtraker.data.remote.datasource.TrainRemoteDataSource
 import javax.inject.Singleton
 
 @Module
+@InstallIn(SingletonComponent::class)
 object AppModule {
 
     // --- DATA SOURCES ---
@@ -44,21 +47,21 @@ object AppModule {
 
     // --- REPOSITORIES ---
 
-    @Provides
-    @Singleton
-    fun provideTrainRepository(
-        localDataSource: TrainLocalDataSource,
-        remoteDataSource: TrainRemoteDataSource
-    ): TrainRepository {
-        // Note: We provide the implementation, but return the interface type
-        return TrainRepositoryImpl(localDataSource, remoteDataSource)
-    }
-
-    @Provides
-    @Singleton
-    fun provideStationRepository(
-        localDataSource: StationLocalDataSource
-    ): StationRepository {
-        return StationRepositoryImpl(localDataSource)
-    }
+//    @Provides
+//    @Singleton
+//    fun provideTrainRepository(
+//        localDataSource: TrainLocalDataSource,
+//        remoteDataSource: TrainRemoteDataSource
+//    ): TrainRepository {
+//        // Note: We provide the implementation, but return the interface type
+//        return TrainRepositoryImpl(localDataSource, remoteDataSource)
+//    }
+//
+//    @Provides
+//    @Singleton
+//    fun provideStationRepository(
+//        localDataSource: StationLocalDataSource
+//    ): StationRepository {
+//        return StationRepositoryImpl(localDataSource)
+//    }
 }

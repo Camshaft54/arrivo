@@ -6,5 +6,5 @@ import retrofit2.http.Path
 
 interface StationApiService {
     @GET("stations/{stationId}")
-    suspend fun getStation(@Path("stationId") stationId: String): StationDto
+    suspend fun getStation(@Path("stationId") stationId: String): Map<String, StationDto>
 }

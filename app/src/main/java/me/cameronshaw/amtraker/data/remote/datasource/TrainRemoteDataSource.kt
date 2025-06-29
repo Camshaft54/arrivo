@@ -10,8 +10,9 @@ class TrainRemoteDataSource(
     private val trainApi: TrainApiService,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
-    suspend fun getTrain(trainId: String): TrainDto =
+    suspend fun getTrain(trainId: String): TrainDto? =
         withContext(ioDispatcher) {
-            trainApi.getTrain(trainId)
+            val responseMap = trainApi.getTrain(trainId)
+            responseMap[trainId]?.firstOrNull()
         }
 }

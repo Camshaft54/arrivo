@@ -6,5 +6,5 @@ import retrofit2.http.Path
 
 interface TrainApiService {
     @GET("trains/{trainId}")
-    suspend fun getTrain(@Path("trainId") trainId: String): TrainDto
+    suspend fun getTrain(@Path("trainId") trainId: String): Map<String, List<TrainDto>>
 }

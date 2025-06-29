@@ -88,8 +88,8 @@ class TrainRepositoryImpl @Inject constructor(
      * into the local database.
      */
     override suspend fun addTrain(train: Train) {
-        val trainWithStopsEntity = train.toEntity()
-        localDataSource.updateTrainData(trainWithStopsEntity)
+        val trainEntity = train.toEntity().train
+        localDataSource.insertTrain(trainEntity)
     }
 
     /**

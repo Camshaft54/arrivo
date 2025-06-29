@@ -11,6 +11,11 @@ class TrainLocalDataSource(
     private val trainDao: TrainDao,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
+    suspend fun insertTrain(train: TrainEntity) =
+        withContext(ioDispatcher) {
+            trainDao.insertOrReplaceTrain(train)
+        }
+
     suspend fun updateTrainData(train: TrainWithStops) =
         withContext(ioDispatcher) {
             trainDao.updateTrainData(train)

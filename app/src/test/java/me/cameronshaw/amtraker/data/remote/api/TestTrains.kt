@@ -182,7 +182,6 @@ val expected1TrainDto = TrainDto(
     lon = -108.52401229221368,
     trainTimely = "",
     iconColor = "#2a893d",
-    // Note: The 'textColor' field from the JSON is not in our DTO, so it will be ignored by Gson.
     stops = listOf(
         TrainDto.StopDto(
             name = "New Orleans",
@@ -196,7 +195,6 @@ val expected1TrainDto = TrainDto(
             arrCmnt = "",
             depCmnt = "",
             status = "Departed",
-            // Note: The 'stopIconColor' field from the JSON is not in our DTO.
             platform = ""
         ),
         TrainDto.StopDto(

@@ -3,7 +3,7 @@ package me.cameronshaw.amtraker.data.local.model
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import me.cameronshaw.amtraker.data.model.Train
-import me.cameronshaw.amtraker.data.util.toLocalDateTime
+import me.cameronshaw.amtraker.data.util.toOffsetDateTime
 
 @Entity(
     primaryKeys = ["code", "trainOwnerNum"],
@@ -28,6 +28,6 @@ fun StopEntity.toDomain(): Train.Stop =
     Train.Stop(
         code = code,
         name = name,
-        arrival = arrival.toLocalDateTime(),
-        departure = departure.toLocalDateTime()
+        arrival = arrival.toOffsetDateTime(),
+        departure = departure.toOffsetDateTime()
     )

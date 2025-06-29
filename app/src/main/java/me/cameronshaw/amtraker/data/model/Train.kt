@@ -4,7 +4,7 @@ import me.cameronshaw.amtraker.data.local.model.StopEntity
 import me.cameronshaw.amtraker.data.local.model.TrainEntity
 import me.cameronshaw.amtraker.data.local.model.TrainWithStops
 import me.cameronshaw.amtraker.data.util.toDbString
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 data class Train(
     val num: String,
@@ -14,8 +14,8 @@ data class Train(
     data class Stop(
         val code: String,
         val name: String,
-        val arrival: LocalDateTime,
-        val departure: LocalDateTime
+        val arrival: OffsetDateTime,
+        val departure: OffsetDateTime
     )
 }
 

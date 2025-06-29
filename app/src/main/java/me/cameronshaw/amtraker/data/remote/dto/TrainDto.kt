@@ -2,7 +2,7 @@ package me.cameronshaw.amtraker.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 import me.cameronshaw.amtraker.data.model.Train
-import me.cameronshaw.amtraker.data.util.toLocalDateTime
+import me.cameronshaw.amtraker.data.util.toOffsetDateTime
 
 data class TrainDto(
     @SerializedName("routeName") val routeName: String,
@@ -66,6 +66,6 @@ fun TrainDto.toDomain() = Train(
 fun TrainDto.StopDto.toDomain() = Train.Stop(
     name = name,
     code = code,
-    arrival = arr?.toLocalDateTime() ?: throw IllegalArgumentException("Arrival time is null"),
-    departure = dep?.toLocalDateTime() ?: throw IllegalArgumentException("Departure time is null")
+    arrival = arr?.toOffsetDateTime() ?: throw IllegalArgumentException("Arrival time is null"),
+    departure = dep?.toOffsetDateTime() ?: throw IllegalArgumentException("Departure time is null")
 )

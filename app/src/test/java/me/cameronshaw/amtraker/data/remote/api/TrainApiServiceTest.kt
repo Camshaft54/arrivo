@@ -49,7 +49,7 @@ class TrainApiServiceTest {
             .setResponseCode(200)
         server.enqueue(mockResponse)
 
-        val expectedResponse = mapOf("727" to listOf(expectedTrain))
+        val expectedResponse = mapOf("727" to listOf(expected727TrainDto))
 
         val actualResponse = apiService.getTrain("727")
 

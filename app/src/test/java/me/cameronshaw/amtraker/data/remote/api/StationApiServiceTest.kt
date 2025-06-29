@@ -49,7 +49,7 @@ class StationApiServiceTest {
             .setResponseCode(200)
         server.enqueue(mockResponse)
 
-        val expectedResponse = mapOf("GAC" to expectedStation)
+        val expectedResponse = mapOf("GAC" to expectedGACStationDto)
 
         val actualResponse = apiService.getStation("GAC")
 

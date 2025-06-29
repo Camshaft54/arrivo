@@ -1,0 +1,25 @@
+{
+  "SJC": {
+    "name": "San Jose Diridon",
+    "code": "SJC",
+    "tz": "America/Los_Angeles",
+    "lat": 37.329933,
+    "lon": -121.902388,
+    "hasAddress": true,
+    "address1": "65 Cahill Street",
+    "address2": " ",
+    "city": "San Jose",
+    "state": "CA",
+    "zip": "95110",
+    "trains": [
+      "11-29",
+      "11-28",
+      "14-28",
+      "14-29",
+      "732-29",
+      "736-29",
+      "741-29",
+      "743-29"
+    ]
+  }
+}

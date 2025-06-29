@@ -83,7 +83,7 @@ class StationRepositoryImpl @Inject constructor(
      */
     override suspend fun addStation(station: Station) {
         val stationEntity = station.toEntity()
-        localDataSource.updateStation(stationEntity)
+        localDataSource.insertStation(stationEntity)
     }
 
     /**

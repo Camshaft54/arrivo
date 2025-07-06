@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.runTest
 import me.cameronshaw.amtraker.MainCoroutineRule
 import me.cameronshaw.amtraker.data.local.AppDatabase
 import me.cameronshaw.amtraker.data.local.model.StationEntity
+import me.cameronshaw.amtraker.data.util.toDbString
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.empty
 import org.hamcrest.Matchers.equalTo
@@ -18,6 +19,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
+import java.time.OffsetDateTime
 
 @RunWith(AndroidJUnit4::class)
 class StationDaoTest {
@@ -42,8 +44,10 @@ class StationDaoTest {
         db.close()
     }
 
-    private val normalStation1 = StationEntity("1", "Test Station")
-    private val normalStation2 = StationEntity("2", "Test Station")
+    private val normalStation1 =
+        StationEntity("1", "Test Station", OffsetDateTime.now().toDbString())
+    private val normalStation2 =
+        StationEntity("2", "Test Station", OffsetDateTime.now().toDbString())
 
     @Test
     fun testInsertStation_normal() = runTest {
@@ -57,9 +61,9 @@ class StationDaoTest {
 
     @Test
     fun testInsertStation_missingName() = runTest {
-        stationDao.insertOrReplaceStation(normalStation1.copy(name = null))
+        stationDao.insertOrReplaceStation(normalStation1.copy(name = ""))
         val station = stationDao.getStationByCode(normalStation1.code).first()
-        assertThat(station, equalTo(normalStation1.copy(name = null)))
+        assertThat(station, equalTo(normalStation1.copy(name = "")))
     }
 
     @Test

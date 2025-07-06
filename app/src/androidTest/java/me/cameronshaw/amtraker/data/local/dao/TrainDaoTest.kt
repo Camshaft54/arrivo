@@ -12,6 +12,7 @@ import me.cameronshaw.amtraker.data.local.AppDatabase
 import me.cameronshaw.amtraker.data.local.model.StopEntity
 import me.cameronshaw.amtraker.data.local.model.TrainEntity
 import me.cameronshaw.amtraker.data.local.model.TrainWithStops
+import me.cameronshaw.amtraker.data.util.toDbString
 import org.hamcrest.Matchers.empty
 import org.hamcrest.Matchers.equalTo
 import org.junit.After
@@ -20,6 +21,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
+import java.time.OffsetDateTime
 
 @RunWith(AndroidJUnit4::class)
 class TrainDaoTest {
@@ -44,32 +46,65 @@ class TrainDaoTest {
         db.close()
     }
 
-    private fun createTestTrain(id: String, routeName: String?) = TrainEntity(id, routeName)
+    private fun createTestTrain(id: String, routeName: String) =
+        TrainEntity(id, routeName, OffsetDateTime.now().toDbString())
 
-    private fun TrainEntity.createTestStop(code: String, name: String) = StopEntity(code, name, num)
+    private fun TrainEntity.createTestStop(
+        code: String,
+        name: String,
+        arrival: OffsetDateTime,
+        departure: OffsetDateTime
+    ) = StopEntity(code, name, num, arrival.toDbString(), departure.toDbString())
 
     private val normalTrain1 = createTestTrain("101", "Test Route")
 
     private val normalStops1 =
-        listOf(normalTrain1.createTestStop("1", "Stop 1"),
-            normalTrain1.createTestStop("2", "Stop 2"))
+        listOf(
+            normalTrain1.createTestStop(
+                "1",
+                "Stop 1",
+                OffsetDateTime.now(),
+                OffsetDateTime.now().plusHours(1)
+            ),
+            normalTrain1.createTestStop(
+                "2",
+                "Stop 2",
+                OffsetDateTime.now().plusHours(2),
+                OffsetDateTime.now().plusHours(3)
+            )
+        )
 
     private val normalTrainWithStops1 = TrainWithStops(normalTrain1, normalStops1)
 
     private val normalTrain2 = createTestTrain("102", "Test Route")
 
     private val normalStops2 =
-        listOf(normalTrain2.createTestStop("1", "Stop 1"),
-            normalTrain2.createTestStop("2", "Stop 2"))
+        listOf(
+            normalTrain2.createTestStop(
+                "1",
+                "Stop 1",
+                OffsetDateTime.now(),
+                OffsetDateTime.now().plusHours(1)
+            ),
+            normalTrain2.createTestStop(
+                "2",
+                "Stop 2",
+                OffsetDateTime.now().plusHours(2),
+                OffsetDateTime.now().plusHours(3)
+            )
+        )
 
     private val normalTrainWithStops2 = TrainWithStops(normalTrain2, normalStops2)
 
     @Test
     fun testInsertTrain_noRoute() = runTest {
-        trainDao.insertOrReplaceTrain(normalTrain1.copy(routeName = null))
+        trainDao.insertOrReplaceTrain(normalTrain1.copy(routeName = ""))
         trainDao.insertOrReplaceStops(normalStops1)
         val withStops = trainDao.getTrainWithStops(normalTrain1.num)
-        assertThat(withStops.first(), equalTo(normalTrainWithStops1.copy(train = normalTrain1.copy(routeName = null))))
+        assertThat(
+            withStops.first(),
+            equalTo(normalTrainWithStops1.copy(train = normalTrain1.copy(routeName = "")))
+        )
     }
 
     @Test
@@ -170,8 +205,18 @@ class TrainDaoTest {
         trainDao.insertOrReplaceTrain(normalTrain1)
         trainDao.insertOrReplaceStops(normalStops1)
         val newStops = listOf(
-            normalTrain1.createTestStop("3", "Stop 3"),
-            normalTrain1.createTestStop("4", "Stop 4")
+            normalTrain1.createTestStop(
+                "3",
+                "Stop 3",
+                OffsetDateTime.now().plusHours(4),
+                OffsetDateTime.now().plusHours(5)
+            ),
+            normalTrain1.createTestStop(
+                "4",
+                "Stop 4",
+                OffsetDateTime.now().plusHours(6),
+                OffsetDateTime.now().plusHours(7)
+            )
         )
         trainDao.updateTrainData(TrainWithStops(normalTrain1, newStops))
         val withStops = trainDao.getTrainWithStops(normalTrain1.num).first()

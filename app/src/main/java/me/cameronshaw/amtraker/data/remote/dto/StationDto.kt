@@ -2,6 +2,7 @@ package me.cameronshaw.amtraker.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 import me.cameronshaw.amtraker.data.model.Station
+import java.time.OffsetDateTime
 
 data class StationDto(
     @SerializedName("name") val name: String,
@@ -20,5 +21,6 @@ data class StationDto(
 
 fun StationDto.toDomain() = Station(
     name = name,
-    code = code
+    code = code,
+    lastUpdated = OffsetDateTime.now()
 )

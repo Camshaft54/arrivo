@@ -1,6 +1,10 @@
 package me.cameronshaw.amtraker.data.repository
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import me.cameronshaw.amtraker.data.local.datasource.TrainLocalDataSource
 import me.cameronshaw.amtraker.data.local.model.toDomain
@@ -20,7 +24,12 @@ interface TrainRepository {
      * Fetches the latest data for a specific train from the remote source
      * and updates the local database.
      */
-    suspend fun refreshTrain(trainId: String)
+    suspend fun refreshTrain(num: String)
+
+    /**
+     * Fetches all trains from the remote source and updates the local database.
+     */
+    suspend fun refreshAllTrains()
 
     /**
      * Gets a continuous stream of all trains from the local database.
@@ -62,8 +71,8 @@ class TrainRepositoryImpl @Inject constructor(
      * Fetches a train from the remote API, converts it to a domain model,
      * then converts that to the necessary entities and saves it to the local database.
      */
-    override suspend fun refreshTrain(trainId: String) {
-        val trainDto = remoteDataSource.getTrain(trainId)
+    override suspend fun refreshTrain(num: String) {
+        val trainDto = remoteDataSource.getTrain(num)
         if (trainDto != null) {
             val domainTrain =
                 trainDto.toDomain() // TODO: handle situation where dep or arr are null
@@ -71,6 +80,21 @@ class TrainRepositoryImpl @Inject constructor(
             localDataSource.updateTrainData(trainWithStopsEntity)
         }
         // TODO: Handle this in the UI by displaying a snackbar or similar
+    }
+
+    /**
+     * Fetches all trains from the remote API, converts to the necessary entities, and saves it to the local database.
+     */
+    override suspend fun refreshAllTrains() {
+        val trainsToRefresh = localDataSource.getAllTrains().first()
+        // TODO: change this to use the trains endpoint instead of each specific one
+        coroutineScope {
+            trainsToRefresh.map {
+                async {
+                    refreshTrain(it.num)
+                }
+            }
+        }.awaitAll()
     }
 
     /**

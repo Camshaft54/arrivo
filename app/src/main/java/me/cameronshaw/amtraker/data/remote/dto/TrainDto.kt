@@ -3,6 +3,7 @@ package me.cameronshaw.amtraker.data.remote.dto
 import com.google.gson.annotations.SerializedName
 import me.cameronshaw.amtraker.data.model.Train
 import me.cameronshaw.amtraker.data.util.toOffsetDateTime
+import java.time.OffsetDateTime
 
 data class TrainDto(
     @SerializedName("routeName") val routeName: String,
@@ -60,7 +61,8 @@ data class TrainDto(
 fun TrainDto.toDomain() = Train(
     num = trainNum,
     routeName = routeName,
-    stops = stops.map { it.toDomain() }
+    stops = stops.map { it.toDomain() },
+    lastUpdated = OffsetDateTime.now()
 )
 
 fun TrainDto.StopDto.toDomain() = Train.Stop(

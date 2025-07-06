@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "me.cameronshaw.amtraker"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "me.cameronshaw.amtraker"
@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)

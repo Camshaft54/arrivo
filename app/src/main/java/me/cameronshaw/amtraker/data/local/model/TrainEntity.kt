@@ -3,11 +3,13 @@ package me.cameronshaw.amtraker.data.local.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import me.cameronshaw.amtraker.data.model.Train
+import me.cameronshaw.amtraker.data.util.toOffsetDateTime
 
 @Entity
 data class TrainEntity(
     @PrimaryKey val num: String,
-    val routeName: String
+    val routeName: String,
+    val lastUpdated: String
 )
 
 /**
@@ -16,5 +18,6 @@ data class TrainEntity(
 fun TrainEntity.toDomain() = Train(
     num = num,
     routeName = routeName,
-    stops = emptyList()
+    stops = emptyList(),
+    lastUpdated = lastUpdated.toOffsetDateTime()
 )

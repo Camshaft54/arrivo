@@ -1,4 +1,4 @@
-package me.cameronshaw.amtraker.ui.screens
+package me.cameronshaw.amtraker.ui.common
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

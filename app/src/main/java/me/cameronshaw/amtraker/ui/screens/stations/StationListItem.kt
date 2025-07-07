@@ -1,9 +1,10 @@
-package me.cameronshaw.amtraker.ui.screens
+package me.cameronshaw.amtraker.ui.screens.stations
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import me.cameronshaw.amtraker.data.model.Station
+import me.cameronshaw.amtraker.ui.common.ListItem
 import me.cameronshaw.amtraker.ui.theme.AmtrakerTheme
 import java.time.OffsetDateTime
 

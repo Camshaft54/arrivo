@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
@@ -19,6 +21,9 @@ import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,6 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.cameronshaw.amtraker.R
 import me.cameronshaw.amtraker.data.model.Train
+import me.cameronshaw.amtraker.ui.common.AddItemDialog
+import me.cameronshaw.amtraker.ui.screens.trains.components.TrainListItem
 import me.cameronshaw.amtraker.ui.theme.AmtrakerTheme
 import java.time.OffsetDateTime
 
@@ -40,6 +47,9 @@ fun TrainScreen(
     TrainScreenContent(
         uiState = uiState,
         modifier = modifier,
+        validateTrainNum = { num ->
+            viewModel.isValidTrainNum(num)
+        },
         onAddTrain = { num ->
             viewModel.addTrain(num)
         },
@@ -56,32 +66,56 @@ fun TrainScreen(
 fun TrainScreenContent(
     uiState: TrainUiState,
     modifier: Modifier = Modifier,
+    validateTrainNum: (String) -> Boolean,
     onAddTrain: (String) -> Boolean,
     onDeleteTrain: (Train) -> Unit,
     onRefresh: () -> Unit
 ) {
-    if (uiState.isLoading) {
-        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
-    } else if (!uiState.errorMessage.isNullOrEmpty()) {
-        ListPlaceholder(
-            message = uiState.errorMessage,
-            isError = true,
-            modifier = modifier
+    var showAddDialog by remember { mutableStateOf(false) }
+
+    if (showAddDialog) {
+        AddItemDialog(
+            title = stringResource(R.string.add_train_title),
+            fieldLabel = stringResource(R.string.add_train_field),
+            onDismissRequest = { showAddDialog = false },
+            validateInput = validateTrainNum,
+            onConfirm = onAddTrain
         )
-    } else if (uiState.trains.isEmpty()) {
-        ListPlaceholder(
-            message = stringResource(R.string.empty_train_screen_message), modifier = modifier
-        )
-    } else {
-        TrainList(
-            trains = uiState.trains,
-            modifier = modifier,
-            onSwipeToDelete = {
-                onDeleteTrain(it)
+    }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        if (uiState.isLoading) {
+            Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
             }
-        )
+        } else if (!uiState.errorMessage.isNullOrEmpty()) {
+            ListPlaceholder(
+                message = uiState.errorMessage,
+                isError = true,
+                modifier = modifier
+            )
+        } else if (uiState.trains.isEmpty()) {
+            ListPlaceholder(
+                message = stringResource(R.string.empty_train_screen_message), modifier = modifier
+            )
+        } else {
+            TrainList(
+                trains = uiState.trains,
+                modifier = modifier,
+                onSwipeToDelete = {
+                    onDeleteTrain(it)
+                }
+            )
+        }
+
+        FloatingActionButton(
+            onClick = { showAddDialog = true },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        ) {
+            Icon(Icons.Filled.Add, contentDescription = "Add Train")
+        }
     }
 }
 
@@ -167,7 +201,13 @@ fun TrainListPopulatedPreview() {
     }
     val trainUiState = TrainUiState(trains = trains)
     AmtrakerTheme {
-        TrainScreenContent(trainUiState, onAddTrain = { true }, onDeleteTrain = {}, onRefresh = {})
+        TrainScreenContent(
+            trainUiState,
+            validateTrainNum = { true },
+            onAddTrain = { true },
+            onDeleteTrain = {},
+            onRefresh = {}
+        )
     }
 }
 
@@ -177,6 +217,7 @@ fun TrainListEmptyPreview() {
     AmtrakerTheme {
         TrainScreenContent(
             TrainUiState(),
+            validateTrainNum = { true },
             onAddTrain = { true },
             onDeleteTrain = {},
             onRefresh = {})
@@ -189,6 +230,7 @@ fun TrainListErrorPreview() {
     AmtrakerTheme {
         TrainScreenContent(
             TrainUiState(errorMessage = "This is an error message on the trains screen."),
+            validateTrainNum = { true },
             onAddTrain = { true },
             onDeleteTrain = {},
             onRefresh = {}
@@ -202,6 +244,7 @@ fun TrainListLoadingPreview() {
     AmtrakerTheme {
         TrainScreenContent(
             TrainUiState(isLoading = true),
+            validateTrainNum = { true },
             onAddTrain = { true },
             onDeleteTrain = {},
             onRefresh = {})

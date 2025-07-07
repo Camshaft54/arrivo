@@ -64,5 +64,5 @@ class TrainViewModel @Inject constructor(
     /**
      * Validates the train number. Must be an integer between 1 and 999.
      */
-    private fun isValidTrainNum(num: String): Boolean = trainNumRegex.matches(num)
+    fun isValidTrainNum(num: String): Boolean = trainNumRegex.matches(num)
 }

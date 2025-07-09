@@ -3,11 +3,14 @@ package me.cameronshaw.amtraker.ui.screens
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.cameronshaw.amtraker.data.model.Train
 import me.cameronshaw.amtraker.data.repository.TrainRepository
@@ -25,19 +28,25 @@ class TrainViewModel @Inject constructor(
 ) : ViewModel() {
     private val trainNumRegex = Regex("^[1-9][0-9]{0,2}\$")
 
-    val uiState: StateFlow<TrainUiState> = trainRepository
-        .getTrackedTrains()
-        .map { trains ->
-            TrainUiState(trains = trains)
+    private val _uiState = MutableStateFlow(TrainUiState(isLoading = true))
+    val uiState = _uiState.asStateFlow()
+
+    init {
+        loadTrains()
+    }
+
+    private fun loadTrains() {
+        viewModelScope.launch {
+            trainRepository
+                .getTrackedTrains()
+                .catch {
+                    _uiState.update { it.copy(errorMessage = "Failed to load trains.") }
+                }
+                .collect { trains ->
+                    _uiState.update { it.copy(trains = trains) }
+                }
         }
-        .catch {
-            emit(TrainUiState(errorMessage = "Failed to load trains."))
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = TrainUiState(isLoading = true)
-        )
+    }
 
     fun addTrain(num: String): Boolean {
         if (!isValidTrainNum(num)) return false

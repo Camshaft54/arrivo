@@ -3,7 +3,6 @@ package me.cameronshaw.amtraker.ui.common
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -12,6 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -33,13 +34,20 @@ fun AddItemDialog(
     fieldLabel: String,
     onDismissRequest: () -> Unit,
     validateInput: (String) -> Boolean,
-    onConfirm: suspend (String) -> Boolean
+    onConfirm: suspend (String) -> Boolean,
+    modifier: Modifier = Modifier,
+    addFailedMessage: String
 ) {
     var text by remember { mutableStateOf("") }
     var isInputValid by remember { mutableStateOf(false) }
     var submissionError by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = Unit) {
+        focusRequester.requestFocus()
+    }
 
     AlertDialog(
         onDismissRequest = {
@@ -59,7 +67,8 @@ fun AddItemDialog(
                     },
                     label = { Text(fieldLabel) },
                     singleLine = true,
-                    isError = !isInputValid && text.isNotEmpty()
+                    isError = !isInputValid && text.isNotEmpty(),
+                    modifier = modifier.focusRequester(focusRequester)
                 )
                 // Show submission error message if it exists
                 if (submissionError != null) {
@@ -82,7 +91,7 @@ fun AddItemDialog(
                         if (success) {
                             onDismissRequest()
                         } else {
-                            submissionError = "Failed to add item. Please try again."
+                            submissionError = addFailedMessage
                         }
                     }
                 },
@@ -118,18 +127,9 @@ fun AddItemDialogPreview() {
             fieldLabel = "Train Number",
             onDismissRequest = {},
             validateInput = { it.isNotEmpty() && it.all(Char::isDigit) },
-            onConfirm = { true } // Simulate success
+            onConfirm = { true },
+            addFailedMessage = "Failed to add item. Please try again." // Simulate success
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AddItemDialogValidationErrorPreview() {
-    MaterialTheme {
-        // This preview doesn't work well in interactive mode because state is internal.
-        // To see this state, you'd run the app and type invalid input.
-        Text("Preview for validation error state (type non-digits in interactive mode)")
     }
 }
 
@@ -142,7 +142,8 @@ fun AddItemDialogSubmissionErrorPreview() {
             fieldLabel = "Train Number",
             onDismissRequest = {},
             validateInput = { true },
-            onConfirm = { false } // Simulate failure
+            onConfirm = { false },
+            addFailedMessage = "Failed to add item. Please try again." // Simulate failure
         )
     }
 }

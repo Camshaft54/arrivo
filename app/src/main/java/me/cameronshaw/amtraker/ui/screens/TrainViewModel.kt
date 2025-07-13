@@ -4,12 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.cameronshaw.amtraker.data.model.Train
@@ -17,7 +13,7 @@ import me.cameronshaw.amtraker.data.repository.TrainRepository
 import javax.inject.Inject
 
 data class TrainUiState(
-    val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val trains: List<Train> = emptyList(),
     val errorMessage: String? = null
 )
@@ -28,7 +24,7 @@ class TrainViewModel @Inject constructor(
 ) : ViewModel() {
     private val trainNumRegex = Regex("^[1-9][0-9]{0,2}\$")
 
-    private val _uiState = MutableStateFlow(TrainUiState(isLoading = true))
+    private val _uiState = MutableStateFlow(TrainUiState(isRefreshing = true))
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -67,6 +63,8 @@ class TrainViewModel @Inject constructor(
     fun refreshTrains() {
         viewModelScope.launch {
             trainRepository.refreshAllTrains()
+
+            _uiState.update { it.copy(isRefreshing = false) }
         }
     }
 

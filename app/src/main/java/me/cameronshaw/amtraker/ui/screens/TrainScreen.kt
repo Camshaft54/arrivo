@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -18,11 +17,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +33,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.cameronshaw.amtraker.R
@@ -46,10 +46,10 @@ import java.time.OffsetDateTime
 
 @Composable
 fun TrainScreen(
-    viewModel: TrainViewModel,
+    viewModel: TrainViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     TrainScreenContent(
         uiState = uiState,
         modifier = modifier,
@@ -88,22 +88,17 @@ fun TrainScreenContent(
             onDismissRequest = { showAddDialog = false },
             validateInput = validateTrainNum,
             onConfirm = onAddTrain,
-            addFailedMessage = "Failed to add train. Please try again."
+            addFailedMessage = stringResource(R.string.add_train_fail_msg)
         )
     }
 
-    Box(
-        modifier = modifier.fillMaxSize().pullToRefresh(
-            isRefreshing = uiState.isLoading,
-            state = pullToRefreshState,
-            onRefresh = onRefresh
-        )
+    PullToRefreshBox(
+        isRefreshing = uiState.isRefreshing,
+        state = pullToRefreshState,
+        onRefresh = onRefresh,
+        modifier = modifier.fillMaxSize()
     ) {
-        if (uiState.isLoading) {
-            Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        } else if (!uiState.errorMessage.isNullOrEmpty()) {
+        if (!uiState.errorMessage.isNullOrEmpty()) {
             ListPlaceholder(
                 message = uiState.errorMessage,
                 isError = true,
@@ -215,7 +210,7 @@ fun TrainListPopulatedPreview() {
             "$it", "Route $it", emptyList(), lastUpdated = OffsetDateTime.now()
         )
     }
-    val trainUiState = TrainUiState(isLoading = isLoading, trains = trains)
+    val trainUiState = TrainUiState(isRefreshing = isLoading, trains = trains)
     val scope = rememberCoroutineScope()
     AmtrakerTheme {
         TrainScreenContent(
@@ -266,7 +261,7 @@ fun TrainListErrorPreview() {
 fun TrainListLoadingPreview() {
     AmtrakerTheme {
         TrainScreenContent(
-            TrainUiState(isLoading = true),
+            TrainUiState(isRefreshing = true),
             validateTrainNum = { it.isNotEmpty() && it.all(Char::isDigit) },
             onAddTrain = { true },
             onDeleteTrain = {},

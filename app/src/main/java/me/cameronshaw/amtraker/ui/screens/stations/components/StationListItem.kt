@@ -1,4 +1,4 @@
-package me.cameronshaw.amtraker.ui.screens.stations
+package me.cameronshaw.amtraker.ui.screens.stations.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

@@ -73,4 +73,21 @@ class TrainApiServiceTest {
 
         assertEquals(actualResponse, emptyMap<String, List<TrainDto>>())
     }
+
+    @Test
+    fun `getTrain parses train response with null arrival times`() = runBlocking {
+        val mockResponse = MockResponse()
+            .setBody(getJson("546_train_null_times.json"))
+            .setResponseCode(200)
+        server.enqueue(mockResponse)
+
+        val expectedResponse = mapOf("546" to listOf(expected546TrainDto))
+
+        val actualResponse = apiService.getTrain("546")
+
+        val request = server.takeRequest()
+        assertEquals("/trains/546", request.path)
+
+        assertEquals(expectedResponse, actualResponse)
+    }
 }

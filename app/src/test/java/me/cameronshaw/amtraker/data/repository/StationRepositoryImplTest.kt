@@ -57,7 +57,13 @@ class StationRepositoryImplTest {
 
         // Assert: Verify that the correct methods were called on our mocks.
         coVerify(exactly = 1) { remoteDataSource.getStation(fakeStationId) }
-        coVerify(exactly = 1) { localDataSource.updateStation(fakeDto.toDomain().toEntity()) }
+        // This test isn't comprehensive, but we can't just check for object equality due to lastUpdated field
+        coVerify(exactly = 1) {
+            localDataSource.updateStation(
+                match { stationEntity ->
+                    stationEntity.code == fakeDto.code && stationEntity.name == fakeDto.name
+                })
+        }
     }
 
     @Test
@@ -77,12 +83,10 @@ class StationRepositoryImplTest {
     fun `getStations THEN maps entities from local source to domain models`() = runTest {
         // Arrange
         val fakeStationEntities = listOf(
-            expectedGACStationEntity,
-            expectedSJCStationEntity
+            expectedGACStationEntity, expectedSJCStationEntity
         )
         val expectedStations = listOf(
-            expectedGACStationDomain,
-            expectedSJCStationDomain
+            expectedGACStationDomain, expectedSJCStationDomain
         )
         coEvery { localDataSource.getAllStations() } returns flowOf(fakeStationEntities)
 

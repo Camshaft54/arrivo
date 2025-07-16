@@ -3,15 +3,18 @@ package me.cameronshaw.amtraker.data.remote.api
 import me.cameronshaw.amtraker.data.local.model.StationEntity
 import me.cameronshaw.amtraker.data.model.Station
 import me.cameronshaw.amtraker.data.remote.dto.StationDto
+import me.cameronshaw.amtraker.data.util.toOffsetDateTime
 
 val expectedGACStationDomain = Station(
     code = "GAC",
-    name = "Santa Clara - Great America"
+    name = "Santa Clara - Great America",
+    lastUpdated = "2025-06-29T10:21:00-07:00".toOffsetDateTime()
 )
 
 val expectedGACStationEntity = StationEntity(
     code = "GAC",
-    name = "Santa Clara - Great America"
+    name = "Santa Clara - Great America",
+    lastUpdated = "2025-06-29T10:21:00-07:00"
 )
 
 val expectedGACStationDto = StationDto(
@@ -36,12 +39,14 @@ val expectedGACStationDto = StationDto(
 
 val expectedSJCStationDomain = Station(
     code = "SJC",
-    name = "San Jose Diridon"
+    name = "San Jose Diridon",
+    lastUpdated = "2025-06-29T10:21:00-07:00".toOffsetDateTime()
 )
 
 val expectedSJCStationEntity = StationEntity(
     code = "SJC",
-    name = "San Jose Diridon"
+    name = "San Jose Diridon",
+    lastUpdated = "2025-06-29T10:21:00-07:00"
 )
 
 val expectedSJCStationDto = StationDto(

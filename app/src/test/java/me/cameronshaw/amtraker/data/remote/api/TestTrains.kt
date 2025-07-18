@@ -236,3 +236,84 @@ val expected1TrainDto = TrainDto(
     onlyOfTrainNum = true,
     alerts = listOf()
 )
+
+val expected546TrainDto = TrainDto(
+    routeName = "Capitol Corridor",
+    trainNum = "546",
+    trainNumRaw = "546",
+    trainID = "546-15",
+    lat = 37.33020494409,
+    lon = -121.90221308676863,
+    trainTimely = "",
+    iconColor = "#212529",
+    stops = listOf(
+        TrainDto.StopDto(
+            name = "San Jose Diridon",
+            code = "SJC",
+            tz = "America/Los_Angeles",
+            bus = false,
+            schArr = "2025-07-15T18:05:00-07:00",
+            schDep = "2025-07-15T18:05:00-07:00",
+            arr = null,
+            arrCmnt = "",
+            depCmnt = "",
+            status = "Station",
+            platform = ""
+        ),
+        TrainDto.StopDto(
+            name = "Santa Clara",
+            code = "SCC",
+            tz = "America/Los_Angeles",
+            bus = false,
+            schArr = "2025-07-15T18:10:00-07:00",
+            schDep = "2025-07-15T18:10:00-07:00",
+            arr = null,
+            arrCmnt = "",
+            depCmnt = "",
+            status = "Station",
+            platform = ""
+        )
+    ),
+    heading = "N",
+    eventCode = "SAC",
+    eventTZ = "America/Los_Angeles",
+    eventName = "Sacramento",
+    origCode = "SJC",
+    originTZ = "America/Los_Angeles",
+    origName = "San Jose Diridon",
+    destCode = "SAC",
+    destTZ = "America/Los_Angeles",
+    destName = "Sacramento",
+    trainState = "Predeparture",
+    velocity = 0.0,
+    statusMsg = "SERVICE DISRUPTION",
+    createdAt = "2025-07-15T20:37:37-04:00",
+    updatedAt = "2025-07-15T20:37:37-04:00",
+    lastValTS = "2025-07-15T17:50:00-07:00",
+    objectID = 3637L,
+    provider = "Amtrak",
+    providerShort = "AMTK",
+    onlyOfTrainNum = true,
+    alerts = listOf(
+    )
+)
+
+val expected546TrainDomain = Train(
+    num = "546",
+    routeName = "Capitol Corridor",
+    stops = listOf(
+        Train.Stop(
+            name = "San Jose Diridon",
+            code = "SJC",
+            arrival = "2025-07-15T18:05:00-07:00".toOffsetDateTime(),
+            departure = "2025-07-15T18:05:00-07:00".toOffsetDateTime()
+        ),
+        Train.Stop(
+            name = "Santa Clara",
+            code = "SCC",
+            arrival = "2025-07-15T18:10:00-07:00".toOffsetDateTime(),
+            departure = "2025-07-15T18:10:00-07:00".toOffsetDateTime()
+        )
+    ),
+    lastUpdated = "2025-07-15T18:00:00-07:00".toOffsetDateTime()!!
+)

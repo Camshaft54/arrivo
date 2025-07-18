@@ -28,6 +28,7 @@ fun TrainList(
     LazyColumn(modifier = modifier.fillMaxSize()) {
         items(trains, key = { it.num }) { train ->
             val dismissState = rememberSwipeToDismissBoxState(
+                positionalThreshold = { it * 0.2F },
                 confirmValueChange = {
                     if (it == SwipeToDismissBoxValue.EndToStart) {
                         onSwipeToDelete(train)

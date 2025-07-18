@@ -1,5 +1,6 @@
 package me.cameronshaw.amtraker.ui.common
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -47,6 +48,12 @@ fun AddItemDialog(
 
     LaunchedEffect(key1 = Unit) {
         focusRequester.requestFocus()
+    }
+
+    BackHandler {
+        if (!isLoading) {
+            onDismissRequest()
+        }
     }
 
     AlertDialog(

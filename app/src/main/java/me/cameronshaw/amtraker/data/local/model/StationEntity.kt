@@ -16,6 +16,6 @@ fun StationEntity.toDomain(): Station {
     return Station(
         code = code,
         name = name,
-        lastUpdated = lastUpdated.toOffsetDateTime()
+        lastUpdated = lastUpdated.toOffsetDateTime()!!
     )
 }

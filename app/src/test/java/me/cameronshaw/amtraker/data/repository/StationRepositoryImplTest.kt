@@ -8,14 +8,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import me.cameronshaw.amtraker.data.local.datasource.StationLocalDataSource
-import me.cameronshaw.amtraker.data.model.toEntity
 import me.cameronshaw.amtraker.data.remote.api.expectedGACStationDomain
 import me.cameronshaw.amtraker.data.remote.api.expectedGACStationDto
 import me.cameronshaw.amtraker.data.remote.api.expectedGACStationEntity
 import me.cameronshaw.amtraker.data.remote.api.expectedSJCStationDomain
 import me.cameronshaw.amtraker.data.remote.api.expectedSJCStationEntity
 import me.cameronshaw.amtraker.data.remote.datasource.StationRemoteDataSource
-import me.cameronshaw.amtraker.data.remote.dto.toDomain
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -57,7 +55,11 @@ class StationRepositoryImplTest {
 
         // Assert: Verify that the correct methods were called on our mocks.
         coVerify(exactly = 1) { remoteDataSource.getStation(fakeStationId) }
-        coVerify(exactly = 1) { localDataSource.updateStation(fakeDto.toDomain().toEntity()) }
+        coVerify(exactly = 1) {
+            localDataSource.updateStation(
+                match { it.code == fakeDto.code && it.name == fakeDto.name }
+            )
+        }
     }
 
     @Test

@@ -1,5 +1,6 @@
 package me.cameronshaw.amtraker.data.repository
 
+import android.util.Log
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -79,7 +80,6 @@ class TrainRepositoryImpl @Inject constructor(
             val trainWithStopsEntity = domainTrain.toEntity()
             localDataSource.updateTrainData(trainWithStopsEntity)
         }
-        // TODO: Handle this in the UI by displaying a snackbar or similar
     }
 
     /**
@@ -92,6 +92,7 @@ class TrainRepositoryImpl @Inject constructor(
             trainsToRefresh.map {
                 async {
                     refreshTrain(it.num)
+                    Log.d("refreshAllTrains", "Refreshed train: ${it.num}")
                 }
             }
         }.awaitAll()

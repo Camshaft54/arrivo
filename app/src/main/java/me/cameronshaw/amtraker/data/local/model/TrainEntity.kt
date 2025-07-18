@@ -19,5 +19,5 @@ fun TrainEntity.toDomain() = Train(
     num = num,
     routeName = routeName,
     stops = emptyList(),
-    lastUpdated = lastUpdated.toOffsetDateTime()
+    lastUpdated = lastUpdated.toOffsetDateTime()!!
 )

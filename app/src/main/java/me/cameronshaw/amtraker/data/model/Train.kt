@@ -23,8 +23,8 @@ data class Train(
     data class Stop(
         val code: String,
         val name: String,
-        val arrival: OffsetDateTime,
-        val departure: OffsetDateTime
+        val arrival: OffsetDateTime?,
+        val departure: OffsetDateTime?
     )
 
     constructor(num: String) : this(num, "", emptyList(), NEVER)

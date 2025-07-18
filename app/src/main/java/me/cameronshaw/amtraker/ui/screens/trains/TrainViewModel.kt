@@ -1,5 +1,6 @@
 package me.cameronshaw.amtraker.ui.screens.trains
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,7 +48,8 @@ class TrainViewModel @Inject constructor(
         viewModelScope.launch {
             trainRepository
                 .getTrackedTrains()
-                .catch {
+                .catch { cause ->
+                    Log.e("TrainViewModel", "Failed to load trains.", cause)
                     _uiState.update {
                         it.copy(
                             errorMessage = "Failed to load trains.",
@@ -96,7 +98,7 @@ class TrainViewModel @Inject constructor(
             try {
                 trainRepository.refreshAllTrains()
             } catch (e: Exception) {
-                _eventFlow.emit("Refresh failed. Please try again.")
+                _eventFlow.emit("Refresh failed. Please try again. $e")
             } finally {
                 _uiState.update { it.copy(isRefreshing = false) }
             }

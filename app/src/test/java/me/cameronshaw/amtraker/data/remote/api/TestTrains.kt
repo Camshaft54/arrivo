@@ -39,7 +39,8 @@ val expected727TrainDomain = Train(
             arrival = "2025-06-29T10:21:00-07:00".toOffsetDateTime(),
             departure = "2025-06-29T10:21:00-07:00".toOffsetDateTime()
         )
-    )
+    ),
+    lastUpdated = "2025-06-29T10:13:26-07:00".toOffsetDateTime()!!
 )
 
 val expected727TrainEntity = expected727TrainDomain.toEntity()
@@ -168,7 +169,8 @@ val expected1TrainDomain = Train(
             arrival = "2025-06-28T10:58:00-05:00".toOffsetDateTime(),
             departure = "2025-06-28T10:59:00-05:00".toOffsetDateTime()
         )
-    )
+    ),
+    lastUpdated = "2025-06-29T10:13:26-07:00".toOffsetDateTime()!!
 )
 
 val expected1TrainEntity = expected1TrainDomain.toEntity()

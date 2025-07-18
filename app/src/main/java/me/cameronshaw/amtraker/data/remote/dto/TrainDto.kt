@@ -68,6 +68,6 @@ fun TrainDto.toDomain() = Train(
 fun TrainDto.StopDto.toDomain() = Train.Stop(
     name = name,
     code = code,
-    arrival = arr?.toOffsetDateTime() ?: throw IllegalArgumentException("Arrival time is null"),
-    departure = dep?.toOffsetDateTime() ?: throw IllegalArgumentException("Departure time is null")
+    arrival = arr?.toOffsetDateTime(),
+    departure = dep?.toOffsetDateTime()
 )

@@ -3,11 +3,9 @@ package me.cameronshaw.amtraker.ui.common
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material3.Card
@@ -43,7 +41,7 @@ fun ListItem(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )
                 if (subtitle != null) {
@@ -55,19 +53,17 @@ fun ListItem(
                 }
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
-
             if (!isStale) {
                 Icon(
                     imageVector = Icons.Filled.Circle,
-                    contentDescription = "Train is Active",
+                    contentDescription = "Active",
                     tint = Color(0xFF34A853),
                     modifier = Modifier.size(24.dp)
                 )
             } else {
                 Icon(
                     imageVector = Icons.Default.Circle,
-                    contentDescription = "Train is Inactive",
+                    contentDescription = "Inactive",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                     modifier = Modifier.size(24.dp)
                 )

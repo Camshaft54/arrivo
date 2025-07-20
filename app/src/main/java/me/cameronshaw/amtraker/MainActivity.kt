@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import me.cameronshaw.amtraker.ui.screens.trains.TrainScreen
-import me.cameronshaw.amtraker.ui.screens.trains.TrainViewModel
+import me.cameronshaw.amtraker.ui.screens.stations.StationScreen
+import me.cameronshaw.amtraker.ui.screens.stations.StationViewModel
 import me.cameronshaw.amtraker.ui.theme.AmtrakerTheme
 
 @AndroidEntryPoint
@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
                 val snackbarHostState = remember { SnackbarHostState() }
                 val scope = rememberCoroutineScope()
 
-                val viewModel: TrainViewModel = hiltViewModel()
+                val viewModel: StationViewModel = hiltViewModel()
 
                 LaunchedEffect(key1 = true) {
                     viewModel.eventFlow.collect { message ->
@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding),
                         color = MaterialTheme.colorScheme.background,
                     ) {
-                        TrainScreen()
+                        StationScreen()
                     }
                 }
             }

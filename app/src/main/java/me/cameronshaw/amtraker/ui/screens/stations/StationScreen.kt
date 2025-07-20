@@ -15,16 +15,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import me.cameronshaw.amtraker.data.model.Station
 import me.cameronshaw.amtraker.ui.common.AddItemDialog
 import me.cameronshaw.amtraker.ui.common.ListPlaceholder
 import me.cameronshaw.amtraker.ui.screens.stations.components.StationList
+import me.cameronshaw.amtraker.ui.theme.AmtrakerTheme
+import java.time.OffsetDateTime
 
 @Composable
 fun StationScreen(
@@ -99,9 +105,7 @@ fun StationScreenContent(
             StationList(
                 stations = uiState.stations,
                 modifier = modifier,
-                onSwipeToDelete = {
-                    onDeleteStation(it)
-                }
+                onSwipeToDelete = onDeleteStation
             )
         }
 
@@ -113,5 +117,85 @@ fun StationScreenContent(
         ) {
             Icon(Icons.Filled.Add, contentDescription = "Add Station")
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun StationListPopulatedPreview() {
+    var isLoading by remember { mutableStateOf(false) }
+    val stations = ('A'..'Z').map {
+        Station(
+            "$it$it$it", "$it Station", lastUpdated = OffsetDateTime.now()
+        )
+    }
+    val stationUiState = StationUiState(isRefreshing = isLoading, stations = stations)
+    val scope = rememberCoroutineScope()
+    AmtrakerTheme {
+        StationScreenContent(
+            stationUiState,
+            validateStationCode = { it.isNotEmpty() && it.all(Char::isLetter) },
+            onAddStation = { true },
+            onDeleteStation = {},
+            onRefresh = {
+                scope.launch {
+                    isLoading = true
+                    delay(1000)
+                    isLoading = false
+                }
+            }
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun StationListEmptyPreview() {
+    var isLoading by remember { mutableStateOf(false) }
+    val stations = emptyList<Station>()
+    val stationUiState = StationUiState(isRefreshing = isLoading, stations = stations)
+    val scope = rememberCoroutineScope()
+    AmtrakerTheme {
+        StationScreenContent(
+            stationUiState,
+            validateStationCode = { it.isNotEmpty() && it.all(Char::isLetter) },
+            onAddStation = { true },
+            onDeleteStation = {},
+            onRefresh = {
+                scope.launch {
+                    isLoading = true
+                    delay(1000)
+                    isLoading = false
+                }
+            }
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun StationListErrorPreview() {
+    var isLoading by remember { mutableStateOf(false) }
+    val stations = emptyList<Station>()
+    val stationUiState = StationUiState(
+        isRefreshing = isLoading,
+        stations = stations,
+        errorMessage = "This is an error message on the stations screen."
+    )
+    val scope = rememberCoroutineScope()
+    AmtrakerTheme {
+        StationScreenContent(
+            stationUiState,
+            validateStationCode = { it.isNotEmpty() && it.all(Char::isLetter) },
+            onAddStation = { true },
+            onDeleteStation = {},
+            onRefresh = {
+                scope.launch {
+                    isLoading = true
+                    delay(1000)
+                    isLoading = false
+                }
+            }
+        )
     }
 }

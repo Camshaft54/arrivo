@@ -98,7 +98,8 @@ class TrainViewModel @Inject constructor(
             try {
                 trainRepository.refreshAllTrains()
             } catch (e: Exception) {
-                _eventFlow.emit("Refresh failed. Please try again. $e")
+                _eventFlow.emit("Refresh failed. Please try again.")
+                Log.d("TrainViewModel", "Train refresh failed.", e)
             } finally {
                 _uiState.update { it.copy(isRefreshing = false) }
             }

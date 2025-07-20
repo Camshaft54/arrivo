@@ -1,6 +1,11 @@
 package me.cameronshaw.amtraker.data.repository
 
+import android.util.Log
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import me.cameronshaw.amtraker.data.local.datasource.StationLocalDataSource
 import me.cameronshaw.amtraker.data.local.model.toDomain
@@ -17,6 +22,11 @@ interface StationRepository {
      * and updates the local database.
      */
     suspend fun refreshStation(stationId: String)
+
+    /**
+     * Fetches all stations from the remote API, converts to the necessary entities, and saves it to the local database.
+     */
+    suspend fun refreshAllStations()
 
     /**
      * Gets a continuous stream of all stations from the local database.
@@ -65,6 +75,22 @@ class StationRepositoryImpl @Inject constructor(
             val stationEntity = domainStation.toEntity()
             localDataSource.updateStation(stationEntity)
         }
+    }
+
+    /**
+     * Fetches all stations from the remote API, converts to the necessary entities, and saves it to the local database.
+     */
+    override suspend fun refreshAllStations() {
+        val trainsToRefresh = localDataSource.getAllStations().first()
+        // TODO: change this to use the trains endpoint instead of each specific one
+        coroutineScope {
+            trainsToRefresh.map {
+                async {
+                    refreshStation(it.code)
+                    Log.d("refreshAllStations", "Refreshed train: ${it.code}")
+                }
+            }
+        }.awaitAll()
     }
 
     /**

@@ -17,20 +17,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.cameronshaw.amtraker.data.model.Train
+import me.cameronshaw.amtraker.ui.common.ListPlaceholder
 import me.cameronshaw.amtraker.ui.util.determineArrivalStopDescription
 import me.cameronshaw.amtraker.ui.util.determineDepartureStopDescription
 import me.cameronshaw.amtraker.ui.util.toUiString
 import java.time.OffsetDateTime
 
+// If only one stop is added along the route, make it the departure and arrival stop.
 @Composable
 fun ScheduleCard( // TODO: fix stop status by adding scheduled arrival/departure or adding a status field
     modifier: Modifier = Modifier,
     train: Train,
-    departureStop: Train.Stop,
-    arrivalStop: Train.Stop
+    departureStop: Train.Stop?,
+    arrivalStop: Train.Stop?
 ) {
     Card(
         modifier = modifier
@@ -38,6 +41,7 @@ fun ScheduleCard( // TODO: fix stop status by adding scheduled arrival/departure
             .padding(horizontal = 16.dp, vertical = 8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
+        
         Row(
             modifier = Modifier
                 .padding(16.dp)
@@ -61,19 +65,32 @@ fun ScheduleCard( // TODO: fix stop status by adding scheduled arrival/departure
                 )
             }
 
-            StationInfoColumn(
-                modifier = Modifier.weight(1f),
-                stationCode = departureStop.code,
-                description = departureStop.determineDepartureStopDescription(),
-                time = departureStop.departure
-            )
+            if (departureStop != null) {
+                StationInfoColumn(
+                    modifier = Modifier.weight(1f),
+                    stationCode = departureStop.code,
+                    description = departureStop.determineDepartureStopDescription(),
+                    time = departureStop.departure
+                )
+            }
 
-            StationInfoColumn(
-                modifier = Modifier.weight(1f),
-                stationCode = arrivalStop.code,
-                description = arrivalStop.determineArrivalStopDescription(),
-                time = arrivalStop.arrival
-            )
+            if (arrivalStop != null) {
+                StationInfoColumn(
+                    modifier = Modifier.weight(1f),
+                    stationCode = arrivalStop.code,
+                    description = arrivalStop.determineArrivalStopDescription(),
+                    time = arrivalStop.arrival
+                )
+            }
+
+            if (departureStop == null && arrivalStop == null) {
+                Text(
+                    text = "No stations added on this route.",
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
@@ -150,6 +167,23 @@ fun ScheduleCardPreview() {
             ),
             departureStop = departureStop,
             arrivalStop = arrivalStop
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ScheduleCardMissingStopsPreview() {
+    MaterialTheme {
+        ScheduleCard(
+            train = Train(
+                num = "546",
+                routeName = "Capitol Corridor",
+                stops = listOf(),
+                lastUpdated = OffsetDateTime.now()
+            ),
+            departureStop = null,
+            arrivalStop = null
         )
     }
 }

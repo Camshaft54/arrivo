@@ -1,5 +1,7 @@
 package me.cameronshaw.amtraker.ui.screens.schedule.components
 
+import ScheduleCard
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,7 +16,8 @@ fun ScheduleList(
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
         items(scheduleCardData, key = { it.train.num }) { datum ->
-            ScheduleCardDatum(
+            ScheduleCard(
+                modifier = modifier,
                 datum.train,
                 datum.departureStop,
                 datum.arrivalStop

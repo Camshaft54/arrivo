@@ -20,12 +20,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import me.cameronshaw.amtraker.data.model.Status
 import me.cameronshaw.amtraker.data.model.Train
 import me.cameronshaw.amtraker.ui.common.ListPlaceholder
 import me.cameronshaw.amtraker.ui.util.determineArrivalStopDescription
 import me.cameronshaw.amtraker.ui.util.determineDepartureStopDescription
 import me.cameronshaw.amtraker.ui.util.toUiString
 import java.time.OffsetDateTime
+
+import me.cameronshaw.amtraker.ui.theme.*
 
 // If only one stop is added along the route, make it the departure and arrival stop.
 @Composable
@@ -41,7 +44,7 @@ fun ScheduleCard( // TODO: fix stop status by adding scheduled arrival/departure
             .padding(horizontal = 16.dp, vertical = 8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        
+
         Row(
             modifier = Modifier
                 .padding(16.dp)
@@ -69,6 +72,7 @@ fun ScheduleCard( // TODO: fix stop status by adding scheduled arrival/departure
                 StationInfoColumn(
                     modifier = Modifier.weight(1f),
                     stationCode = departureStop.code,
+                    status = departureStop.status // Think about where in the code is the best way to derive this information
                     description = departureStop.determineDepartureStopDescription(),
                     time = departureStop.departure
                 )
@@ -101,8 +105,14 @@ private fun StationInfoColumn(
     modifier: Modifier = Modifier,
     stationCode: String,
     description: String,
+    status: Status,
     time: OffsetDateTime?
 ) {
+    val statusColor = when (status) {
+        Status.EARLY -> Amber
+        Status.ON_TIME -> Green
+        Status.LATE -> Red
+    }
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -118,7 +128,7 @@ private fun StationInfoColumn(
             Icon(
                 imageVector = Icons.Default.Circle,
                 contentDescription = "Inactive",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                tint = statusColor,
                 modifier = Modifier.size(16.dp)
             )
         }

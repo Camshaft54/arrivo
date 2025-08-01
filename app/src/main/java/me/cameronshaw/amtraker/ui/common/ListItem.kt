@@ -16,9 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import me.cameronshaw.amtraker.ui.theme.Green
 
 @Composable
 fun ListItem(
@@ -57,7 +57,7 @@ fun ListItem(
                 Icon(
                     imageVector = Icons.Filled.Circle,
                     contentDescription = "Active",
-                    tint = Color(0xFF34A853),
+                    tint = Green,
                     modifier = Modifier.size(24.dp)
                 )
             } else {

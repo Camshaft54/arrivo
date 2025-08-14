@@ -22,17 +22,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.cameronshaw.amtraker.data.model.Status
 import me.cameronshaw.amtraker.data.model.Train
-import me.cameronshaw.amtraker.ui.common.ListPlaceholder
+import me.cameronshaw.amtraker.ui.theme.Amber
+import me.cameronshaw.amtraker.ui.theme.Green
+import me.cameronshaw.amtraker.ui.theme.Red
 import me.cameronshaw.amtraker.ui.util.determineArrivalStopDescription
 import me.cameronshaw.amtraker.ui.util.determineDepartureStopDescription
 import me.cameronshaw.amtraker.ui.util.toUiString
 import java.time.OffsetDateTime
 
-import me.cameronshaw.amtraker.ui.theme.*
 
-// If only one stop is added along the route, make it the departure and arrival stop.
 @Composable
-fun ScheduleCard( // TODO: fix stop status by adding scheduled arrival/departure or adding a status field
+fun ScheduleCard(
     modifier: Modifier = Modifier,
     train: Train,
     departureStop: Train.Stop?,
@@ -72,7 +72,7 @@ fun ScheduleCard( // TODO: fix stop status by adding scheduled arrival/departure
                 StationInfoColumn(
                     modifier = Modifier.weight(1f),
                     stationCode = departureStop.code,
-                    status = departureStop.status // Think about where in the code is the best way to derive this information
+                    status = departureStop.status,
                     description = departureStop.determineDepartureStopDescription(),
                     time = departureStop.departure
                 )
@@ -81,6 +81,7 @@ fun ScheduleCard( // TODO: fix stop status by adding scheduled arrival/departure
             if (arrivalStop != null) {
                 StationInfoColumn(
                     modifier = Modifier.weight(1f),
+                    status = arrivalStop.status,
                     stationCode = arrivalStop.code,
                     description = arrivalStop.determineArrivalStopDescription(),
                     time = arrivalStop.arrival
@@ -112,6 +113,7 @@ private fun StationInfoColumn(
         Status.EARLY -> Amber
         Status.ON_TIME -> Green
         Status.LATE -> Red
+        Status.UNKNOWN -> MaterialTheme.colorScheme.onSurfaceVariant
     }
     Column(
         modifier = modifier,
@@ -127,7 +129,7 @@ private fun StationInfoColumn(
             Spacer(modifier = Modifier.width(4.dp))
             Icon(
                 imageVector = Icons.Default.Circle,
-                contentDescription = "Inactive",
+                contentDescription = status.description,
                 tint = statusColor,
                 modifier = Modifier.size(16.dp)
             )
@@ -155,13 +157,17 @@ fun ScheduleCardPreview() {
         code = "OKJ",
         name = "Oakland - Jack London",
         arrival = OffsetDateTime.now(),
-        departure = OffsetDateTime.now().plusMinutes(2)
+        departure = OffsetDateTime.now().plusMinutes(2),
+        scheduledArrival = OffsetDateTime.now(),
+        scheduledDeparture = OffsetDateTime.now().plusMinutes(2)
     )
     val arrivalStop = Train.Stop(
         code = "GAC",
         name = "Santa Clara - Great America",
         arrival = OffsetDateTime.now().plusHours(1),
-        departure = OffsetDateTime.now().plusHours(1).plusMinutes(2)
+        departure = OffsetDateTime.now().plusHours(1).plusMinutes(2),
+        scheduledArrival = OffsetDateTime.now().plusHours(1),
+        scheduledDeparture = OffsetDateTime.now().plusHours(1).plusMinutes(2)
     )
 
     MaterialTheme {

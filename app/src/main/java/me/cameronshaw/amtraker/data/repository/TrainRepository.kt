@@ -76,7 +76,7 @@ class TrainRepositoryImpl @Inject constructor(
         val trainDto = remoteDataSource.getTrain(num)
         if (trainDto != null) {
             val domainTrain =
-                trainDto.toDomain() // TODO: handle situation where dep or arr are null
+                trainDto.toDomain()
             val trainWithStopsEntity = domainTrain.toEntity()
             localDataSource.updateTrainData(trainWithStopsEntity)
         }

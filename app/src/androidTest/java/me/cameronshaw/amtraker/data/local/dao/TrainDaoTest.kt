@@ -53,8 +53,18 @@ class TrainDaoTest {
         code: String,
         name: String,
         arrival: OffsetDateTime,
-        departure: OffsetDateTime
-    ) = StopEntity(code, name, num, arrival.toDbString(), departure.toDbString())
+        departure: OffsetDateTime,
+        scheduledArrival: OffsetDateTime? = null,
+        scheduledDeparture: OffsetDateTime? = null
+    ) = StopEntity(
+        code,
+        name,
+        arrival.toDbString(),
+        departure.toDbString(),
+        scheduledArrival.toDbString(),
+        scheduledDeparture.toDbString(),
+        num
+    )
 
     private val normalTrain1 = createTestTrain("101", "Test Route")
 
@@ -64,11 +74,15 @@ class TrainDaoTest {
                 "1",
                 "Stop 1",
                 OffsetDateTime.now(),
+                OffsetDateTime.now().plusHours(1),
+                OffsetDateTime.now(),
                 OffsetDateTime.now().plusHours(1)
             ),
             normalTrain1.createTestStop(
                 "2",
                 "Stop 2",
+                OffsetDateTime.now().plusHours(2),
+                OffsetDateTime.now().plusHours(3),
                 OffsetDateTime.now().plusHours(2),
                 OffsetDateTime.now().plusHours(3)
             )

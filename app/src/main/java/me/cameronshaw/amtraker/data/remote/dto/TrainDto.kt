@@ -69,5 +69,7 @@ fun TrainDto.StopDto.toDomain() = Train.Stop(
     name = name,
     code = code,
     arrival = arr?.toOffsetDateTime(),
-    departure = dep?.toOffsetDateTime()
+    departure = dep?.toOffsetDateTime(),
+    scheduledArrival = schArr?.toOffsetDateTime(),
+    scheduledDeparture = schDep?.toOffsetDateTime()
 )

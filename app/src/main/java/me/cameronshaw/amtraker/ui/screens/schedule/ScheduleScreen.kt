@@ -15,16 +15,31 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.cameronshaw.amtraker.R
-import me.cameronshaw.amtraker.data.model.Train
 import me.cameronshaw.amtraker.ui.common.ListPlaceholder
-import me.cameronshaw.amtraker.ui.screens.schedule.components.ScheduleCardDatum
+import me.cameronshaw.amtraker.ui.previewdata.SampleData
+import me.cameronshaw.amtraker.data.model.ScheduleDatum
 import me.cameronshaw.amtraker.ui.screens.schedule.components.ScheduleList
-import me.cameronshaw.amtraker.ui.screens.trains.TrainScreenContent
 import me.cameronshaw.amtraker.ui.theme.AmtrakerTheme
-import java.time.OffsetDateTime
+
+@Composable
+fun ScheduleScreen(
+    modifier: Modifier = Modifier,
+    viewModel: ScheduleViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    ScheduleScreenContent(
+        uiState = uiState,
+        modifier = modifier,
+        onRefresh = {
+            viewModel.refreshSchedule()
+        }
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,25 +85,10 @@ fun ScheduleScreenContent(
 fun ScheduleListPopulatedPreview() {
     var isLoading by remember { mutableStateOf(false) }
     val scheduleData = List(5) {
-        val stop1 = Train.Stop(
-            code = "OKJ",
-            name = "Oakland - Jack London",
-            arrival = OffsetDateTime.now(),
-            departure = OffsetDateTime.now().plusMinutes(2)
-        )
-        val stop2 = Train.Stop(
-            code = "GAC",
-            name = "Santa Clara - Great America",
-            arrival = OffsetDateTime.now().plusHours(1),
-            departure = OffsetDateTime.now().plusHours(1).plusMinutes(2)
-        )
-
-        ScheduleCardDatum(
-            train = Train(
-                "$it", "Route $it", listOf(stop1, stop2), lastUpdated = OffsetDateTime.now()
-            ),
-            departureStop = stop1,
-            arrivalStop = stop2
+        ScheduleDatum(
+            train = SampleData.train(it),
+            departureStop = SampleData.stop1,
+            arrivalStop = SampleData.stop2
         )
     }
     val scheduleUiState = ScheduleUiState(isRefreshing = isLoading, scheduleData = scheduleData)

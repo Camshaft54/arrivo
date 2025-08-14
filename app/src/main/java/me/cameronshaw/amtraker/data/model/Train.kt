@@ -24,8 +24,21 @@ data class Train(
         val code: String,
         val name: String,
         val arrival: OffsetDateTime?,
-        val departure: OffsetDateTime?
-    )
+        val departure: OffsetDateTime?,
+        val scheduledArrival: OffsetDateTime?,
+        val scheduledDeparture: OffsetDateTime?,
+    ) {
+        val status: Status
+            get() = if (arrival == null || scheduledArrival == null) {
+                Status.UNKNOWN
+            } else if (arrival.isEqual(scheduledArrival)) {
+                Status.ON_TIME
+            } else if (arrival.isAfter(scheduledArrival)) {
+                Status.LATE
+            } else {
+                Status.EARLY
+            }
+    }
 
     constructor(num: String) : this(num, "", emptyList(), NEVER)
 }
@@ -38,6 +51,8 @@ fun Train.toEntity() = TrainWithStops(
             name = it.name,
             arrival = it.arrival.toDbString(),
             departure = it.departure.toDbString(),
+            scheduledArrival = it.scheduledArrival.toDbString(),
+            scheduledDeparture = it.scheduledDeparture.toDbString(),
             trainOwnerNum = num
         )
     }

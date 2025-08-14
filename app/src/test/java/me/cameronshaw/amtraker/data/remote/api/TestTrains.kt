@@ -13,31 +13,41 @@ val expected727TrainDomain = Train(
             name = "Oakland-Jack London Square",
             code = "OKJ",
             arrival = "2025-06-29T09:13:00-07:00".toOffsetDateTime(),
-            departure = "2025-06-29T09:15:00-07:00".toOffsetDateTime()
+            departure = "2025-06-29T09:15:00-07:00".toOffsetDateTime(),
+            scheduledArrival = "2025-06-29T08:44:00-07:00".toOffsetDateTime(),
+            scheduledDeparture = "2025-06-29T08:45:00-07:00".toOffsetDateTime()
         ),
         Train.Stop(
             name = "Oakland Coliseum",
             code = "OAC",
             arrival = "2025-06-29T09:24:00-07:00".toOffsetDateTime(),
-            departure = "2025-06-29T09:25:00-07:00".toOffsetDateTime()
+            departure = "2025-06-29T09:25:00-07:00".toOffsetDateTime(),
+            scheduledArrival = "2025-06-29T08:55:00-07:00".toOffsetDateTime(),
+            scheduledDeparture = "2025-06-29T08:55:00-07:00".toOffsetDateTime()
         ),
         Train.Stop(
             name = "Hayward",
             code = "HAY",
             arrival = "2025-06-29T09:34:00-07:00".toOffsetDateTime(),
-            departure = "2025-06-29T09:35:00-07:00".toOffsetDateTime()
+            departure = "2025-06-29T09:35:00-07:00".toOffsetDateTime(),
+            scheduledArrival = "2025-06-29T09:08:00-07:00".toOffsetDateTime(),
+            scheduledDeparture = "2025-06-29T09:08:00-07:00".toOffsetDateTime()
         ),
         Train.Stop(
             name = "Fremont",
             code = "FMT",
             arrival = "2025-06-29T09:50:00-07:00".toOffsetDateTime(),
-            departure = "2025-06-29T09:51:00-07:00".toOffsetDateTime()
+            departure = "2025-06-29T09:51:00-07:00".toOffsetDateTime(),
+            scheduledArrival = "2025-06-29T09:23:00-07:00".toOffsetDateTime(),
+            scheduledDeparture = "2025-06-29T09:23:00-07:00".toOffsetDateTime()
         ),
         Train.Stop(
             name = "Santa Clara - Great America",
             code = "GAC",
             arrival = "2025-06-29T10:21:00-07:00".toOffsetDateTime(),
-            departure = "2025-06-29T10:21:00-07:00".toOffsetDateTime()
+            departure = "2025-06-29T10:21:00-07:00".toOffsetDateTime(),
+            scheduledArrival = "2025-06-29T09:40:00-07:00".toOffsetDateTime(),
+            scheduledDeparture = "2025-06-29T09:40:00-07:00".toOffsetDateTime()
         )
     ),
     lastUpdated = "2025-06-29T10:13:26-07:00".toOffsetDateTime()!!
@@ -161,13 +171,17 @@ val expected1TrainDomain = Train(
             name = "New Orleans",
             code = "NOL",
             arrival = "2025-06-28T09:02:00-05:00".toOffsetDateTime(),
-            departure = "2025-06-28T09:00:00-05:00".toOffsetDateTime()
+            departure = "2025-06-28T09:00:00-05:00".toOffsetDateTime(),
+            scheduledArrival = "2025-06-28T09:00:00-05:00".toOffsetDateTime(),
+            scheduledDeparture = "2025-06-28T09:00:00-05:00".toOffsetDateTime()
         ),
         Train.Stop(
             name = "Schriever",
             code = "SCH",
             arrival = "2025-06-28T10:58:00-05:00".toOffsetDateTime(),
-            departure = "2025-06-28T10:59:00-05:00".toOffsetDateTime()
+            departure = "2025-06-28T10:59:00-05:00".toOffsetDateTime(),
+            scheduledArrival = "2025-06-28T10:30:00-05:00".toOffsetDateTime(),
+            scheduledDeparture = "2025-06-28T10:30:00-05:00".toOffsetDateTime()
         )
     ),
     lastUpdated = "2025-06-29T10:13:26-07:00".toOffsetDateTime()!!
@@ -306,13 +320,17 @@ val expected546TrainDomain = Train(
             name = "San Jose Diridon",
             code = "SJC",
             arrival = "2025-07-15T18:05:00-07:00".toOffsetDateTime(),
-            departure = "2025-07-15T18:05:00-07:00".toOffsetDateTime()
+            departure = "2025-07-15T18:05:00-07:00".toOffsetDateTime(),
+            scheduledArrival = "2025-07-15T18:05:00-07:00".toOffsetDateTime(),
+            scheduledDeparture = "2025-07-15T18:05:00-07:00".toOffsetDateTime()
         ),
         Train.Stop(
             name = "Santa Clara",
             code = "SCC",
             arrival = "2025-07-15T18:10:00-07:00".toOffsetDateTime(),
-            departure = "2025-07-15T18:10:00-07:00".toOffsetDateTime()
+            departure = "2025-07-15T18:10:00-07:00".toOffsetDateTime(),
+            scheduledArrival = "2025-07-15T18:10:00-07:00".toOffsetDateTime(),
+            scheduledDeparture = "2025-07-15T18:10:00-07:00".toOffsetDateTime()
         )
     ),
     lastUpdated = "2025-07-15T18:00:00-07:00".toOffsetDateTime()!!

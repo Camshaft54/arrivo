@@ -2,6 +2,7 @@ package me.cameronshaw.amtraker.data.local.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import me.cameronshaw.amtraker.data.model.Train
 import me.cameronshaw.amtraker.data.util.toOffsetDateTime
 
@@ -14,7 +15,8 @@ import me.cameronshaw.amtraker.data.util.toOffsetDateTime
             childColumns = ["trainOwnerNum"],
             onDelete = ForeignKey.CASCADE // Delete stops when train is deleted
         )
-    ]
+    ],
+    indices = [Index(value = ["trainOwnerNum"])]
 )
 data class StopEntity(
     val code: String,

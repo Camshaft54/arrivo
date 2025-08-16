@@ -28,7 +28,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.cameronshaw.amtraker.R
 import me.cameronshaw.amtraker.data.model.Train
-import me.cameronshaw.amtraker.ui.common.AddItemDialog
+import me.cameronshaw.amtraker.ui.dialogs.AddItemDialog
 import me.cameronshaw.amtraker.ui.common.ListPlaceholder
 import me.cameronshaw.amtraker.ui.screens.trains.components.TrainList
 import me.cameronshaw.amtraker.ui.theme.AmtrakerTheme

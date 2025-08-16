@@ -9,20 +9,24 @@ fun OffsetDateTime.toUiString(): String {
     return this.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
 }
 
-fun Train.Stop.determineDepartureStopDescription(): String =
-    if (this.departure == null) {
+fun Train.Stop.determineDepartureStopDescription(): String {
+    val dep = this.departure ?: this.scheduledDeparture
+    return if (dep == null) {
         ""
-    } else if (this.departure.isAfter(OffsetDateTime.now())) {
+    } else if (dep.isAfter(OffsetDateTime.now())) {
         "Departing"
     } else {
         "Departed"
     }
+}
 
-fun Train.Stop.determineArrivalStopDescription(): String =
-    if (this.arrival == null) {
+fun Train.Stop.determineArrivalStopDescription(): String {
+    val arr = this.arrival ?: this.scheduledArrival
+    return if (arr == null) {
         ""
-    } else if (this.arrival.isAfter(OffsetDateTime.now())) {
+    } else if (arr.isAfter(OffsetDateTime.now())) {
         "Arriving"
     } else {
         "Arrived"
     }
+}

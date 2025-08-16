@@ -3,6 +3,8 @@
     <string name="empty_train_screen_message">"No trains are being tracked.\nTap the '+' button to add a new train."</string>
     <string name="add_train_title">Add Train</string>
     <string name="add_train_field">Train Number</string>
+    <string name="add_station_name">Add Station</string>
+    <string name="add_station_field">Station Code</string>
     <string name="add_train_fail_msg">Failed to add train. Please try again.</string>
     <string name="schedule_empty_message">No trains are being tracked.</string>
 </resources>

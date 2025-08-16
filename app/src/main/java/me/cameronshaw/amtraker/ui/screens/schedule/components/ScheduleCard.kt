@@ -74,7 +74,7 @@ fun ScheduleCard(
                     stationCode = departureStop.code,
                     status = departureStop.status,
                     description = departureStop.determineDepartureStopDescription(),
-                    time = departureStop.departure
+                    time = departureStop.departure ?: departureStop.scheduledDeparture
                 )
             }
 
@@ -84,13 +84,13 @@ fun ScheduleCard(
                     status = arrivalStop.status,
                     stationCode = arrivalStop.code,
                     description = arrivalStop.determineArrivalStopDescription(),
-                    time = arrivalStop.arrival
+                    time = arrivalStop.arrival ?: arrivalStop.scheduledArrival
                 )
             }
 
             if (departureStop == null && arrivalStop == null) {
                 Text(
-                    text = "No stations added on this route.",
+                    text = "Offline or no stations added on this route.",
                     style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant

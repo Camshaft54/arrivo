@@ -7,6 +7,7 @@ import me.cameronshaw.amtraker.data.model.Station
 import me.cameronshaw.amtraker.data.model.Train
 import java.time.OffsetDateTime
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface ScheduleRepository {
     /**
@@ -17,6 +18,7 @@ interface ScheduleRepository {
     fun getScheduleData(): Flow<List<ScheduleDatum>>
 }
 
+@Singleton
 class ScheduleRepositoryImpl @Inject constructor(
     private val trainRepository: TrainRepository, private val stationRepository: StationRepository
 ) : ScheduleRepository {

@@ -1,4 +1,4 @@
-package me.cameronshaw.amtraker.ui.common
+package me.cameronshaw.amtraker.ui.dialogs
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column

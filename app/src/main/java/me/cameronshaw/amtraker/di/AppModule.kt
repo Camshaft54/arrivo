@@ -12,6 +12,8 @@ import me.cameronshaw.amtraker.data.remote.api.StationApiService
 import me.cameronshaw.amtraker.data.remote.api.TrainApiService
 import me.cameronshaw.amtraker.data.remote.datasource.StationRemoteDataSource
 import me.cameronshaw.amtraker.data.remote.datasource.TrainRemoteDataSource
+import me.cameronshaw.amtraker.data.repository.ScheduleRepository
+import me.cameronshaw.amtraker.data.repository.ScheduleRepositoryImpl
 import me.cameronshaw.amtraker.data.repository.StationRepository
 import me.cameronshaw.amtraker.data.repository.StationRepositoryImpl
 import me.cameronshaw.amtraker.data.repository.TrainRepository
@@ -67,5 +69,14 @@ object AppModule {
         remoteDataSource: StationRemoteDataSource
     ): StationRepository {
         return StationRepositoryImpl(localDataSource, remoteDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideScheduleRepository(
+        trainRepository: TrainRepository,
+        stationRepository: StationRepository
+    ): ScheduleRepository {
+        return ScheduleRepositoryImpl(trainRepository, stationRepository)
     }
 }

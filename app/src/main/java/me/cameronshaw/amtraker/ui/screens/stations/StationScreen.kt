@@ -19,14 +19,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import me.cameronshaw.amtraker.R
 import me.cameronshaw.amtraker.data.model.Station
-import me.cameronshaw.amtraker.ui.common.AddItemDialog
+import me.cameronshaw.amtraker.ui.dialogs.AddItemDialog
 import me.cameronshaw.amtraker.ui.common.ListPlaceholder
 import me.cameronshaw.amtraker.ui.screens.stations.components.StationList
 import me.cameronshaw.amtraker.ui.theme.AmtrakerTheme
@@ -71,8 +73,8 @@ fun StationScreenContent(
 
     if (showAddDialog) {
         AddItemDialog(
-            title = "Add Station",
-            fieldLabel = "Train Number",
+            title = stringResource(R.string.add_station_name),
+            fieldLabel = stringResource(R.string.add_station_field),
             onDismissRequest = { showAddDialog = false },
             validateInput = validateStationCode,
             onConfirm = onAddStation,

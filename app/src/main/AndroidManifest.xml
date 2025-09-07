@@ -34,8 +34,19 @@
         </intent-filter>
         <meta-data
             android:name="android.appwidget.provider"
-            android:resource="@xml/widget_info" /> <!-- 3. Point to your widget provider info XML -->
+            android:resource="@xml/widget_info" />
         </receiver>
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.impl.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
 
     </application>
 

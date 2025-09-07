@@ -1,17 +1,21 @@
 package me.cameronshaw.amtraker.data.model
 
+import kotlinx.serialization.Serializable
 import me.cameronshaw.amtraker.data.local.model.StopEntity
 import me.cameronshaw.amtraker.data.local.model.TrainEntity
 import me.cameronshaw.amtraker.data.local.model.TrainWithStops
 import me.cameronshaw.amtraker.data.util.NEVER
+import me.cameronshaw.amtraker.data.util.OffsetDateTimeSerializer
 import me.cameronshaw.amtraker.data.util.toDbString
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 
+@Serializable
 data class Train(
     val num: String,
     val routeName: String,
     val stops: List<Stop>,
+    @Serializable(with = OffsetDateTimeSerializer::class)
     val lastUpdated: OffsetDateTime
 ) {
     /**
@@ -20,12 +24,17 @@ data class Train(
     val isStale: Boolean
         get() = ChronoUnit.HOURS.between(lastUpdated, OffsetDateTime.now()) >= 1
 
+    @Serializable
     data class Stop(
         val code: String,
         val name: String,
+        @Serializable(with = OffsetDateTimeSerializer::class)
         val arrival: OffsetDateTime?,
+        @Serializable(with = OffsetDateTimeSerializer::class)
         val departure: OffsetDateTime?,
+        @Serializable(with = OffsetDateTimeSerializer::class)
         val scheduledArrival: OffsetDateTime?,
+        @Serializable(with = OffsetDateTimeSerializer::class)
         val scheduledDeparture: OffsetDateTime?,
     ) {
         val status: Status

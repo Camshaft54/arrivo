@@ -87,7 +87,7 @@ class StationRepositoryImpl @Inject constructor(
             trainsToRefresh.map {
                 async {
                     refreshStation(it.code)
-                    Log.d("refreshAllStations", "Refreshed train: ${it.code}")
+                    Log.d("refreshAllStations", "Refreshed station: ${it.code}")
                 }
             }
         }.awaitAll()

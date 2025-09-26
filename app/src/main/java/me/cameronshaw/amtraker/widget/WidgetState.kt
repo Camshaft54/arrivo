@@ -9,4 +9,11 @@ import java.time.OffsetDateTime
 data class WidgetState(
     val lastUpdated: @Serializable(with = OffsetDateTimeSerializer::class) OffsetDateTime,
     val schedule: List<ScheduleDatum>
-)
+) {
+    companion object {
+        fun defaultWidgetState(): WidgetState = WidgetState(
+            lastUpdated = OffsetDateTime.now(),
+            schedule = emptyList()
+        )
+    }
+}

@@ -4,9 +4,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
-    id("org.jetbrains.kotlin.kapt")
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlinx.serialization)
 }
 
@@ -71,8 +70,8 @@ dependencies {
     implementation(libs.androidx.work)
     implementation(libs.androidx.hilt.work)
     implementation(libs.kotlinx.serialization.json)
+    ksp(libs.androidx.hilt.compiler)
     ksp(libs.hilt.android.compiler)
-    kapt(libs.androidx.hilt.compiler)
 
     testImplementation(libs.junit)
     testImplementation(libs.androidx.room.testing)

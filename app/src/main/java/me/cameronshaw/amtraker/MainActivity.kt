@@ -31,6 +31,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import me.cameronshaw.amtraker.ui.Screen
@@ -40,6 +42,7 @@ import me.cameronshaw.amtraker.ui.screens.stations.StationScreen
 import me.cameronshaw.amtraker.ui.screens.stations.StationViewModel
 import me.cameronshaw.amtraker.ui.screens.trains.TrainScreen
 import me.cameronshaw.amtraker.ui.theme.AmtrakerTheme
+import me.cameronshaw.amtraker.widget.RefreshWidgetWorker
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

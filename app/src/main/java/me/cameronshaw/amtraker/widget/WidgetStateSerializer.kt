@@ -9,10 +9,7 @@ import java.io.OutputStream
 import java.time.OffsetDateTime
 
 object WidgetStateSerializer : Serializer<WidgetState> {
-    override val defaultValue: WidgetState = WidgetState(
-        lastUpdated = OffsetDateTime.now(),
-        schedule = emptyList()
-    )
+    override val defaultValue: WidgetState = WidgetState.defaultWidgetState()
 
     override suspend fun readFrom(input: InputStream): WidgetState {
         return try {

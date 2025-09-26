@@ -58,7 +58,7 @@ class RefreshWidgetAction : ActionCallback {
         glanceId: GlanceId,
         parameters: ActionParameters
     ) {
-        val workManager = WorkManager.getInstance(context.applicationContext)
+        val workManager = WorkManager.getInstance(context)
         val request = OneTimeWorkRequestBuilder<RefreshWidgetWorker>().build()
         workManager.enqueue(request)
     }

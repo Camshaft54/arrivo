@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.Button
+import androidx.glance.ButtonDefaults
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
@@ -31,6 +32,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import me.cameronshaw.amtraker.data.local.model.THEMES
 import me.cameronshaw.amtraker.widget.components.GlanceScheduleCard
 import me.cameronshaw.amtraker.widget.theme.GlanceAmtrakerTheme
 import java.time.format.DateTimeFormatter
@@ -43,7 +45,19 @@ class AmtrakerWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            GlanceAmtrakerTheme {
+            val widgetState = currentState<WidgetState>()
+            val currentAppTheme = widgetState.appSettings.theme
+
+            // Determine if the widget should use dark theme based on appTheme
+            val overrideSystemTheme =
+                currentAppTheme != "SYSTEM" || !THEMES.contains(currentAppTheme)
+            val useDarkTheme = when (currentAppTheme) {
+                "DARK" -> true
+                "LIGHT" -> false
+                else -> false
+            }
+
+            GlanceAmtrakerTheme(overrideSystemTheme, useDarkTheme) {
                 WidgetContent()
             }
         }
@@ -85,7 +99,11 @@ class AmtrakerWidget : GlanceAppWidget() {
                 }
                 Spacer(GlanceModifier.defaultWeight())
                 Button(
-                    text = "Refresh", onClick = actionRunCallback<RefreshWidgetAction>()
+                    text = "Refresh", onClick = actionRunCallback<RefreshWidgetAction>(),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = GlanceTheme.colors.secondary, // Use primary for background
+                        contentColor = GlanceTheme.colors.onSecondary    // Use onPrimary for text
+                    )
                 )
             }
 

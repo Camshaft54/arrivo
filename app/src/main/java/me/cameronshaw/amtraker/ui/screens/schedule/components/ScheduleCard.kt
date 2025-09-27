@@ -22,9 +22,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.cameronshaw.amtraker.data.model.Status
 import me.cameronshaw.amtraker.data.model.Train
-import me.cameronshaw.amtraker.ui.theme.Amber
-import me.cameronshaw.amtraker.ui.theme.Green
-import me.cameronshaw.amtraker.ui.theme.Red
+import me.cameronshaw.amtraker.ui.theme.StatusAmber
+import me.cameronshaw.amtraker.ui.theme.StatusGreen
+import me.cameronshaw.amtraker.ui.theme.StatusRed
 import me.cameronshaw.amtraker.ui.util.determineArrivalStopDescription
 import me.cameronshaw.amtraker.ui.util.determineDepartureStopDescription
 import me.cameronshaw.amtraker.ui.util.toUiString
@@ -110,9 +110,9 @@ private fun StationInfoColumn(
     time: OffsetDateTime?
 ) {
     val statusColor = when (status) {
-        Status.EARLY -> Amber
-        Status.ON_TIME -> Green
-        Status.LATE -> Red
+        Status.EARLY -> StatusAmber
+        Status.ON_TIME -> StatusGreen
+        Status.LATE -> StatusRed
         Status.UNKNOWN -> MaterialTheme.colorScheme.onSurfaceVariant
     }
     Column(

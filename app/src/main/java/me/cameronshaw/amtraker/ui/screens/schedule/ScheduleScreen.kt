@@ -4,9 +4,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,20 +20,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.cameronshaw.amtraker.R
+import me.cameronshaw.amtraker.data.model.ScheduleDatum
 import me.cameronshaw.amtraker.ui.common.ListPlaceholder
 import me.cameronshaw.amtraker.ui.previewdata.SampleData
-import me.cameronshaw.amtraker.data.model.ScheduleDatum
 import me.cameronshaw.amtraker.ui.screens.schedule.components.ScheduleList
 import me.cameronshaw.amtraker.ui.theme.AmtrakerTheme
 
 @Composable
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
     viewModel: ScheduleViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = viewModel.eventFlow) {
+        viewModel.eventFlow.collectLatest { eventMessage ->
+            snackbarHostState.showSnackbar(message = eventMessage)
+        }
+    }
+
     ScheduleScreenContent(
         uiState = uiState,
         modifier = modifier,

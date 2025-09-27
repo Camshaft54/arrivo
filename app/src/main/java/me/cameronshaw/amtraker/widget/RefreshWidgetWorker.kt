@@ -11,13 +11,15 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
 import me.cameronshaw.amtraker.data.repository.ScheduleRepository
+import me.cameronshaw.amtraker.data.repository.SettingsRepository
 import java.time.OffsetDateTime
 
 @HiltWorker
 class RefreshWidgetWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val scheduleRepository: ScheduleRepository
+    private val scheduleRepository: ScheduleRepository,
+    private val settingsRepository: SettingsRepository
 ) : CoroutineWorker(context, workerParams) {
 
     companion object {
@@ -27,7 +29,8 @@ class RefreshWidgetWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         scheduleRepository.refreshSchedule()
         val scheduleData = scheduleRepository.getScheduleData().first()
-        val newWidgetState = WidgetState(OffsetDateTime.now(), scheduleData)
+        val appSettings = settingsRepository.appSettingsFlow().first()
+        val newWidgetState = WidgetState(OffsetDateTime.now(), appSettings, scheduleData)
 
         val amtrakerWidget = AmtrakerWidget()
         val manager = GlanceAppWidgetManager(context)

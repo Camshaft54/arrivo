@@ -19,16 +19,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import me.cameronshaw.amtraker.R
+import me.cameronshaw.amtraker.data.local.model.AppSettings
 import me.cameronshaw.amtraker.ui.dialogs.settings.components.DropdownSetting
 import me.cameronshaw.amtraker.ui.dialogs.settings.components.SettingItem
 import me.cameronshaw.amtraker.ui.theme.AmtrakerTheme
@@ -36,10 +38,23 @@ import me.cameronshaw.amtraker.ui.theme.AmtrakerTheme
 @Composable
 fun SettingsDialog(
     onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    var selectedTheme by remember { mutableStateOf("System default") }
+    val appSettings by viewModel.appSettings.collectAsState()
 
+    SettingsDialogContent(
+        onDismissRequest, appSettings, viewModel::updateTheme, modifier
+    )
+}
+
+@Composable
+fun SettingsDialogContent(
+    onDismissRequest: () -> Unit,
+    appSettings: AppSettings,
+    onUpdateTheme: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Dialog(
         onDismissRequest = onDismissRequest,
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -63,8 +78,7 @@ fun SettingsDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Settings",
-                        style = MaterialTheme.typography.headlineSmall
+                        text = "Settings", style = MaterialTheme.typography.headlineSmall
                     )
                     IconButton(onClick = onDismissRequest) {
                         Icon(Icons.Default.Close, contentDescription = "Close settings")
@@ -79,11 +93,21 @@ fun SettingsDialog(
                     title = "App Theme"
                 ) {
                     DropdownSetting(
-                        label = "Choose your app theme",
-                        options = listOf("Light", "Dark", "System default"),
-                        selectedOption = selectedTheme,
-                        onOptionSelected = { selectedTheme = it }
-                    )
+                        label = stringResource(R.string.choose_theme),
+                        options = listOf("System default", "Light", "Dark"),
+                        selectedOption = when (appSettings.theme) {
+                            "SYSTEM" -> "System default"
+                            "LIGHT" -> "Light"
+                            "DARK" -> "Dark"
+                            else -> "System default"
+                        },
+                        onOptionSelected = { newTheme ->
+                            onUpdateTheme(when (newTheme) {
+                                "System default" -> "SYSTEM"
+                                "Light" -> "LIGHT"
+                                "Dark" -> "DARK"
+                                else -> "SYSTEM"
+                            }) })
                 }
             }
         }
@@ -94,8 +118,9 @@ fun SettingsDialog(
 @Composable
 fun PreviewSettingDialog() {
     AmtrakerTheme {
-        SettingsDialog(
-            onDismissRequest = { }
-        )
+        SettingsDialogContent(
+            onDismissRequest = { },
+            appSettings = AppSettings(),
+            onUpdateTheme = { })
     }
 }

@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun DropdownSetting(
     label: String,
-    options: List<String>,
+    options: Collection<String>,
     selectedOption: String,
     onOptionSelected: (String) -> Unit,
     modifier: Modifier = Modifier

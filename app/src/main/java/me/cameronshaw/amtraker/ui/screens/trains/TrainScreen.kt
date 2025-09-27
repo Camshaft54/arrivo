@@ -9,9 +9,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,11 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.cameronshaw.amtraker.R
 import me.cameronshaw.amtraker.data.model.Train
-import me.cameronshaw.amtraker.ui.dialogs.AddItemDialog
 import me.cameronshaw.amtraker.ui.common.ListPlaceholder
+import me.cameronshaw.amtraker.ui.dialogs.AddItemDialog
 import me.cameronshaw.amtraker.ui.screens.trains.components.TrainList
 import me.cameronshaw.amtraker.ui.theme.AmtrakerTheme
 import java.time.OffsetDateTime
@@ -37,9 +40,17 @@ import java.time.OffsetDateTime
 @Composable
 fun TrainScreen(
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
     viewModel: TrainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = viewModel.eventFlow) {
+        viewModel.eventFlow.collectLatest { eventMessage ->
+            snackbarHostState.showSnackbar(message = eventMessage)
+        }
+    }
+
     TrainScreenContent(
         uiState = uiState,
         modifier = modifier,

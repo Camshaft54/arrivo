@@ -19,9 +19,9 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import me.cameronshaw.amtraker.R
 import me.cameronshaw.amtraker.data.model.Status
-import me.cameronshaw.amtraker.ui.theme.Amber
-import me.cameronshaw.amtraker.ui.theme.Green
-import me.cameronshaw.amtraker.ui.theme.Red
+import me.cameronshaw.amtraker.ui.theme.StatusAmber
+import me.cameronshaw.amtraker.ui.theme.StatusGreen
+import me.cameronshaw.amtraker.ui.theme.StatusRed
 import me.cameronshaw.amtraker.ui.util.toUiString
 import java.time.OffsetDateTime
 
@@ -31,9 +31,9 @@ fun GlanceStationInfoColumn(
     stationCode: String, description: String, status: Status, time: OffsetDateTime?
 ) {
     val statusColor = when (status) {
-        Status.EARLY -> ColorProvider(Amber)
-        Status.ON_TIME -> ColorProvider(Green)
-        Status.LATE -> ColorProvider(Red)
+        Status.EARLY -> ColorProvider(StatusAmber)
+        Status.ON_TIME -> ColorProvider(StatusGreen)
+        Status.LATE -> ColorProvider(StatusRed)
         Status.UNKNOWN -> GlanceTheme.colors.onSurfaceVariant
     }
 

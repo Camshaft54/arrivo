@@ -7,4 +7,5 @@
     <string name="add_station_field">Station Code</string>
     <string name="add_train_fail_msg">Failed to add train. Please try again.</string>
     <string name="schedule_empty_message">No trains are being tracked.</string>
+    <string name="choose_theme">Choose your app theme</string>
 </resources>

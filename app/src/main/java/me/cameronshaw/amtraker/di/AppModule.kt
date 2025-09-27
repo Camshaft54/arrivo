@@ -1,8 +1,10 @@
 package me.cameronshaw.amtraker.di
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.cameronshaw.amtraker.data.local.dao.StationDao
 import me.cameronshaw.amtraker.data.local.dao.TrainDao
@@ -14,6 +16,8 @@ import me.cameronshaw.amtraker.data.remote.datasource.StationRemoteDataSource
 import me.cameronshaw.amtraker.data.remote.datasource.TrainRemoteDataSource
 import me.cameronshaw.amtraker.data.repository.ScheduleRepository
 import me.cameronshaw.amtraker.data.repository.ScheduleRepositoryImpl
+import me.cameronshaw.amtraker.data.repository.SettingsRepository
+import me.cameronshaw.amtraker.data.repository.SettingsRepositoryImpl
 import me.cameronshaw.amtraker.data.repository.StationRepository
 import me.cameronshaw.amtraker.data.repository.StationRepositoryImpl
 import me.cameronshaw.amtraker.data.repository.TrainRepository
@@ -78,5 +82,13 @@ object AppModule {
         stationRepository: StationRepository
     ): ScheduleRepository {
         return ScheduleRepositoryImpl(trainRepository, stationRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSettingsRepository(
+        @ApplicationContext context: Context
+    ): SettingsRepository {
+        return SettingsRepositoryImpl(context)
     }
 }

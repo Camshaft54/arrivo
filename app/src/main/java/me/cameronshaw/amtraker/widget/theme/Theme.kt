@@ -2,27 +2,29 @@ package me.cameronshaw.amtraker.widget.theme
 
 import android.os.Build
 import androidx.compose.runtime.Composable
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.glance.GlanceTheme
 import androidx.glance.material3.ColorProviders
+import androidx.compose.material3.darkColorScheme as m3DarkColorScheme
+import androidx.compose.material3.lightColorScheme as m3LightColorScheme
+import me.cameronshaw.amtraker.ui.theme.darkScheme as appDarkScheme
+import me.cameronshaw.amtraker.ui.theme.lightScheme as appLightScheme
 
 @Composable
 fun GlanceAmtrakerTheme(
+    overrideSystemTheme: Boolean,
+    darkTheme: Boolean,
     content: @Composable () -> Unit
 ) {
     GlanceTheme(
         colors = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             ColorProviders(
-                light = lightColorScheme(),
-                dark = darkColorScheme()
+                light = if (darkTheme && overrideSystemTheme) m3DarkColorScheme() else m3LightColorScheme(),
+                dark = if (darkTheme || !overrideSystemTheme) m3DarkColorScheme() else m3LightColorScheme()
             )
         } else {
-            // Define fallback colors for older Android versions
-            // These are inspired by your app's Theme.kt
             ColorProviders(
-                light = me.cameronshaw.amtraker.ui.theme.LightColorScheme,
-                dark = me.cameronshaw.amtraker.ui.theme.DarkColorScheme
+                light = if (darkTheme && overrideSystemTheme) appDarkScheme else appLightScheme,
+                dark = if (darkTheme || !overrideSystemTheme) appDarkScheme else appLightScheme
             )
         }
     ) {

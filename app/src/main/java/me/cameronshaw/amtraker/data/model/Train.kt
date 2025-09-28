@@ -15,8 +15,9 @@ data class Train(
     val num: String,
     val routeName: String,
     val stops: List<Stop>,
-    @Serializable(with = OffsetDateTimeSerializer::class)
-    val lastUpdated: OffsetDateTime
+    val provider: String,
+    val velocity: Double,
+    @Serializable(with = OffsetDateTimeSerializer::class) val lastUpdated: OffsetDateTime
 ) {
     /**
      * Data is considered "stale" if it hasn't been refreshed in over an hour.
@@ -28,14 +29,10 @@ data class Train(
     data class Stop(
         val code: String,
         val name: String,
-        @Serializable(with = OffsetDateTimeSerializer::class)
-        val arrival: OffsetDateTime?,
-        @Serializable(with = OffsetDateTimeSerializer::class)
-        val departure: OffsetDateTime?,
-        @Serializable(with = OffsetDateTimeSerializer::class)
-        val scheduledArrival: OffsetDateTime?,
-        @Serializable(with = OffsetDateTimeSerializer::class)
-        val scheduledDeparture: OffsetDateTime?,
+        @Serializable(with = OffsetDateTimeSerializer::class) val arrival: OffsetDateTime?,
+        @Serializable(with = OffsetDateTimeSerializer::class) val departure: OffsetDateTime?,
+        @Serializable(with = OffsetDateTimeSerializer::class) val scheduledArrival: OffsetDateTime?,
+        @Serializable(with = OffsetDateTimeSerializer::class) val scheduledDeparture: OffsetDateTime?,
     ) {
         val status: Status
             get() = if (arrival == null || scheduledArrival == null) {
@@ -49,11 +46,17 @@ data class Train(
             }
     }
 
-    constructor(num: String) : this(num, "", emptyList(), NEVER)
+    constructor(num: String) : this(num, "", emptyList(), "", 0.0, NEVER)
 }
 
 fun Train.toEntity() = TrainWithStops(
-    TrainEntity(num = num, routeName = routeName, lastUpdated = lastUpdated.toDbString()),
+    TrainEntity(
+        num = num,
+        routeName = routeName,
+        provider = provider,
+        velocity = velocity,
+        lastUpdated = lastUpdated.toDbString()
+    ),
     stops.map {
         StopEntity(
             code = it.code,
@@ -64,5 +67,4 @@ fun Train.toEntity() = TrainWithStops(
             scheduledDeparture = it.scheduledDeparture.toDbString(),
             trainOwnerNum = num
         )
-    }
-)
+    })

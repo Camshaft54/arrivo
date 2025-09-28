@@ -68,17 +68,14 @@ fun ScheduleCard(
                 )
             }
 
-            if (departureStop != null) {
-                StationInfoColumn(
-                    modifier = Modifier.weight(1f),
-                    stationCode = departureStop.code,
-                    status = departureStop.status,
-                    description = departureStop.determineDepartureStopDescription(),
-                    time = departureStop.departure ?: departureStop.scheduledDeparture
+            if (departureStop == null || arrivalStop == null) { // O stops
+                Text(
+                    text = "Offline or no stations added on this route.",
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-            }
-
-            if (arrivalStop != null) {
+            } else if (departureStop == arrivalStop) { // 1 stop
                 StationInfoColumn(
                     modifier = Modifier.weight(1f),
                     status = arrivalStop.status,
@@ -86,14 +83,27 @@ fun ScheduleCard(
                     description = arrivalStop.determineArrivalStopDescription(),
                     time = arrivalStop.arrival ?: arrivalStop.scheduledArrival
                 )
-            }
-
-            if (departureStop == null && arrivalStop == null) {
-                Text(
-                    text = "Offline or no stations added on this route.",
-                    style = MaterialTheme.typography.bodySmall,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                StationInfoColumn(
+                    modifier = Modifier.weight(1f),
+                    stationCode = departureStop.code,
+                    status = departureStop.status,
+                    description = departureStop.determineDepartureStopDescription(),
+                    time = departureStop.departure ?: departureStop.scheduledDeparture
+                )
+            } else { // 2 stops
+                StationInfoColumn(
+                    modifier = Modifier.weight(1f),
+                    stationCode = departureStop.code,
+                    status = departureStop.status,
+                    description = departureStop.determineDepartureStopDescription(),
+                    time = departureStop.departure ?: departureStop.scheduledDeparture
+                )
+                StationInfoColumn(
+                    modifier = Modifier.weight(1f),
+                    status = arrivalStop.status,
+                    stationCode = arrivalStop.code,
+                    description = arrivalStop.determineArrivalStopDescription(),
+                    time = arrivalStop.arrival ?: arrivalStop.scheduledArrival
                 )
             }
         }
@@ -175,6 +185,8 @@ fun ScheduleCardPreview() {
             train = Train(
                 num = "546",
                 routeName = "Capitol Corridor",
+                provider = "Amtrak",
+                velocity = 30.0,
                 stops = listOf(
                     departureStop,
                     arrivalStop
@@ -196,6 +208,8 @@ fun ScheduleCardMissingStopsPreview() {
                 num = "546",
                 routeName = "Capitol Corridor",
                 stops = listOf(),
+                provider = "Amtrak",
+                velocity = 30.0,
                 lastUpdated = OffsetDateTime.now()
             ),
             departureStop = null,

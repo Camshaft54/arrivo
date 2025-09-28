@@ -69,7 +69,7 @@ class ScheduleRepositoryImpl @Inject constructor(
     private fun pickTwoRelevantStops(
         stops: List<Train.Stop>, now: OffsetDateTime = OffsetDateTime.now()
     ): List<Train.Stop> = stops.sortedBy {
-        it.arrival
+        it.arrival ?: it.scheduledArrival
     }.let {
         val remainingStops = it.filter { stop -> stop.arrival?.isAfter(now) ?: false }
         when (remainingStops.size) {

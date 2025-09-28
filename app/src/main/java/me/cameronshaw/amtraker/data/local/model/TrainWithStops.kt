@@ -19,5 +19,7 @@ fun TrainWithStops.toDomain(): Train =
         num = train.num,
         routeName = train.routeName,
         stops = stops.map { it.toDomain() },
+        provider = train.provider,
+        velocity = train.velocity,
         lastUpdated = train.lastUpdated.toOffsetDateTime()!!
     )

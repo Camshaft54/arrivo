@@ -32,7 +32,7 @@ data class TrainUiState(
 class TrainViewModel @Inject constructor(
     private val trainRepository: TrainRepository
 ) : ViewModel() {
-    private val trainNumRegex = Regex("^[1-9][0-9]{0,2}\$")
+    private val trainNumRegex = Regex("^[0-1]?[1-9][0-9]{0,2}$")
 
     private val _eventFlow = MutableSharedFlow<String>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -107,7 +107,7 @@ class TrainViewModel @Inject constructor(
     }
 
     /**
-     * Validates the train number. Must be an integer between 1 and 999.
+     * Validates the train number. Must be an integer between 1 and 1999.
      */
     fun isValidTrainNum(num: String): Boolean = trainNumRegex.matches(num)
 }

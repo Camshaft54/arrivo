@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -51,22 +51,15 @@ fun TrainScreen(
         }
     }
 
-    TrainScreenContent(
-        uiState = uiState,
-        modifier = modifier,
-        validateTrainNum = { num ->
-            viewModel.isValidTrainNum(num)
-        },
-        onAddTrain = { num ->
-            viewModel.addTrain(num)
-        },
-        onDeleteTrain = { train ->
-            viewModel.deleteTrain(train)
-        },
-        onRefresh = {
-            viewModel.refreshTrains()
-        }
-    )
+    TrainScreenContent(uiState = uiState, modifier = modifier, validateTrainNum = { num ->
+        viewModel.isValidTrainNum(num)
+    }, onAddTrain = { num ->
+        viewModel.addTrain(num)
+    }, onDeleteTrain = { train ->
+        viewModel.deleteTrain(train)
+    }, onRefresh = {
+        viewModel.refreshTrains()
+    })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -116,12 +109,9 @@ fun TrainScreenContent(
             )
         } else {
             TrainList(
-                trains = uiState.trains,
-                modifier = modifier,
-                onSwipeToDelete = {
+                trains = uiState.trains, modifier = modifier, onSwipeToDelete = {
                     onDeleteTrain(it)
-                }
-            )
+                })
         }
 
         FloatingActionButton(
@@ -141,7 +131,7 @@ fun TrainListPopulatedPreview() {
     var isLoading by remember { mutableStateOf(false) }
     val trains = List(20) {
         Train(
-            "$it", "Route $it", emptyList(), lastUpdated = OffsetDateTime.now()
+            "$it", "Route $it", emptyList(), "Amtrak", 30.0, lastUpdated = OffsetDateTime.now()
         )
     }
     val trainUiState = TrainUiState(isRefreshing = isLoading, trains = trains)
@@ -158,8 +148,7 @@ fun TrainListPopulatedPreview() {
                     delay(1000)
                     isLoading = false
                 }
-            }
-        )
+            })
     }
 }
 
@@ -185,8 +174,7 @@ fun TrainListErrorPreview() {
             validateTrainNum = { it.isNotEmpty() && it.all(Char::isDigit) },
             onAddTrain = { false },
             onDeleteTrain = {},
-            onRefresh = {}
-        )
+            onRefresh = {})
     }
 }
 

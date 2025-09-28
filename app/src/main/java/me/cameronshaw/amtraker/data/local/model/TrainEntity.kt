@@ -9,6 +9,8 @@ import me.cameronshaw.amtraker.data.util.toOffsetDateTime
 data class TrainEntity(
     @PrimaryKey val num: String,
     val routeName: String,
+    val provider: String,
+    val velocity: Double,
     val lastUpdated: String
 )
 
@@ -19,5 +21,7 @@ fun TrainEntity.toDomain() = Train(
     num = num,
     routeName = routeName,
     stops = emptyList(),
+    provider = provider,
+    velocity = velocity,
     lastUpdated = lastUpdated.toOffsetDateTime()!!
 )

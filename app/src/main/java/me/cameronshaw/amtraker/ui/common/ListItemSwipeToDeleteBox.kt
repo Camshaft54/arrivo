@@ -13,6 +13,7 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,21 +21,17 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun <T> ListItemSwipeToDeleteBox(
-    onSwipeToDelete: (T) -> Unit,
-    item: T,
-    listItem: @Composable (T) -> Unit
+    onSwipeToDelete: (T) -> Unit, item: T, listItem: @Composable (T) -> Unit
 ) {
-    val dismissState = rememberSwipeToDismissBoxState(
-        positionalThreshold = { it * 0.2F },
-        confirmValueChange = {
-            if (it == SwipeToDismissBoxValue.EndToStart) {
-                onSwipeToDelete(item)
-                true
-            } else {
-                false
-            }
+    val dismissState = rememberSwipeToDismissBoxState(positionalThreshold = { it * 0.2F })
+
+    LaunchedEffect(dismissState.currentValue) {
+        if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
+            onSwipeToDelete(item)
+            // dismissState.reset()
         }
-    )
+    }
+
     SwipeToDismissBox(
         state = dismissState,
         enableDismissFromStartToEnd = false,
@@ -63,8 +60,7 @@ fun <T> ListItemSwipeToDeleteBox(
                     )
                 }
             }
-        }
-    ) {
+        }) {
         listItem(item)
     }
 }

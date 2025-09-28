@@ -62,6 +62,8 @@ fun TrainDto.toDomain() = Train(
     num = trainNum,
     routeName = routeName,
     stops = stops.map { it.toDomain() },
+    provider = provider,
+    velocity = velocity,
     lastUpdated = OffsetDateTime.now()
 )
 

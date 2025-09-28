@@ -28,6 +28,8 @@ class SampleData {
             num = num.toString(),
             routeName = "Route $num",
             stops = listOf(stop1, stop2),
+            provider = "Amtrak",
+            velocity = 0.0,
             lastUpdated = referenceTime
         )
     }

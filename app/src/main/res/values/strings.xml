@@ -8,4 +8,5 @@
     <string name="add_train_fail_msg">Failed to add train. Please try again.</string>
     <string name="schedule_empty_message">No trains are being tracked.</string>
     <string name="choose_theme">Choose your app theme</string>
+    <string name="no_stations_tracked">No stations are being tracked.\nTap the \'+\' button to add a new station.</string>
 </resources>

@@ -28,6 +28,8 @@ fun TrainListItemActivePreview() {
     val activeTrain = Train(
         num = "727",
         routeName = "Capitol Corridor",
+        provider = "Amtrak",
+        velocity = 30.0,
         lastUpdated = OffsetDateTime.now(),
         stops = emptyList()
     )
@@ -42,6 +44,8 @@ fun TrainListItemInactivePreview() {
     val inactiveTrain = Train(
         num = "727",
         routeName = "",
+        provider = "Amtrak",
+        velocity = 0.0,
         lastUpdated = OffsetDateTime.now().minusHours(1),
         stops = emptyList()
     )

@@ -44,6 +44,12 @@ data class Train(
             } else {
                 Status.EARLY
             }
+
+        val arrivedAt: Boolean
+            get() = arrival?.isBefore(OffsetDateTime.now()) ?: false
+
+        val departedFrom: Boolean
+            get() = departure?.isAfter(OffsetDateTime.now()) ?: false
     }
 
     constructor(num: String) : this(num, "", emptyList(), "", 0.0, NEVER)

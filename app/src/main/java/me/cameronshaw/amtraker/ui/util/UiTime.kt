@@ -11,9 +11,7 @@ fun OffsetDateTime.toUiString(): String {
 
 fun Train.Stop.determineDepartureStopDescription(): String {
     val dep = this.departure ?: this.scheduledDeparture
-    return if (dep == null) {
-        ""
-    } else if (dep.isAfter(OffsetDateTime.now())) {
+    return if (dep == null || dep.isAfter(OffsetDateTime.now())) {
         "Departing"
     } else {
         "Departed"
@@ -22,11 +20,25 @@ fun Train.Stop.determineDepartureStopDescription(): String {
 
 fun Train.Stop.determineArrivalStopDescription(): String {
     val arr = this.arrival ?: this.scheduledArrival
-    return if (arr == null) {
-        ""
-    } else if (arr.isAfter(OffsetDateTime.now())) {
+    return if (arr == null || arr.isAfter(OffsetDateTime.now())) {
         "Arriving"
     } else {
         "Arrived"
+    }
+}
+
+fun Train.Stop.determineDepartureStopFullDescription(): String {
+    return if (departure != null) {
+        "${determineDepartureStopDescription()} ${departure.toUiString()}"
+    } else {
+        "${determineDepartureStopDescription()} ${scheduledDeparture?.toUiString() ?: "--:--"}"
+    }
+}
+
+fun Train.Stop.determineArrivalStopFullDescription(): String {
+    return if (arrival != null) {
+        "${determineArrivalStopDescription()} ${arrival.toUiString()}"
+    } else {
+        "${determineArrivalStopDescription()} ${scheduledArrival?.toUiString() ?: "--:--"}"
     }
 }

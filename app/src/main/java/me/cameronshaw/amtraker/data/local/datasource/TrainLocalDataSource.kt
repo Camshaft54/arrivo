@@ -37,6 +37,8 @@ class TrainLocalDataSource(
         }
     }
 
+    fun getTrainWithStops(num: String) = trainDao.getTrainWithStops(num)
+
     fun getAllTrains() = trainDao.getAllTrains()
 
     fun getAllTrainsWithStops() = trainDao.getAllTrainsWithStops()

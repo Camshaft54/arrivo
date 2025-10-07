@@ -33,6 +33,11 @@ interface TrainRepository {
     suspend fun refreshAllTrains()
 
     /**
+     * Gets a continuously updated train from the local database.
+     */
+    fun getTrain(num: String): Flow<Train>
+
+    /**
      * Gets a continuous stream of all trains from the local database.
      * The UI will observe this to get real-time updates.
      */
@@ -96,6 +101,13 @@ class TrainRepositoryImpl @Inject constructor(
                 }
             }
         }.awaitAll()
+    }
+
+    /**
+     * Gets a continuously updated train from the local database.
+     */
+    override fun getTrain(num: String): Flow<Train> {
+        return localDataSource.getTrainWithStops(num).map { it.toDomain() }
     }
 
     /**

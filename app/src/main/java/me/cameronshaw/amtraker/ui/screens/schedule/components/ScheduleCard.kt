@@ -36,15 +36,16 @@ fun ScheduleCard(
     modifier: Modifier = Modifier,
     train: Train,
     departureStop: Train.Stop?,
-    arrivalStop: Train.Stop?
+    arrivalStop: Train.Stop?,
+    onClick: () -> Unit
 ) {
     Card(
+        onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-
         Row(
             modifier = Modifier
                 .padding(16.dp)
@@ -194,7 +195,8 @@ fun ScheduleCardPreview() {
                 lastUpdated = OffsetDateTime.now()
             ),
             departureStop = departureStop,
-            arrivalStop = arrivalStop
+            arrivalStop = arrivalStop,
+            onClick = {}
         )
     }
 }
@@ -213,7 +215,8 @@ fun ScheduleCardMissingStopsPreview() {
                 lastUpdated = OffsetDateTime.now()
             ),
             departureStop = null,
-            arrivalStop = null
+            arrivalStop = null,
+            onClick = {}
         )
     }
 }

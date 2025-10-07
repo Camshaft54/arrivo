@@ -1,12 +1,15 @@
 package me.cameronshaw.amtraker
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,20 +29,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import me.cameronshaw.amtraker.ui.Screen
 import me.cameronshaw.amtraker.ui.dialogs.settings.SettingsDialog
 import me.cameronshaw.amtraker.ui.dialogs.settings.SettingsViewModel
+import me.cameronshaw.amtraker.ui.routeToScreen
 import me.cameronshaw.amtraker.ui.screens.schedule.ScheduleScreen
+import me.cameronshaw.amtraker.ui.screens.scheduledetail.ScheduleDetailScreen
 import me.cameronshaw.amtraker.ui.screens.stations.StationScreen
 import me.cameronshaw.amtraker.ui.screens.trains.TrainScreen
 import me.cameronshaw.amtraker.ui.theme.AmtrakerTheme
+
+const val TRAIN_NUM_ARG = "trainNum"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -71,6 +82,12 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
                     topBar = {
+                        val navBackStackEntry by navController.currentBackStackEntryAsState()
+                        val currentDestination =
+                            navBackStackEntry?.destination?.route.routeToScreen()
+
+                        val canNavigateUp = navController.previousBackStackEntry != null
+
                         TopAppBar(
                             colors = TopAppBarDefaults.topAppBarColors(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -78,12 +95,26 @@ class MainActivity : ComponentActivity() {
                                 navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                                 actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                             ),
-                            title = { Text("Amtraker") },
+                            title = {
+                                val titleText = currentDestination.title
+                                    ?: stringResource(R.string.app_name)
+                                Text(titleText)
+                            },
+                            navigationIcon = {
+                                if (canNavigateUp && currentDestination.isTopLevel) {
+                                    IconButton(onClick = { navController.navigateUp() }) {
+                                        Icon(
+                                            Icons.AutoMirrored.Filled.ArrowBack,
+                                            contentDescription = "Back"
+                                        )
+                                    }
+                                }
+                            },
                             actions = {
                                 IconButton(onClick = { showSettingsDialog = true }) {
                                     Icon(
-                                        imageVector = Screen.SETTINGS.icon,
-                                        contentDescription = Screen.SETTINGS.name
+                                        imageVector = Screen.Settings.icon,
+                                        contentDescription = Screen.Settings.name
                                     )
                                 }
                             }
@@ -94,18 +125,37 @@ class MainActivity : ComponentActivity() {
                             val navBackStackEntry by navController.currentBackStackEntryAsState()
                             val currentDestination = navBackStackEntry?.destination
 
-                            Screen.entries.filter { it != Screen.SETTINGS }.forEach { screen ->
+                            Screen.entries.filter { it.isTopLevel }.forEach { screen ->
                                 NavigationBarItem(
                                     icon = { Icon(screen.icon, contentDescription = screen.name) },
                                     label = { Text(screen.name) },
                                     selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                                     onClick = {
-                                        navController.navigate(screen.route) {
-                                            popUpTo(navController.graph.findStartDestination().id) {
-                                                saveState = true
+                                        // Is the current screen's graph root the same as the tab we're clicking?
+                                        val currentTabRootRoute = currentDestination?.parent?.startDestinationRoute ?: navController.graph.findStartDestination().route
+                                        val isSameTab = currentDestination?.hierarchy?.any { it.route == screen.route || (it as? NavGraph)?.startDestinationRoute == screen.route } == true
+                                        // TODO: Gemini is trash at figuring out this navigation stuff, I really need to understand it myself and rewrite it :)
+
+                                        if (isSameTab) {
+                                            // We are in the same tab hierarchy
+                                            if (currentDestination.route != screen.route) {
+                                                // And not on the root screen of this tab, so pop to it
+                                                Log.d("BottomNav", "Popping to ${screen.route} from ${currentDestination?.route}")
+                                                navController.popBackStack(screen.route, inclusive = false, saveState = false)
+                                            } else {
+                                                // Already on the root of this tab. Do nothing or scroll to top.
+                                                Log.d("BottomNav", "Already on root ${screen.route}")
                                             }
-                                            launchSingleTop = true
-                                            restoreState = true
+                                        } else {
+                                            // Different tab, standard navigation
+                                            Log.d("BottomNav", "Navigating to different tab ${screen.route}")
+                                            navController.navigate(screen.route) {
+                                                popUpTo(navController.graph.findStartDestination().id) {
+                                                    saveState = true
+                                                }
+                                                launchSingleTop = true
+                                                restoreState = true
+                                            }
                                         }
                                     },
                                     colors = NavigationBarItemDefaults.colors(
@@ -130,11 +180,23 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(Screen.Schedule.route) {
-                            ScheduleScreen(snackbarHostState = snackbarHostState)
+                            ScheduleScreen(
+                                snackbarHostState = snackbarHostState,
+                                navController = navController
+                            )
                         }
 
                         composable(Screen.Stations.route) {
                             StationScreen(snackbarHostState = snackbarHostState)
+                        }
+
+                        composable(
+                            route = "${Screen.ScheduleDetail.route}/{$TRAIN_NUM_ARG}",
+                            arguments = listOf(navArgument(TRAIN_NUM_ARG) {
+                                type = NavType.StringType
+                            })
+                        ) { backStackEntry ->
+                            ScheduleDetailScreen(snackbarHostState = snackbarHostState)
                         }
                     }
                 }

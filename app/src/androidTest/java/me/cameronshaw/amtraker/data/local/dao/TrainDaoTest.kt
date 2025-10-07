@@ -47,7 +47,7 @@ class TrainDaoTest {
     }
 
     private fun createTestTrain(id: String, routeName: String) =
-        TrainEntity(id, routeName, OffsetDateTime.now().toDbString())
+        TrainEntity(id, routeName, "Amtrak", 30.0, OffsetDateTime.now().toDbString())
 
     private fun TrainEntity.createTestStop(
         code: String,

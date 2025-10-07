@@ -19,11 +19,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.cameronshaw.amtraker.R
 import me.cameronshaw.amtraker.data.model.ScheduleDatum
+import me.cameronshaw.amtraker.ui.Screen
 import me.cameronshaw.amtraker.ui.common.ListPlaceholder
 import me.cameronshaw.amtraker.ui.previewdata.SampleData
 import me.cameronshaw.amtraker.ui.screens.schedule.components.ScheduleList
@@ -31,6 +33,7 @@ import me.cameronshaw.amtraker.ui.theme.AmtrakerTheme
 
 @Composable
 fun ScheduleScreen(
+    navController: NavController,
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     viewModel: ScheduleViewModel = hiltViewModel()
@@ -48,6 +51,9 @@ fun ScheduleScreen(
         modifier = modifier,
         onRefresh = {
             viewModel.refreshSchedule()
+        },
+        onNavigateToDetail = { trainId ->
+            navController.navigate("${Screen.ScheduleDetail.route}/$trainId")
         }
     )
 }
@@ -57,7 +63,8 @@ fun ScheduleScreen(
 fun ScheduleScreenContent(
     uiState: ScheduleUiState,
     modifier: Modifier = Modifier,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    onNavigateToDetail: (trainId: String) -> Unit
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
 
@@ -85,6 +92,7 @@ fun ScheduleScreenContent(
         } else {
             ScheduleList(
                 scheduleCardData = uiState.scheduleData,
+                onTrainClicked = onNavigateToDetail,
                 modifier = modifier
             )
         }
@@ -113,7 +121,8 @@ fun ScheduleListPopulatedPreview() {
                     delay(1000)
                     isLoading = false
                 }
-            }
+            },
+            onNavigateToDetail = {}
         )
     }
 }

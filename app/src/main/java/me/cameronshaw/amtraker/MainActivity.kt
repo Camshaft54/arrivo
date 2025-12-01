@@ -75,7 +75,10 @@ class MainActivity : ComponentActivity() {
 
                 if (showSettingsDialog) {
                     SettingsDialog(
-                        onDismissRequest = { showSettingsDialog = false }
+                        onDismissRequest = {
+                            @Suppress("AssignedValueIsNeverRead")
+                            showSettingsDialog = false
+                        }
                     )
                 }
 
@@ -111,7 +114,10 @@ class MainActivity : ComponentActivity() {
                                 }
                             },
                             actions = {
-                                IconButton(onClick = { showSettingsDialog = true }) {
+                                IconButton(onClick = {
+                                    @Suppress("AssignedValueIsNeverRead")
+                                    showSettingsDialog = true
+                                }) {
                                     Icon(
                                         imageVector = Screen.Settings.icon,
                                         contentDescription = Screen.Settings.name
@@ -131,7 +137,6 @@ class MainActivity : ComponentActivity() {
                                     label = { Text(screen.name) },
                                     selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                                     onClick = {
-                                        val currentTabRootRoute = currentDestination?.parent?.startDestinationRoute ?: navController.graph.findStartDestination().route
                                         val isSameTab = currentDestination?.hierarchy?.any { it.route == screen.route || (it as? NavGraph)?.startDestinationRoute == screen.route } == true
 
                                         if (isSameTab) {
@@ -187,7 +192,7 @@ class MainActivity : ComponentActivity() {
                             arguments = listOf(navArgument(TRAIN_NUM_ARG) {
                                 type = NavType.StringType
                             })
-                        ) { backStackEntry ->
+                        ) { _ ->
                             ScheduleDetailScreen(snackbarHostState = snackbarHostState)
                         }
                     }

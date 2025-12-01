@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.room)
 }
 
 android {
@@ -16,7 +17,7 @@ android {
     defaultConfig {
         applicationId = "me.cameronshaw.amtraker"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -39,6 +40,10 @@ android {
     buildFeatures {
         compose = true
     }
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 kotlin {

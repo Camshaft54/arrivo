@@ -1,0 +1,164 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "01d25523e615aaa88bcb3a56c075d17a",
+    "entities": [
+      {
+        "tableName": "TrainEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`num` TEXT NOT NULL, `routeName` TEXT NOT NULL, `provider` TEXT NOT NULL, `velocity` REAL NOT NULL, `lastUpdated` TEXT NOT NULL, PRIMARY KEY(`num`))",
+        "fields": [
+          {
+            "fieldPath": "num",
+            "columnName": "num",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "routeName",
+            "columnName": "routeName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "provider",
+            "columnName": "provider",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "velocity",
+            "columnName": "velocity",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastUpdated",
+            "columnName": "lastUpdated",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "num"
+          ]
+        }
+      },
+      {
+        "tableName": "StopEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`code` TEXT NOT NULL, `name` TEXT NOT NULL, `arrival` TEXT NOT NULL, `departure` TEXT NOT NULL, `scheduledArrival` TEXT NOT NULL, `scheduledDeparture` TEXT NOT NULL, `trainOwnerNum` TEXT NOT NULL, PRIMARY KEY(`code`, `trainOwnerNum`), FOREIGN KEY(`trainOwnerNum`) REFERENCES `TrainEntity`(`num`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "arrival",
+            "columnName": "arrival",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "departure",
+            "columnName": "departure",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scheduledArrival",
+            "columnName": "scheduledArrival",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scheduledDeparture",
+            "columnName": "scheduledDeparture",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trainOwnerNum",
+            "columnName": "trainOwnerNum",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "code",
+            "trainOwnerNum"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_StopEntity_trainOwnerNum",
+            "unique": false,
+            "columnNames": [
+              "trainOwnerNum"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_StopEntity_trainOwnerNum` ON `${TABLE_NAME}` (`trainOwnerNum`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "TrainEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "trainOwnerNum"
+            ],
+            "referencedColumns": [
+              "num"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "StationEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`code` TEXT NOT NULL, `name` TEXT NOT NULL, `lastUpdated` TEXT NOT NULL, PRIMARY KEY(`code`))",
+        "fields": [
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastUpdated",
+            "columnName": "lastUpdated",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "code"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '01d25523e615aaa88bcb3a56c075d17a')"
+    ]
+  }
+}

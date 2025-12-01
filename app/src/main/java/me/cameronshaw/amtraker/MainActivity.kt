@@ -1,49 +1,33 @@
 package me.cameronshaw.amtraker
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
+import me.cameronshaw.amtraker.ui.AmtrakerBottomBar
+import me.cameronshaw.amtraker.ui.AmtrakerTopBar
 import me.cameronshaw.amtraker.ui.Screen
 import me.cameronshaw.amtraker.ui.dialogs.settings.SettingsDialog
 import me.cameronshaw.amtraker.ui.dialogs.settings.SettingsViewModel
-import me.cameronshaw.amtraker.ui.routeToScreen
 import me.cameronshaw.amtraker.ui.screens.schedule.ScheduleScreen
 import me.cameronshaw.amtraker.ui.screens.scheduledetail.ScheduleDetailScreen
 import me.cameronshaw.amtraker.ui.screens.stations.StationScreen
@@ -85,87 +69,12 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
                     topBar = {
-                        val navBackStackEntry by navController.currentBackStackEntryAsState()
-                        val currentDestination =
-                            navBackStackEntry?.destination?.route.routeToScreen()
-
-                        val canNavigateUp = navController.previousBackStackEntry != null
-
-                        TopAppBar(
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                                navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                                actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            ),
-                            title = {
-                                val titleText = currentDestination.title
-                                    ?: stringResource(R.string.app_name)
-                                Text(titleText)
-                            },
-                            navigationIcon = {
-                                if (canNavigateUp && !currentDestination.isTopLevel) {
-                                    IconButton(onClick = { navController.navigateUp() }) {
-                                        Icon(
-                                            Icons.AutoMirrored.Filled.ArrowBack,
-                                            contentDescription = "Back"
-                                        )
-                                    }
-                                }
-                            },
-                            actions = {
-                                IconButton(onClick = {
-                                    @Suppress("AssignedValueIsNeverRead")
-                                    showSettingsDialog = true
-                                }) {
-                                    Icon(
-                                        imageVector = Screen.Settings.icon,
-                                        contentDescription = Screen.Settings.name
-                                    )
-                                }
-                            }
-                        )
-                    },
-                    bottomBar = {
-                        NavigationBar {
-                            val navBackStackEntry by navController.currentBackStackEntryAsState()
-                            val currentDestination = navBackStackEntry?.destination
-
-                            Screen.entries.filter { it.isTopLevel }.forEach { screen ->
-                                NavigationBarItem(
-                                    icon = { Icon(screen.icon, contentDescription = screen.name) },
-                                    label = { Text(screen.name) },
-                                    selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                                    onClick = {
-                                        val isSameTab = currentDestination?.hierarchy?.any { it.route == screen.route || (it as? NavGraph)?.startDestinationRoute == screen.route } == true
-
-                                        if (isSameTab) {
-                                            if (currentDestination.route != screen.route) {
-                                                navController.popBackStack(screen.route, inclusive = false, saveState = false)
-                                            } else {
-                                                Log.d("BottomNav", "Already on root ${screen.route}")
-                                            }
-                                        } else {
-                                            navController.navigate(screen.route) {
-                                                popUpTo(navController.graph.findStartDestination().id) {
-                                                    saveState = true
-                                                }
-                                                launchSingleTop = true
-                                                restoreState = true
-                                            }
-                                        }
-                                    },
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                                        selectedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                                        indicatorColor = MaterialTheme.colorScheme.secondaryContainer,
-                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                )
-                            }
+                        AmtrakerTopBar(navController = navController) {
+                            @Suppress("AssignedValueIsNeverRead")
+                            showSettingsDialog = true
                         }
-                    }
+                    },
+                    bottomBar = { AmtrakerBottomBar(navController = navController) }
                 ) { innerPadding ->
                     NavHost(
                         navController = navController,

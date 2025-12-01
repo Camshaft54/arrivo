@@ -56,19 +56,28 @@ fun GlanceScheduleCard(
                 )
             }
 
-            // Departure and Arrival Stops
-            if (departureStop != null) {
+            if (departureStop != null && departureStop == arrivalStop) { // 1 stop
+                GlanceStationInfoColumn(
+                    stationCode = arrivalStop.code,
+                    status = arrivalStop.status,
+                    description = arrivalStop.determineArrivalStopDescription(),
+                    time = arrivalStop.arrival ?: arrivalStop.scheduledArrival
+                )
+                Spacer(GlanceModifier.size(16.dp))
                 GlanceStationInfoColumn(
                     stationCode = departureStop.code,
                     status = departureStop.status,
                     description = departureStop.determineDepartureStopDescription(),
                     time = departureStop.departure ?: departureStop.scheduledDeparture
                 )
-            }
-
-            Spacer(GlanceModifier.size(16.dp))
-
-            if (arrivalStop != null) {
+            } else if (departureStop != null && arrivalStop != null) { // 2 stops
+                GlanceStationInfoColumn(
+                    stationCode = departureStop.code,
+                    status = departureStop.status,
+                    description = departureStop.determineDepartureStopDescription(),
+                    time = departureStop.departure ?: departureStop.scheduledDeparture
+                )
+                Spacer(GlanceModifier.size(16.dp))
                 GlanceStationInfoColumn(
                     stationCode = arrivalStop.code,
                     status = arrivalStop.status,

@@ -101,7 +101,7 @@ class MainActivity : ComponentActivity() {
                                 Text(titleText)
                             },
                             navigationIcon = {
-                                if (canNavigateUp && currentDestination.isTopLevel) {
+                                if (canNavigateUp && !currentDestination.isTopLevel) {
                                     IconButton(onClick = { navController.navigateUp() }) {
                                         Icon(
                                             Icons.AutoMirrored.Filled.ArrowBack,
@@ -131,24 +131,16 @@ class MainActivity : ComponentActivity() {
                                     label = { Text(screen.name) },
                                     selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                                     onClick = {
-                                        // Is the current screen's graph root the same as the tab we're clicking?
                                         val currentTabRootRoute = currentDestination?.parent?.startDestinationRoute ?: navController.graph.findStartDestination().route
                                         val isSameTab = currentDestination?.hierarchy?.any { it.route == screen.route || (it as? NavGraph)?.startDestinationRoute == screen.route } == true
-                                        // TODO: Gemini is trash at figuring out this navigation stuff, I really need to understand it myself and rewrite it :)
 
                                         if (isSameTab) {
-                                            // We are in the same tab hierarchy
                                             if (currentDestination.route != screen.route) {
-                                                // And not on the root screen of this tab, so pop to it
-                                                Log.d("BottomNav", "Popping to ${screen.route} from ${currentDestination?.route}")
                                                 navController.popBackStack(screen.route, inclusive = false, saveState = false)
                                             } else {
-                                                // Already on the root of this tab. Do nothing or scroll to top.
                                                 Log.d("BottomNav", "Already on root ${screen.route}")
                                             }
                                         } else {
-                                            // Different tab, standard navigation
-                                            Log.d("BottomNav", "Navigating to different tab ${screen.route}")
                                             navController.navigate(screen.route) {
                                                 popUpTo(navController.graph.findStartDestination().id) {
                                                     saveState = true

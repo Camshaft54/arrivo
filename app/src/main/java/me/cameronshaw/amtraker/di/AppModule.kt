@@ -1,17 +1,21 @@
 package me.cameronshaw.amtraker.di
 
 import android.content.Context
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import me.cameronshaw.amtraker.data.amtrakremote.api.AmtrakApiService
+import me.cameronshaw.amtraker.data.amtrakremote.api.AmtrakDecryptor
+import me.cameronshaw.amtraker.data.amtrakremote.datasource.AmtrakStationDataSource
+import me.cameronshaw.amtraker.data.amtrakremote.datasource.AmtrakTrainDataSource
 import me.cameronshaw.amtraker.data.local.dao.StationDao
 import me.cameronshaw.amtraker.data.local.dao.TrainDao
 import me.cameronshaw.amtraker.data.local.datasource.StationLocalDataSource
 import me.cameronshaw.amtraker.data.local.datasource.TrainLocalDataSource
-import me.cameronshaw.amtraker.data.remote.api.StationApiService
-import me.cameronshaw.amtraker.data.remote.api.TrainApiService
+import me.cameronshaw.amtraker.data.remote.api.AmtrakerApiService
 import me.cameronshaw.amtraker.data.remote.datasource.StationRemoteDataSource
 import me.cameronshaw.amtraker.data.remote.datasource.TrainRemoteDataSource
 import me.cameronshaw.amtraker.data.repository.ScheduleRepository
@@ -38,8 +42,17 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideTrainRemoteDataSource(apiService: TrainApiService): TrainRemoteDataSource {
+    fun provideAmtrakerTrainDataSource(apiService: AmtrakerApiService): TrainRemoteDataSource {
         return TrainRemoteDataSource(apiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAmtrakTrainDataSource(
+        apiService: AmtrakApiService,
+        decryptor: AmtrakDecryptor
+    ): AmtrakTrainDataSource {
+        return AmtrakTrainDataSource(apiService, decryptor)
     }
 
     @Provides
@@ -50,8 +63,17 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideStationRemoteDataSource(apiService: StationApiService): StationRemoteDataSource {
+    fun provideAmtrakerStationDataSource(apiService: AmtrakerApiService): StationRemoteDataSource {
         return StationRemoteDataSource(apiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAmtrakStationDataSource(
+        apiService: AmtrakApiService,
+        decryptor: AmtrakDecryptor
+    ): AmtrakStationDataSource {
+        return AmtrakStationDataSource(apiService, decryptor)
     }
 
 
@@ -61,18 +83,21 @@ object AppModule {
     @Singleton
     fun provideTrainRepository(
         localDataSource: TrainLocalDataSource,
-        remoteDataSource: TrainRemoteDataSource
+        remoteDataSource: TrainRemoteDataSource,
+        amtrakTrainDataSource: AmtrakTrainDataSource,
+        gson: Gson
     ): TrainRepository {
-        return TrainRepositoryImpl(localDataSource, remoteDataSource)
+        return TrainRepositoryImpl(localDataSource, remoteDataSource, amtrakTrainDataSource, gson)
     }
 
     @Provides
     @Singleton
     fun provideStationRepository(
         localDataSource: StationLocalDataSource,
-        remoteDataSource: StationRemoteDataSource
+        remoteDataSource: StationRemoteDataSource,
+        amtrakDataSource: AmtrakStationDataSource
     ): StationRepository {
-        return StationRepositoryImpl(localDataSource, remoteDataSource)
+        return StationRepositoryImpl(localDataSource, remoteDataSource, amtrakDataSource)
     }
 
     @Provides

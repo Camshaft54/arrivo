@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class TrainApiServiceTest {
 
     private lateinit var server: MockWebServer
-    private lateinit var apiService: TrainApiService
+    private lateinit var apiService: AmtrakerApiService
 
     @Before
     fun setUp() {
@@ -34,7 +34,7 @@ class TrainApiServiceTest {
             .baseUrl(server.url("/")) // Point Retrofit to our mock server
             .addConverterFactory(GsonConverterFactory.create(customGson))
             .build()
-            .create(TrainApiService::class.java)
+            .create(AmtrakerApiService::class.java)
     }
 
     @After

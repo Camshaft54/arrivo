@@ -50,6 +50,8 @@ val expected727TrainDomain = Train(
             scheduledDeparture = "2025-06-29T09:40:00-07:00".toOffsetDateTime()
         )
     ),
+    provider = "Amtrak",
+    velocity = 0.0,
     lastUpdated = "2025-06-29T10:13:26-07:00".toOffsetDateTime()!!
 )
 
@@ -184,6 +186,8 @@ val expected1TrainDomain = Train(
             scheduledDeparture = "2025-06-28T10:30:00-05:00".toOffsetDateTime()
         )
     ),
+    provider = "Amtrak",
+    velocity = 80.1009368896484,
     lastUpdated = "2025-06-29T10:13:26-07:00".toOffsetDateTime()!!
 )
 
@@ -333,5 +337,7 @@ val expected546TrainDomain = Train(
             scheduledDeparture = "2025-07-15T18:10:00-07:00".toOffsetDateTime()
         )
     ),
+    provider = "Amtrak",
+    velocity = 0.0,
     lastUpdated = "2025-07-15T18:00:00-07:00".toOffsetDateTime()!!
 )

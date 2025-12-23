@@ -7,15 +7,26 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import me.cameronshaw.amtraker.data.amtrakremote.api.AmtrakApiService
+import me.cameronshaw.amtraker.data.amtrakremote.api.AmtrakDecryptionInterceptor
+import me.cameronshaw.amtraker.data.amtrakremote.api.AmtrakDecryptor
+import me.cameronshaw.amtraker.data.remote.api.AmtrakerApiService
 import me.cameronshaw.amtraker.data.remote.api.MapOrEmptyArrayDeserializer
-import me.cameronshaw.amtraker.data.remote.api.StationApiService
-import me.cameronshaw.amtraker.data.remote.api.TrainApiService
 import me.cameronshaw.amtraker.data.remote.dto.StationDto
 import me.cameronshaw.amtraker.data.remote.dto.TrainDto
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Qualifier
 import javax.inject.Singleton
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class AmtrakRetrofit
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class AmtrakerRetrofit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -40,7 +51,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(gson: Gson): Retrofit = Retrofit.Builder()
+    @AmtrakerRetrofit
+    fun provideAmtrakerRetrofit(gson: Gson): Retrofit = Retrofit.Builder()
         .baseUrl("https://api-v3.amtraker.com/v3/")
         .client(
             OkHttpClient()
@@ -50,12 +62,36 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideTrainDao(retrofit: Retrofit): TrainApiService =
-        retrofit.create(TrainApiService::class.java)
+    @AmtrakRetrofit
+    fun provideAmtrakRetrofit(
+        interceptor: AmtrakDecryptionInterceptor
+    ): Retrofit {
+        // You can add your custom decryption interceptor here
+        val client = OkHttpClient.Builder()
+            .addInterceptor(interceptor)
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl("https://maps.amtrak.com/")
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
 
     @Provides
     @Singleton
-    fun provideStationDao(retrofit: Retrofit): StationApiService =
-        retrofit.create(StationApiService::class.java)
+    fun provideAmtrakerDao(@AmtrakerRetrofit retrofit: Retrofit): AmtrakerApiService =
+        retrofit.create(AmtrakerApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAmtrakDao(@AmtrakRetrofit retrofit: Retrofit): AmtrakApiService =
+        retrofit.create(AmtrakApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAmtrakDecryptor(): AmtrakDecryptor {
+        return AmtrakDecryptor()
+    }
 
 }

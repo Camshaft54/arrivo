@@ -1,12 +1,15 @@
 package me.cameronshaw.amtraker.data.repository
 
 import android.util.Log
+import com.google.gson.Gson
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import me.cameronshaw.amtraker.data.amtrakremote.datasource.AmtrakTrainDataSource
+import me.cameronshaw.amtraker.data.amtrakremote.dto.toTrainDomain
 import me.cameronshaw.amtraker.data.local.datasource.TrainLocalDataSource
 import me.cameronshaw.amtraker.data.local.model.toDomain
 import me.cameronshaw.amtraker.data.model.Train
@@ -60,6 +63,8 @@ interface TrainRepository {
     suspend fun deleteTrain(train: Train)
 }
 
+private const val USE_AMTRAK_API = true // TODO make a setting for this
+
 /**
  * The implementation of the repository. It coordinates the local and remote
  * data sources to fulfill the requests defined in the interface.
@@ -70,7 +75,9 @@ interface TrainRepository {
 @Singleton
 class TrainRepositoryImpl @Inject constructor(
     private val localDataSource: TrainLocalDataSource,
-    private val remoteDataSource: TrainRemoteDataSource
+    private val remoteDataSource: TrainRemoteDataSource,
+    private val amtrakDataSource: AmtrakTrainDataSource,
+    private val gson: Gson
 ) : TrainRepository {
 
     /**
@@ -78,12 +85,17 @@ class TrainRepositoryImpl @Inject constructor(
      * then converts that to the necessary entities and saves it to the local database.
      */
     override suspend fun refreshTrain(num: String) {
-        val trainDto = remoteDataSource.getTrain(num)
-        if (trainDto != null) {
-            val domainTrain =
-                trainDto.toDomain()
-            val trainWithStopsEntity = domainTrain.toEntity()
-            localDataSource.updateTrainData(trainWithStopsEntity)
+        if (USE_AMTRAK_API) {
+            // Amtrak API only supports refreshing all trains
+            refreshAllTrains()
+        } else {
+            val trainDto = remoteDataSource.getTrain(num)
+            if (trainDto != null) {
+                val domainTrain =
+                    trainDto.toDomain()
+                val trainWithStopsEntity = domainTrain.toEntity()
+                localDataSource.updateTrainData(trainWithStopsEntity)
+            }
         }
     }
 
@@ -93,14 +105,33 @@ class TrainRepositoryImpl @Inject constructor(
     override suspend fun refreshAllTrains() {
         val trainsToRefresh = localDataSource.getAllTrains().first()
         // TODO: change this to use the trains endpoint instead of each specific one
-        coroutineScope {
-            trainsToRefresh.map {
-                async {
-                    refreshTrain(it.num)
-                    Log.d("refreshAllTrains", "Refreshed train: ${it.num}")
-                }
+        if (USE_AMTRAK_API) {
+            val allTrains = amtrakDataSource.getTrains().associate {
+                val domain = it.toTrainDomain(gson)
+                domain.num to domain
             }
-        }.awaitAll()
+            coroutineScope {
+                trainsToRefresh.map {
+                    async {
+                        val domainTrain = allTrains[it.num]
+                        if (domainTrain != null) {
+                            val trainWithStopsEntity = domainTrain.toEntity()
+                            localDataSource.updateTrainData(trainWithStopsEntity)
+                        }
+                        Log.d("refreshAllTrains", "Refreshed train: ${it.num}")
+                    }
+                }
+            }.awaitAll()
+        } else {
+            coroutineScope {
+                trainsToRefresh.map {
+                    async {
+                        refreshTrain(it.num)
+                        Log.d("refreshAllTrains", "Refreshed train: ${it.num}")
+                    }
+                }
+            }.awaitAll()
+        }
     }
 
     /**

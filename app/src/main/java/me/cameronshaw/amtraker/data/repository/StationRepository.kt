@@ -7,6 +7,8 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import me.cameronshaw.amtraker.data.amtrakremote.datasource.AmtrakStationDataSource
+import me.cameronshaw.amtraker.data.amtrakremote.dto.toDomain
 import me.cameronshaw.amtraker.data.local.datasource.StationLocalDataSource
 import me.cameronshaw.amtraker.data.local.model.toDomain
 import me.cameronshaw.amtraker.data.model.Station
@@ -51,6 +53,8 @@ interface StationRepository {
     suspend fun deleteStation(station: Station)
 }
 
+private const val USE_AMTRAK_API = true // TODO make a setting for this
+
 /**
  * The implementation of the repository. It coordinates the local and remote
  * data sources to fulfill the requests defined in the interface.
@@ -61,7 +65,8 @@ interface StationRepository {
 @Singleton
 class StationRepositoryImpl @Inject constructor(
     private val localDataSource: StationLocalDataSource,
-    private val remoteDataSource: StationRemoteDataSource
+    private val remoteDataSource: StationRemoteDataSource,
+    private val amtrakDataSource: AmtrakStationDataSource
 ) : StationRepository {
 
     /**
@@ -69,11 +74,15 @@ class StationRepositoryImpl @Inject constructor(
      * then converts that to the necessary entities and saves it to the local database.
      */
     override suspend fun refreshStation(stationId: String) {
-        val stationDto = remoteDataSource.getStation(stationId)
-        if (stationDto != null) {
-            val domainStation = stationDto.toDomain()
-            val stationEntity = domainStation.toEntity()
-            localDataSource.updateStation(stationEntity)
+        if (USE_AMTRAK_API) {
+            refreshAllStations()
+        } else {
+            val stationDto = remoteDataSource.getStation(stationId)
+            if (stationDto != null) {
+                val domainStation = stationDto.toDomain()
+                val stationEntity = domainStation.toEntity()
+                localDataSource.updateStation(stationEntity)
+            }
         }
     }
 
@@ -81,16 +90,33 @@ class StationRepositoryImpl @Inject constructor(
      * Fetches all stations from the remote API, converts to the necessary entities, and saves it to the local database.
      */
     override suspend fun refreshAllStations() {
-        val trainsToRefresh = localDataSource.getAllStations().first()
-        // TODO: change this to use the trains endpoint instead of each specific one
-        coroutineScope {
-            trainsToRefresh.map {
-                async {
-                    refreshStation(it.code)
-                    Log.d("refreshAllStations", "Refreshed station: ${it.code}")
-                }
+        val stationsToRefresh = localDataSource.getAllStations().first()
+        if (USE_AMTRAK_API) {
+            val allStations = amtrakDataSource.getStations().associate {
+                it.code to it.toDomain()
             }
-        }.awaitAll()
+            coroutineScope {
+                stationsToRefresh.map {
+                    async {
+                        val domainStation = allStations[it.code]
+                        if (domainStation != null) {
+                            localDataSource.updateStation(domainStation.toEntity())
+                        }
+                        Log.d("refreshAllStations", "Refreshed station: ${it.code}")
+                    }
+                }
+            }.awaitAll()
+        } else {
+            // TODO: change this to use the stations endpoint instead of each specific one
+            coroutineScope {
+                stationsToRefresh.map {
+                    async {
+                        refreshStation(it.code)
+                        Log.d("refreshAllStations", "Refreshed station: ${it.code}")
+                    }
+                }
+            }.awaitAll()
+        }
     }
 
     /**

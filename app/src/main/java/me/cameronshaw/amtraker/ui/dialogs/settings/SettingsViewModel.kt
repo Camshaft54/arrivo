@@ -28,4 +28,10 @@ class SettingsViewModel @Inject constructor(
             settingsRepository.updateTheme(theme)
         }
     }
+
+    fun updateProvider(provider: String) {
+        viewModelScope.launch {
+            settingsRepository.updateProvider(provider)
+        }
+    }
 }

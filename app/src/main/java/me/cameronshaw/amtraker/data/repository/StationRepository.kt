@@ -53,8 +53,6 @@ interface StationRepository {
     suspend fun deleteStation(station: Station)
 }
 
-private const val USE_AMTRAK_API = true // TODO make a setting for this
-
 /**
  * The implementation of the repository. It coordinates the local and remote
  * data sources to fulfill the requests defined in the interface.
@@ -66,15 +64,23 @@ private const val USE_AMTRAK_API = true // TODO make a setting for this
 class StationRepositoryImpl @Inject constructor(
     private val localDataSource: StationLocalDataSource,
     private val remoteDataSource: StationRemoteDataSource,
-    private val amtrakDataSource: AmtrakStationDataSource
+    private val amtrakDataSource: AmtrakStationDataSource,
+    private val settingsRepository: SettingsRepository
 ) : StationRepository {
+
+    private suspend fun useAmtrakApi() =
+        when (settingsRepository.appSettingsFlow().first().dataProvider) {
+            "AMTRAK" -> true
+            "AMTRAKER" -> false
+            else -> true
+        }
 
     /**
      * Fetches a train from the remote API, converts it to a domain model,
      * then converts that to the necessary entities and saves it to the local database.
      */
     override suspend fun refreshStation(stationId: String) {
-        if (USE_AMTRAK_API) {
+        if (useAmtrakApi()) {
             refreshAllStations()
         } else {
             val stationDto = remoteDataSource.getStation(stationId)
@@ -91,7 +97,7 @@ class StationRepositoryImpl @Inject constructor(
      */
     override suspend fun refreshAllStations() {
         val stationsToRefresh = localDataSource.getAllStations().first()
-        if (USE_AMTRAK_API) {
+        if (useAmtrakApi()) {
             val allStations = amtrakDataSource.getStations().associate {
                 it.code to it.toDomain()
             }

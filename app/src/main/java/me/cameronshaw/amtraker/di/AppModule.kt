@@ -85,9 +85,10 @@ object AppModule {
         localDataSource: TrainLocalDataSource,
         remoteDataSource: TrainRemoteDataSource,
         amtrakTrainDataSource: AmtrakTrainDataSource,
-        gson: Gson
+        gson: Gson,
+        settingsRepository: SettingsRepository
     ): TrainRepository {
-        return TrainRepositoryImpl(localDataSource, remoteDataSource, amtrakTrainDataSource, gson)
+        return TrainRepositoryImpl(localDataSource, remoteDataSource, amtrakTrainDataSource, gson, settingsRepository)
     }
 
     @Provides
@@ -95,9 +96,10 @@ object AppModule {
     fun provideStationRepository(
         localDataSource: StationLocalDataSource,
         remoteDataSource: StationRemoteDataSource,
-        amtrakDataSource: AmtrakStationDataSource
+        amtrakDataSource: AmtrakStationDataSource,
+        settingsRepository: SettingsRepository
     ): StationRepository {
-        return StationRepositoryImpl(localDataSource, remoteDataSource, amtrakDataSource)
+        return StationRepositoryImpl(localDataSource, remoteDataSource, amtrakDataSource, settingsRepository)
     }
 
     @Provides

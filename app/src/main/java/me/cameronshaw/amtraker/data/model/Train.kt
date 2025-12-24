@@ -35,21 +35,21 @@ data class Train(
         @Serializable(with = OffsetDateTimeSerializer::class) val scheduledDeparture: OffsetDateTime?,
     ) {
         val status: Status
-            get() = if (arrival == null || scheduledArrival == null) {
+            get() = if ((arrival == null || scheduledArrival == null) && (departure == null || scheduledDeparture == null)) {
                 Status.UNKNOWN
-            } else if (arrival.isEqual(scheduledArrival)) {
+            } else if ((arrival != null && arrival.isEqual(scheduledArrival)) || (departure != null && arrival == null && departure.isEqual(scheduledDeparture))) {
                 Status.ON_TIME
-            } else if (arrival.isAfter(scheduledArrival)) {
+            } else if ((arrival != null && arrival.isAfter(scheduledArrival)) || (departure != null && arrival == null && departure.isEqual(scheduledDeparture))) {
                 Status.LATE
             } else {
                 Status.EARLY
             }
 
         val arrivedAt: Boolean
-            get() = arrival?.isBefore(OffsetDateTime.now()) ?: false
+            get() = arrival?.isBefore(OffsetDateTime.now()) ?: departedFrom
 
         val departedFrom: Boolean
-            get() = departure?.isAfter(OffsetDateTime.now()) ?: false
+            get() = departure?.isBefore(OffsetDateTime.now()) ?: false
     }
 
     constructor(num: String) : this(num, "", emptyList(), "", 0.0, NEVER)

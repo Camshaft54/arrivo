@@ -17,6 +17,8 @@ val Context.settingsDataStore: DataStore<Preferences> by preferencesDataStore(na
 interface SettingsRepository {
     fun appSettingsFlow(): Flow<AppSettings>
     suspend fun updateTheme(theme: String)
+
+    suspend fun updateProvider(provider: String)
 }
 
 @Singleton
@@ -25,6 +27,7 @@ class SettingsRepositoryImpl @Inject constructor(private val context: Context) :
 
     private object PreferencesKeys {
         val APP_THEME = stringPreferencesKey("app_theme")
+        val DATA_PROVIDER = stringPreferencesKey("data_provider")
     }
 
     override fun appSettingsFlow(): Flow<AppSettings> = context.settingsDataStore.data
@@ -38,8 +41,15 @@ class SettingsRepositoryImpl @Inject constructor(private val context: Context) :
         }
     }
 
+    override suspend fun updateProvider(provider: String) {
+        context.settingsDataStore.edit { preferences ->
+            preferences[PreferencesKeys.DATA_PROVIDER] = provider
+        }
+    }
+
     private fun mapAppSettings(preferences: Preferences): AppSettings {
         val theme = preferences[PreferencesKeys.APP_THEME] ?: "SYSTEM"
-        return AppSettings(theme = theme)
+        val provider = preferences[PreferencesKeys.DATA_PROVIDER] ?: "AMTRAK"
+        return AppSettings(theme = theme, dataProvider = provider)
     }
 }

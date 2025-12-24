@@ -63,8 +63,6 @@ interface TrainRepository {
     suspend fun deleteTrain(train: Train)
 }
 
-private const val USE_AMTRAK_API = true // TODO make a setting for this
-
 /**
  * The implementation of the repository. It coordinates the local and remote
  * data sources to fulfill the requests defined in the interface.
@@ -77,15 +75,23 @@ class TrainRepositoryImpl @Inject constructor(
     private val localDataSource: TrainLocalDataSource,
     private val remoteDataSource: TrainRemoteDataSource,
     private val amtrakDataSource: AmtrakTrainDataSource,
-    private val gson: Gson
+    private val gson: Gson,
+    private val settingsRepository: SettingsRepository
 ) : TrainRepository {
+
+    private suspend fun useAmtrakApi() =
+        when (settingsRepository.appSettingsFlow().first().dataProvider) {
+            "AMTRAK" -> true
+            "AMTRAKER" -> false
+            else -> true
+        }
 
     /**
      * Fetches a train from the remote API, converts it to a domain model,
      * then converts that to the necessary entities and saves it to the local database.
      */
     override suspend fun refreshTrain(num: String) {
-        if (USE_AMTRAK_API) {
+        if (useAmtrakApi()) {
             // Amtrak API only supports refreshing all trains
             refreshAllTrains()
         } else {
@@ -104,8 +110,7 @@ class TrainRepositoryImpl @Inject constructor(
      */
     override suspend fun refreshAllTrains() {
         val trainsToRefresh = localDataSource.getAllTrains().first()
-        // TODO: change this to use the trains endpoint instead of each specific one
-        if (USE_AMTRAK_API) {
+        if (useAmtrakApi()) {
             val allTrains = amtrakDataSource.getTrains().associate {
                 val domain = it.toTrainDomain(gson)
                 domain.num to domain
@@ -123,6 +128,7 @@ class TrainRepositoryImpl @Inject constructor(
                 }
             }.awaitAll()
         } else {
+            // TODO: change this to use the trains endpoint instead of each specific one
             coroutineScope {
                 trainsToRefresh.map {
                     async {

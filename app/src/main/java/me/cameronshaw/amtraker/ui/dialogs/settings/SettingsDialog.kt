@@ -44,7 +44,7 @@ fun SettingsDialog(
     val appSettings by viewModel.appSettings.collectAsState()
 
     SettingsDialogContent(
-        onDismissRequest, appSettings, viewModel::updateTheme, modifier
+        onDismissRequest, appSettings, viewModel::updateTheme, viewModel::updateProvider, modifier
     )
 }
 
@@ -53,6 +53,7 @@ fun SettingsDialogContent(
     onDismissRequest: () -> Unit,
     appSettings: AppSettings,
     onUpdateTheme: (String) -> Unit,
+    onProviderChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Dialog(
@@ -102,12 +103,37 @@ fun SettingsDialogContent(
                             else -> "System default"
                         },
                         onOptionSelected = { newTheme ->
-                            onUpdateTheme(when (newTheme) {
-                                "System default" -> "SYSTEM"
-                                "Light" -> "LIGHT"
-                                "Dark" -> "DARK"
-                                else -> "SYSTEM"
-                            }) })
+                            onUpdateTheme(
+                                when (newTheme) {
+                                    "System default" -> "SYSTEM"
+                                    "Light" -> "LIGHT"
+                                    "Dark" -> "DARK"
+                                    else -> "SYSTEM"
+                                }
+                            )
+                        })
+                }
+
+                SettingItem(
+                    title = "Provider"
+                ) {
+                    DropdownSetting(
+                        label = stringResource(R.string.choose_provider),
+                        options = listOf("Amtrak", "Amtraker (3rd party)"),
+                        selectedOption = when (appSettings.dataProvider) {
+                            "AMTRAK" -> "Amtrak"
+                            "AMTRAKER" -> "Amtraker (3rd party)"
+                            else -> "Amtrak"
+                        },
+                        onOptionSelected = { newProvider ->
+                            onProviderChange(
+                                when (newProvider) {
+                                    "Amtrak" -> "AMTRAK"
+                                    "Amtraker (3rd party)" -> "AMTRAKER"
+                                    else -> "AMTRAK"
+                                }
+                            )
+                        })
                 }
             }
         }
@@ -121,6 +147,7 @@ fun PreviewSettingDialog() {
         SettingsDialogContent(
             onDismissRequest = { },
             appSettings = AppSettings(),
-            onUpdateTheme = { })
+            onUpdateTheme = { },
+            onProviderChange = { })
     }
 }

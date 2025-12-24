@@ -1,5 +1,6 @@
 package me.cameronshaw.amtraker.data.repository
 
+import com.google.gson.Gson
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
@@ -7,6 +8,7 @@ import io.mockk.junit4.MockKRule
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import me.cameronshaw.amtraker.data.amtrakremote.datasource.AmtrakTrainDataSource
 import me.cameronshaw.amtraker.data.local.datasource.TrainLocalDataSource
 import me.cameronshaw.amtraker.data.remote.api.expected1TrainDomain
 import me.cameronshaw.amtraker.data.remote.api.expected1TrainEntity
@@ -30,11 +32,20 @@ class TrainRepositoryImplTest {
     @RelaxedMockK
     private lateinit var remoteDataSource: TrainRemoteDataSource
 
+    @RelaxedMockK
+    private lateinit var amtrakDataSource: AmtrakTrainDataSource
+
+    @RelaxedMockK
+    private lateinit var gson: Gson
+
+    @RelaxedMockK
+    private lateinit var settingsRepository: SettingsRepositoryImpl
+
     private lateinit var repository: TrainRepositoryImpl
 
     @Before
     fun setUp() {
-        repository = TrainRepositoryImpl(localDataSource, remoteDataSource)
+        repository = TrainRepositoryImpl(localDataSource, remoteDataSource, amtrakDataSource, gson, settingsRepository)
     }
 
     @Test

@@ -7,6 +7,7 @@ import io.mockk.junit4.MockKRule
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import me.cameronshaw.amtraker.data.amtrakremote.datasource.AmtrakStationDataSource
 import me.cameronshaw.amtraker.data.local.datasource.StationLocalDataSource
 import me.cameronshaw.amtraker.data.remote.api.expectedGACStationDomain
 import me.cameronshaw.amtraker.data.remote.api.expectedGACStationDto
@@ -33,6 +34,12 @@ class StationRepositoryImplTest {
     @RelaxedMockK
     private lateinit var remoteDataSource: StationRemoteDataSource
 
+    @RelaxedMockK
+    private lateinit var amtrakDataSource: AmtrakStationDataSource
+
+    @RelaxedMockK
+    private lateinit var settingsRepository: SettingsRepositoryImpl
+
     // The class we are actually testing.
     private lateinit var repository: StationRepositoryImpl
 
@@ -40,7 +47,7 @@ class StationRepositoryImplTest {
     fun setUp() {
         // Create a new instance of the repository before each test,
         // injecting the mock data sources.
-        repository = StationRepositoryImpl(localDataSource, remoteDataSource)
+        repository = StationRepositoryImpl(localDataSource, remoteDataSource, amtrakDataSource, settingsRepository)
     }
 
     @Test

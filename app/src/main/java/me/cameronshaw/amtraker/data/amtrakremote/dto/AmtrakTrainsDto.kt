@@ -3,6 +3,7 @@ package me.cameronshaw.amtraker.data.amtrakremote.dto
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import me.cameronshaw.amtraker.data.model.Train
+import me.cameronshaw.amtraker.data.util.StationNameLookup
 import me.cameronshaw.amtraker.data.util.parseAmtrakDate
 import java.time.OffsetDateTime
 
@@ -42,8 +43,8 @@ fun Map<String, Any?>.toTrainDomain(
         .values
         .map { jsonString ->
             val stopDto = gson.fromJson(jsonString as String, AmtrakStopDto::class.java)
-//            val fullName = stationNames[stopDto.code] ?: "Unknown Station"
-            stopDto.toStopDomain(stopDto.code) // TODO replace with fullname
+            val fullName = StationNameLookup.stationNames[stopDto.code] ?: stopDto.code
+            stopDto.toStopDomain(fullName) // TODO replace with fullname
         }
 
     return Train(

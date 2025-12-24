@@ -28,7 +28,6 @@ fun <T> ListItemSwipeToDeleteBox(
     LaunchedEffect(dismissState.currentValue) {
         if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
             onSwipeToDelete(item)
-            // dismissState.reset()
         }
     }
 

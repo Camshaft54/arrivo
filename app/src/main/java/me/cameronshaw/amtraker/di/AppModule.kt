@@ -49,8 +49,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAmtrakTrainDataSource(
-        apiService: AmtrakApiService,
-        decryptor: AmtrakDecryptor
+        apiService: AmtrakApiService, decryptor: AmtrakDecryptor
     ): AmtrakTrainDataSource {
         return AmtrakTrainDataSource(apiService, decryptor)
     }
@@ -70,8 +69,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAmtrakStationDataSource(
-        apiService: AmtrakApiService,
-        decryptor: AmtrakDecryptor
+        apiService: AmtrakApiService, decryptor: AmtrakDecryptor
     ): AmtrakStationDataSource {
         return AmtrakStationDataSource(apiService, decryptor)
     }
@@ -88,7 +86,9 @@ object AppModule {
         gson: Gson,
         settingsRepository: SettingsRepository
     ): TrainRepository {
-        return TrainRepositoryImpl(localDataSource, remoteDataSource, amtrakTrainDataSource, gson, settingsRepository)
+        return TrainRepositoryImpl(
+            localDataSource, remoteDataSource, amtrakTrainDataSource, gson, settingsRepository
+        )
     }
 
     @Provides
@@ -99,14 +99,15 @@ object AppModule {
         amtrakDataSource: AmtrakStationDataSource,
         settingsRepository: SettingsRepository
     ): StationRepository {
-        return StationRepositoryImpl(localDataSource, remoteDataSource, amtrakDataSource, settingsRepository)
+        return StationRepositoryImpl(
+            localDataSource, remoteDataSource, amtrakDataSource, settingsRepository
+        )
     }
 
     @Provides
     @Singleton
     fun provideScheduleRepository(
-        trainRepository: TrainRepository,
-        stationRepository: StationRepository
+        trainRepository: TrainRepository, stationRepository: StationRepository
     ): ScheduleRepository {
         return ScheduleRepositoryImpl(trainRepository, stationRepository)
     }

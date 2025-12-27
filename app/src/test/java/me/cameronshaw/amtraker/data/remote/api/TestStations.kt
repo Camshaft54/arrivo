@@ -1,8 +1,8 @@
 package me.cameronshaw.amtraker.data.remote.api
 
+import me.cameronshaw.amtraker.data.amtraker.dto.StationDto
 import me.cameronshaw.amtraker.data.local.model.StationEntity
 import me.cameronshaw.amtraker.data.model.Station
-import me.cameronshaw.amtraker.data.remote.dto.StationDto
 import me.cameronshaw.amtraker.data.util.toOffsetDateTime
 
 val expectedGACStationDomain = Station(

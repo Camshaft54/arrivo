@@ -1,9 +1,9 @@
 package me.cameronshaw.amtraker.data.remote.amtrakapi
 
 import kotlinx.coroutines.test.runTest
-import me.cameronshaw.amtraker.data.amtrakremote.api.AmtrakApiService
-import me.cameronshaw.amtraker.data.amtrakremote.api.AmtrakDecryptionInterceptor
-import me.cameronshaw.amtraker.data.amtrakremote.api.AmtrakDecryptor
+import me.cameronshaw.amtraker.data.amtrak.api.AmtrakApiService
+import me.cameronshaw.amtraker.data.amtrak.api.AmtrakDecryptionInterceptor
+import me.cameronshaw.amtraker.data.amtrak.api.AmtrakDecryptor
 import okhttp3.OkHttpClient
 import org.junit.Assert
 import org.junit.Before

@@ -1,4 +1,4 @@
-package me.cameronshaw.amtraker.data.remote.dto
+package me.cameronshaw.amtraker.data.amtraker.dto
 
 import com.google.gson.annotations.SerializedName
 import me.cameronshaw.amtraker.data.model.Train

@@ -8,14 +8,14 @@ import io.mockk.junit4.MockKRule
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import me.cameronshaw.amtraker.data.amtrakremote.datasource.AmtrakTrainDataSource
+import me.cameronshaw.amtraker.data.amtrak.datasource.AmtrakTrainDataSource
+import me.cameronshaw.amtraker.data.amtraker.datasource.TrainAmtrakerDataSource
 import me.cameronshaw.amtraker.data.local.datasource.TrainLocalDataSource
 import me.cameronshaw.amtraker.data.remote.api.expected1TrainDomain
 import me.cameronshaw.amtraker.data.remote.api.expected1TrainEntity
 import me.cameronshaw.amtraker.data.remote.api.expected727TrainDomain
 import me.cameronshaw.amtraker.data.remote.api.expected727TrainDto
 import me.cameronshaw.amtraker.data.remote.api.expected727TrainEntity
-import me.cameronshaw.amtraker.data.remote.datasource.TrainRemoteDataSource
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -30,7 +30,7 @@ class TrainRepositoryImplTest {
     private lateinit var localDataSource: TrainLocalDataSource
 
     @RelaxedMockK
-    private lateinit var remoteDataSource: TrainRemoteDataSource
+    private lateinit var remoteDataSource: TrainAmtrakerDataSource
 
     @RelaxedMockK
     private lateinit var amtrakDataSource: AmtrakTrainDataSource

@@ -8,14 +8,14 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import me.cameronshaw.amtraker.data.amtrakremote.datasource.AmtrakTrainDataSource
-import me.cameronshaw.amtraker.data.amtrakremote.dto.toTrainDomain
+import me.cameronshaw.amtraker.data.amtrak.datasource.AmtrakTrainDataSource
+import me.cameronshaw.amtraker.data.amtrak.dto.toTrainDomain
+import me.cameronshaw.amtraker.data.amtraker.datasource.TrainAmtrakerDataSource
+import me.cameronshaw.amtraker.data.amtraker.dto.toDomain
 import me.cameronshaw.amtraker.data.local.datasource.TrainLocalDataSource
 import me.cameronshaw.amtraker.data.local.model.toDomain
 import me.cameronshaw.amtraker.data.model.Train
 import me.cameronshaw.amtraker.data.model.toEntity
-import me.cameronshaw.amtraker.data.remote.datasource.TrainRemoteDataSource
-import me.cameronshaw.amtraker.data.remote.dto.toDomain
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -73,7 +73,7 @@ interface TrainRepository {
 @Singleton
 class TrainRepositoryImpl @Inject constructor(
     private val localDataSource: TrainLocalDataSource,
-    private val remoteDataSource: TrainRemoteDataSource,
+    private val remoteDataSource: TrainAmtrakerDataSource,
     private val amtrakDataSource: AmtrakTrainDataSource,
     private val gson: Gson,
     private val settingsRepository: SettingsRepository

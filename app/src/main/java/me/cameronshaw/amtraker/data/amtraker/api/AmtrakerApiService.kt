@@ -1,7 +1,7 @@
-package me.cameronshaw.amtraker.data.remote.api
+package me.cameronshaw.amtraker.data.amtraker.api
 
-import me.cameronshaw.amtraker.data.remote.dto.StationDto
-import me.cameronshaw.amtraker.data.remote.dto.TrainDto
+import me.cameronshaw.amtraker.data.amtraker.dto.StationDto
+import me.cameronshaw.amtraker.data.amtraker.dto.TrainDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 

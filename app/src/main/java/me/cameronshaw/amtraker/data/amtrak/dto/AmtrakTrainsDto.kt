@@ -1,4 +1,4 @@
-package me.cameronshaw.amtraker.data.amtrakremote.dto
+package me.cameronshaw.amtraker.data.amtrak.dto
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName

@@ -1,8 +1,8 @@
 package me.cameronshaw.amtraker.data.remote.api
 
+import me.cameronshaw.amtraker.data.amtraker.dto.TrainDto
 import me.cameronshaw.amtraker.data.model.Train
 import me.cameronshaw.amtraker.data.model.toEntity
-import me.cameronshaw.amtraker.data.remote.dto.TrainDto
 import me.cameronshaw.amtraker.data.util.toOffsetDateTime
 
 val expected727TrainDomain = Train(

@@ -1,7 +1,7 @@
-package me.cameronshaw.amtraker.data.amtrakremote.api
+package me.cameronshaw.amtraker.data.amtrak.api
 
-import me.cameronshaw.amtraker.data.amtrakremote.dto.RoutesListEntry
-import me.cameronshaw.amtraker.data.amtrakremote.dto.RoutesListValuesDto
+import me.cameronshaw.amtraker.data.amtrak.dto.RoutesListEntry
+import me.cameronshaw.amtraker.data.amtrak.dto.RoutesListValuesDto
 import java.nio.charset.StandardCharsets
 import javax.crypto.Cipher
 import javax.crypto.SecretKeyFactory

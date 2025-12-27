@@ -1,4 +1,4 @@
-package me.cameronshaw.amtraker.data.remote.api
+package me.cameronshaw.amtraker.data.amtraker.api
 
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer

@@ -1,4 +1,4 @@
-package me.cameronshaw.amtraker.data.amtrakremote.api
+package me.cameronshaw.amtraker.data.amtrak.api
 
 import okhttp3.Interceptor
 import okhttp3.Response

@@ -1,12 +1,12 @@
-package me.cameronshaw.amtraker.data.remote.datasource
+package me.cameronshaw.amtraker.data.amtraker.datasource
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import me.cameronshaw.amtraker.data.remote.api.AmtrakerApiService
-import me.cameronshaw.amtraker.data.remote.dto.StationDto
+import me.cameronshaw.amtraker.data.amtraker.api.AmtrakerApiService
+import me.cameronshaw.amtraker.data.amtraker.dto.StationDto
 
-class StationRemoteDataSource(
+class StationAmtrakerDataSource(
     private val api: AmtrakerApiService,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {

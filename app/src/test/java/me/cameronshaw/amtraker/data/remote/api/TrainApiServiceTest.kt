@@ -3,8 +3,10 @@ package me.cameronshaw.amtraker.data.remote.api
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.runBlocking
+import me.cameronshaw.amtraker.data.amtraker.api.AmtrakerApiService
+import me.cameronshaw.amtraker.data.amtraker.api.MapOrEmptyArrayDeserializer
+import me.cameronshaw.amtraker.data.amtraker.dto.TrainDto
 import me.cameronshaw.amtraker.data.remote.api.TestUtils.getJson
-import me.cameronshaw.amtraker.data.remote.dto.TrainDto
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After

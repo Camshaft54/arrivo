@@ -1,9 +1,9 @@
-package me.cameronshaw.amtraker.data.amtrakremote.api
+package me.cameronshaw.amtraker.data.amtrak.api
 
-import me.cameronshaw.amtraker.data.amtrakremote.dto.AmtrakStationRootResponse
-import me.cameronshaw.amtraker.data.amtrakremote.dto.AmtrakTrainRootResponse
-import me.cameronshaw.amtraker.data.amtrakremote.dto.RoutesListEntry
-import me.cameronshaw.amtraker.data.amtrakremote.dto.RoutesListValuesDto
+import me.cameronshaw.amtraker.data.amtrak.dto.AmtrakStationRootResponse
+import me.cameronshaw.amtraker.data.amtrak.dto.AmtrakTrainRootResponse
+import me.cameronshaw.amtraker.data.amtrak.dto.RoutesListEntry
+import me.cameronshaw.amtraker.data.amtrak.dto.RoutesListValuesDto
 import retrofit2.http.GET
 import retrofit2.http.Headers
 

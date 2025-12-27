@@ -11,11 +11,11 @@ plugins {
 }
 
 android {
-    namespace = "me.cameronshaw.amtraker"
+    namespace = "me.cameronshaw.arrivo"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "me.cameronshaw.amtraker"
+        applicationId = "me.cameronshaw.arrivo"
         minSdk = 26
         targetSdk = 36
         versionCode = 1

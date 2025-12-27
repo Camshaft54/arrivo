@@ -5,10 +5,10 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="Tests in 'me.cameronshaw.amtraker'">
+      <SelectionState runConfigName="ScheduleDetailScreenContentPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ScheduleDetailScreenContentPreview">
+      <SelectionState runConfigName="Tests in 'me.cameronshaw.arrivo'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

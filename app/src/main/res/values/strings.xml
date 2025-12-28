@@ -10,4 +10,5 @@
     <string name="choose_theme">Choose your app theme</string>
     <string name="no_stations_tracked">No stations are being tracked.\nTap the \'+\' button to add a new station.</string>
     <string name="choose_provider">Choose your data provider</string>
+    <string name="widget_name">Arrivo Schedule</string>
 </resources>

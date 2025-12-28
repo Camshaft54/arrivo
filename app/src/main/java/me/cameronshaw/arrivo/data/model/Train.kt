@@ -37,9 +37,9 @@ data class Train(
         val status: Status
             get() = if ((arrival == null || scheduledArrival == null) && (departure == null || scheduledDeparture == null)) {
                 Status.UNKNOWN
-            } else if ((arrival != null && arrival.isEqual(scheduledArrival)) || (departure != null && arrival == null && departure.isEqual(scheduledDeparture))) {
+            } else if ((arrival != null && scheduledArrival != null && arrival.isEqual(scheduledArrival)) || (departure != null && scheduledDeparture != null && departure.isEqual(scheduledDeparture))) {
                 Status.ON_TIME
-            } else if ((arrival != null && arrival.isAfter(scheduledArrival)) || (departure != null && arrival == null && departure.isEqual(scheduledDeparture))) {
+            } else if ((arrival != null && scheduledArrival != null && arrival.isAfter(scheduledArrival)) || (departure != null && scheduledDeparture != null && departure.isEqual(scheduledDeparture))) {
                 Status.LATE
             } else {
                 Status.EARLY

@@ -58,15 +58,13 @@ class ArrivoWidget : GlanceAppWidget() {
             }
 
             GlanceArrivoTheme(overrideSystemTheme, useDarkTheme) {
-                WidgetContent()
+                WidgetContent(widgetState)
             }
         }
     }
 
     @Composable
-    fun WidgetContent() {
-        val state = currentState<WidgetState>()
-
+    fun WidgetContent(state: WidgetState) {
         Column(
             modifier = GlanceModifier.fillMaxSize().background(GlanceTheme.colors.surface)
                 .cornerRadius(16.dp).padding(vertical = 20.dp, horizontal = 16.dp),
@@ -79,7 +77,7 @@ class ArrivoWidget : GlanceAppWidget() {
             ) {
                 Column {
                     Text(
-                        text = "Amtraker Schedule", style = TextStyle(
+                        text = "Arrivo Schedule", style = TextStyle(
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp,
                             color = GlanceTheme.colors.onSurface

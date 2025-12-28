@@ -11,14 +11,24 @@ class WidgetStateDefinition(
     private val serializer: Serializer<WidgetState>,
     private val fileName: String
 ) : GlanceStateDefinition<WidgetState> {
+    companion object {
+        private val dataStores = mutableMapOf<String, DataStore<WidgetState>>()
+    }
+
     override suspend fun getDataStore(
         context: Context,
         fileKey: String
     ): DataStore<WidgetState> {
-        return DataStoreFactory.create(
-            serializer = serializer,
-            produceFile = { getLocation(context, fileKey) }
-        )
+        val path = getLocation(context, fileKey).absolutePath
+
+        return synchronized(dataStores) {
+            dataStores.getOrPut(path) {
+                DataStoreFactory.create(
+                    serializer = serializer,
+                    produceFile = { File(path) }
+                )
+            }
+        }
     }
 
     override fun getLocation(

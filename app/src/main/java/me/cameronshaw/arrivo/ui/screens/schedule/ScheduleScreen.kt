@@ -10,26 +10,16 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import me.cameronshaw.arrivo.R
-import me.cameronshaw.arrivo.data.model.ScheduleDatum
 import me.cameronshaw.arrivo.ui.Screen
 import me.cameronshaw.arrivo.ui.common.ListPlaceholder
-import me.cameronshaw.arrivo.ui.previewdata.SampleData
 import me.cameronshaw.arrivo.ui.screens.schedule.components.ScheduleList
-import me.cameronshaw.arrivo.ui.theme.ArrivoTheme
 
 @Composable
 fun ScheduleScreen(
@@ -96,33 +86,5 @@ fun ScheduleScreenContent(
                 modifier = modifier
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ScheduleListPopulatedPreview() {
-    var isLoading by remember { mutableStateOf(false) }
-    val scheduleData = List(5) {
-        ScheduleDatum(
-            train = SampleData.train(it),
-            departureStop = SampleData.stop1,
-            arrivalStop = SampleData.stop2
-        )
-    }
-    val scheduleUiState = ScheduleUiState(isRefreshing = isLoading, scheduleData = scheduleData)
-    val scope = rememberCoroutineScope()
-    ArrivoTheme {
-        ScheduleScreenContent(
-            scheduleUiState,
-            onRefresh = {
-                scope.launch {
-                    isLoading = true
-                    delay(1000)
-                    isLoading = false
-                }
-            },
-            onNavigateToDetail = {}
-        )
     }
 }

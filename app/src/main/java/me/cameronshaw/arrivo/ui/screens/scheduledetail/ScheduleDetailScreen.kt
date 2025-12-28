@@ -15,13 +15,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import me.cameronshaw.arrivo.data.model.Train
-import me.cameronshaw.arrivo.ui.previewdata.SampleData
 import me.cameronshaw.arrivo.ui.screens.scheduledetail.components.ScheduleDetailStopList
 import me.cameronshaw.arrivo.ui.util.toUiString
 
@@ -83,15 +81,5 @@ fun ScheduleDetailScreenContent(
             modifier = Modifier.padding(vertical = 8.dp)
         )
         ScheduleDetailStopList(Modifier, train.stops)
-    }
-}
-
-@Composable
-@Preview(showBackground = true)
-fun ScheduleDetailScreenContentPreview() {
-    MaterialTheme {
-        ScheduleDetailScreenContent(
-            train = SampleData.train(546),
-        )
     }
 }

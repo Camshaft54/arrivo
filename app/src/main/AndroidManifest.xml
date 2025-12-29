@@ -16,14 +16,15 @@
         android:theme="@style/Theme.Arrivo"
         tools:targetApi="31">
 
-        <meta-data
-            android:name="androidx.work.WorkManager"
-            android:value="androidx.work.impl.WorkManagerInitializer" />
-
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
-            tools:node="remove">
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
         </provider>
 
         <activity

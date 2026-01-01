@@ -2,9 +2,6 @@ package me.cameronshaw.arrivo.data.repository
 
 import android.util.Log
 import com.google.gson.Gson
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -14,7 +11,6 @@ import me.cameronshaw.arrivo.data.amtraker.datasource.TrainAmtrakerDataSource
 import me.cameronshaw.arrivo.data.amtraker.dto.toDomain
 import me.cameronshaw.arrivo.data.local.datasource.TrainLocalDataSource
 import me.cameronshaw.arrivo.data.local.model.toDomain
-import me.cameronshaw.arrivo.data.model.TrackedTrain
 import me.cameronshaw.arrivo.data.model.Train
 import me.cameronshaw.arrivo.data.model.toEntity
 import javax.inject.Inject
@@ -88,37 +84,29 @@ class TrainRepositoryImpl @Inject constructor(
     override suspend fun refreshAllTrains() {
         val trackedTrains = trackedTrainRepository.getTrackedTrains().first()
 
-        val allTrains = if (useAmtrakApi()) {
-            amtrakDataSource.getTrains().map {
-                it.toTrainDomain(gson)
-            }
+        val allRemoteTrains = if (useAmtrakApi()) {
+            amtrakDataSource.getTrains().map { it.toTrainDomain(gson) }
         } else {
-            amtrakerDataSource.getTrains().map {
-                it.toDomain()
-            }
+            amtrakerDataSource.getTrains().map { it.toDomain() }
         }
 
-        val trainsByTrackedTrain = allTrains.associateBy { domain ->
-            TrackedTrain(domain.num, domain.originDate)
+        val remoteTrainsByNum = allRemoteTrains.groupBy { it.num }
+
+        val trainsToKeep = trackedTrains.flatMap { tracked ->
+            val sameNum = remoteTrainsByNum[tracked.num] ?: emptyList()
+            if (tracked.originDate == null) {
+                sameNum
+            } else {
+                sameNum.filter { it.originDate == tracked.originDate }
+            }
         }
 
         localDataSource.deleteAllTrains()
+        localDataSource.insertTrainsWithStops(trainsToKeep.map { it.toEntity() })
 
-        coroutineScope {
-            trackedTrains.map {
-                async {
-                    trainsByTrackedTrain
-                        .filter { (tracked, _) ->
-                            it.num == tracked.num && (it.originDate == null || it.originDate == tracked.originDate)
-                        }
-                        .forEach { (_, domainTrain) ->
-                            val trainWithStopsEntity = domainTrain.toEntity()
-                            localDataSource.updateTrainData(trainWithStopsEntity)
-                        }
-                    Log.d("refreshAllTrains", "Refreshed train: ${it.num}")
-                }
-            }
-        }.awaitAll()
+        trainsToKeep.forEach {
+            Log.d("refreshAllTrains", "Refreshed train: ${it.num}")
+        }
     }
 
     /**

@@ -17,7 +17,6 @@ data class TrainWithStopsEntity(
 fun TrainWithStopsEntity.toDomain(): Train =
     Train(
         num = train.num,
-        originDate = train.originDate.toOffsetDateTime(),
         routeName = train.routeName,
         stops = stops.map { it.toDomain() },
         provider = train.provider,

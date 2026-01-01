@@ -16,6 +16,11 @@ class TrainLocalDataSource(
             trainDao.insertOrReplaceTrain(train)
         }
 
+    suspend fun insertTrainsWithStops(trainsWithStops: List<TrainWithStopsEntity>) =
+        withContext(ioDispatcher) {
+            trainDao.insertTrainsWithStops(trainsWithStops)
+        }
+
     suspend fun updateTrainData(train: TrainWithStopsEntity) =
         withContext(ioDispatcher) {
             trainDao.updateTrainData(train)

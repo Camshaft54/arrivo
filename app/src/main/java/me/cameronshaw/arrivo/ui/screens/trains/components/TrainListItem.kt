@@ -29,7 +29,6 @@ fun TrainListItem(
 fun TrainListItemActivePreview() {
     val activeTrain = Train(
         num = "727",
-        originDate = null,
         routeName = "Capitol Corridor",
         provider = "Amtrak",
         velocity = 30.0,
@@ -51,7 +50,6 @@ fun TrainListItemActivePreview() {
 fun TrainListItemInactivePreview() {
     val inactiveTrain = Train(
         num = "727",
-        originDate = null,
         routeName = "",
         provider = "Amtrak",
         velocity = 0.0,

@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName
 import me.cameronshaw.arrivo.data.model.Train
 import me.cameronshaw.arrivo.data.util.toOffsetDateTime
 import java.time.OffsetDateTime
-import java.time.temporal.ChronoUnit
 
 data class TrainDto(
     @SerializedName("routeName") val routeName: String,
@@ -61,7 +60,6 @@ data class TrainDto(
 
 fun TrainDto.toDomain() = Train(
     num = trainNum,
-    originDate = this.stops[0].schDep?.toOffsetDateTime()?.truncatedTo(ChronoUnit.DAYS),
     routeName = routeName,
     stops = stops.map { it.toDomain() },
     provider = provider,

@@ -22,7 +22,6 @@ data class TrainEntity(
  */
 fun TrainEntity.toDomain() = Train(
     num = num,
-    originDate = if (originDate.isNotBlank()) originDate.toOffsetDateTime() else null,
     routeName = routeName,
     stops = emptyList(),
     provider = provider,

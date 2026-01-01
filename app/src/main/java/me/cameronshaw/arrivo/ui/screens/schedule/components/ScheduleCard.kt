@@ -185,7 +185,6 @@ fun ScheduleCardPreview() {
         ScheduleCard(
             train = Train(
                 num = "546",
-                originDate = departureStop.departure,
                 routeName = "Capitol Corridor",
                 provider = "Amtrak",
                 velocity = 30.0,
@@ -209,7 +208,6 @@ fun ScheduleCardMissingStopsPreview() {
         ScheduleCard(
             train = Train(
                 num = "546",
-                originDate = null,
                 routeName = "Capitol Corridor",
                 stops = listOf(),
                 provider = "Amtrak",

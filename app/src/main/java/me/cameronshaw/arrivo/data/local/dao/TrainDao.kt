@@ -51,6 +51,18 @@ interface TrainDao {
         insertOrReplaceStops(train.stops)
     }
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTrains(trains: List<TrainEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertStops(stops: List<StopEntity>)
+
+    @Transaction
+    suspend fun insertTrainsWithStops(trainsWithStops: List<TrainWithStopsEntity>) {
+        insertTrains(trainsWithStops.map { it.train })
+        insertStops(trainsWithStops.flatMap { it.stops })
+    }
+
     /**
      * For UI to load all the trains the user has
      */

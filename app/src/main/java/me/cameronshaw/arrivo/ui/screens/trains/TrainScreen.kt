@@ -136,7 +136,6 @@ fun TrainListPopulatedPreview() {
             listOf(
                 Train(
                     "$it",
-                    null,
                     "Route $it",
                     emptyList(),
                     "Amtrak",

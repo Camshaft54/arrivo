@@ -26,7 +26,6 @@ class SampleData {
 
         fun train(num: Int) = Train(
             num = num.toString(),
-            originDate = stop1.departure,
             routeName = "Route $num",
             stops = listOf(stop1, stop2),
             provider = "Amtrak",

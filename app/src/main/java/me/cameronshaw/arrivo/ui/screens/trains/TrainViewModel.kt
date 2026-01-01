@@ -89,9 +89,9 @@ class TrainViewModel @Inject constructor(
             try {
                 trackedTrainRepository.insertTrackedTrain(TrackedTrain(newTrain.num, date))
                 try {
-                    trainRepository.refreshTrain(num)
+                    trainRepository.refreshAllTrains()
                 } catch (_: Exception) {
-                    _eventFlow.emit("Failed to fetch information about train.")
+                    _eventFlow.emit("Failed to fetch information about trains.")
                 }
             } catch (_: Exception) {
                 _uiState.update { it.copy(errorMessage = "Failed to add train.") }

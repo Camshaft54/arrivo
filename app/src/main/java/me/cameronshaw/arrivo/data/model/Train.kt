@@ -13,7 +13,6 @@ import java.time.temporal.ChronoUnit
 @Serializable
 data class Train(
     val num: String,
-    @Serializable(with = OffsetDateTimeSerializer::class) val originDate: OffsetDateTime?,
     val routeName: String,
     val stops: List<Stop>,
     val provider: String,
@@ -22,6 +21,11 @@ data class Train(
 ) {
     val id: String
         get() = "$num (${originDate.toDbString()})"
+
+    @Serializable(with = OffsetDateTimeSerializer::class)
+    val originDate: OffsetDateTime?
+        get() = stops.firstOrNull()?.departure?.truncatedTo(ChronoUnit.DAYS)
+
 
     /**
      * Data is considered "stale" if it hasn't been refreshed in over an hour.
@@ -67,9 +71,8 @@ data class Train(
     }
 
     constructor(
-        num: String,
-        originDate: OffsetDateTime = OffsetDateTime.now().truncatedTo(ChronoUnit.DAYS)
-    ) : this(num, originDate, "", emptyList(), "", 0.0, NEVER)
+        num: String
+    ) : this(num, "", emptyList(), "", 0.0, NEVER)
 }
 
 fun Train.toEntity() = TrainWithStopsEntity(

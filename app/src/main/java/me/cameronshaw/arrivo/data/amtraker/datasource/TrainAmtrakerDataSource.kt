@@ -15,4 +15,11 @@ class TrainAmtrakerDataSource(
             val responseMap = api.getTrain(trainId)
             responseMap[trainId]?.firstOrNull()
         }
+
+    suspend fun getTrains(): List<TrainDto> =
+        withContext(ioDispatcher) {
+            val responseMap = api.getTrains()
+            responseMap.values.flatten()
+        }
+
 }

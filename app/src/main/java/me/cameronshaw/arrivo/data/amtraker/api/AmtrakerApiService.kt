@@ -11,4 +11,7 @@ interface AmtrakerApiService {
 
     @GET("trains/{trainId}")
     suspend fun getTrain(@Path("trainId") trainId: String): Map<String, List<TrainDto>>
+
+    @GET("trains")
+    suspend fun getTrains(): Map<String, List<TrainDto>>
 }

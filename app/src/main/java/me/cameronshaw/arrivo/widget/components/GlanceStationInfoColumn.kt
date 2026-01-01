@@ -28,7 +28,7 @@ import java.time.OffsetDateTime
 @SuppressLint("RestrictedApi")
 @Composable
 fun GlanceStationInfoColumn(
-    stationCode: String, description: String, status: Status, time: OffsetDateTime?
+    stationCode: String, description: String, status: Status, time: OffsetDateTime?, modifier: GlanceModifier = GlanceModifier
 ) {
     val statusColor = when (status) {
         Status.EARLY -> ColorProvider(StatusBlue)
@@ -39,7 +39,8 @@ fun GlanceStationInfoColumn(
 
     Column(
         horizontalAlignment = Alignment.Horizontal.CenterHorizontally,
-        verticalAlignment = Alignment.Vertical.CenterVertically
+        verticalAlignment = Alignment.Vertical.CenterVertically,
+        modifier = modifier
     ) {
         Row(verticalAlignment = Alignment.Vertical.CenterVertically) {
             Text(

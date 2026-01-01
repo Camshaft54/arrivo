@@ -14,6 +14,7 @@ fun String.toOffsetDateTime(): OffsetDateTime? =
         DateTimeFormatter.ISO_OFFSET_DATE_TIME
     ) else null
 
+// Used to indicate a station/train has never been updated (lastUpdated = NEVER)
 val NEVER: OffsetDateTime = OffsetDateTime.parse("1970-01-01T00:00:00+00:00")
 
 private val amtrakFormatter = DateTimeFormatter.ofPattern("M/d/yyyy H:mm:ss")

@@ -15,6 +15,7 @@ import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
+import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -58,6 +59,7 @@ fun GlanceScheduleCard(
 
             if (departureStop != null && departureStop == arrivalStop) { // 1 stop
                 GlanceStationInfoColumn(
+                    modifier = GlanceModifier.width(85.dp),
                     stationCode = arrivalStop.code,
                     status = arrivalStop.status,
                     description = arrivalStop.determineArrivalStopDescription(),
@@ -65,6 +67,7 @@ fun GlanceScheduleCard(
                 )
                 Spacer(GlanceModifier.size(16.dp))
                 GlanceStationInfoColumn(
+                    modifier = GlanceModifier.width(75.dp),
                     stationCode = departureStop.code,
                     status = departureStop.status,
                     description = departureStop.determineDepartureStopDescription(),
@@ -72,6 +75,7 @@ fun GlanceScheduleCard(
                 )
             } else if (departureStop != null && arrivalStop != null) { // 2 stops
                 GlanceStationInfoColumn(
+                    modifier = GlanceModifier.width(85.dp),
                     stationCode = departureStop.code,
                     status = departureStop.status,
                     description = departureStop.determineDepartureStopDescription(),
@@ -79,6 +83,7 @@ fun GlanceScheduleCard(
                 )
                 Spacer(GlanceModifier.size(16.dp))
                 GlanceStationInfoColumn(
+                    modifier = GlanceModifier.width(85.dp),
                     stationCode = arrivalStop.code,
                     status = arrivalStop.status,
                     description = arrivalStop.determineArrivalStopDescription(),

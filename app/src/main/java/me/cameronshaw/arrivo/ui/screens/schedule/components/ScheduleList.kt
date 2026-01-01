@@ -15,13 +15,13 @@ fun ScheduleList(
     onTrainClicked: (trainId: String) -> Unit
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
-        items(scheduleCardData, key = { it.train.num }) { datum ->
+        items(scheduleCardData, key = { it.train.id }) { datum ->
             ScheduleCard(
                 modifier = modifier,
                 datum.train,
                 datum.departureStop,
                 datum.arrivalStop,
-                onClick = { onTrainClicked(datum.train.num) }
+                onClick = { onTrainClicked(datum.train.id) }
             )
         }
     }

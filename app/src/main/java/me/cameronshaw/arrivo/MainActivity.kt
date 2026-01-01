@@ -34,7 +34,7 @@ import me.cameronshaw.arrivo.ui.screens.stations.StationScreen
 import me.cameronshaw.arrivo.ui.screens.trains.TrainScreen
 import me.cameronshaw.arrivo.ui.theme.ArrivoTheme
 
-const val TRAIN_NUM_ARG = "trainNum"
+const val TRAIN_ID_ARG = "trainId"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -97,8 +97,8 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(
-                            route = "${Screen.ScheduleDetail.route}/{$TRAIN_NUM_ARG}",
-                            arguments = listOf(navArgument(TRAIN_NUM_ARG) {
+                            route = "${Screen.ScheduleDetail.route}/{$TRAIN_ID_ARG}",
+                            arguments = listOf(navArgument(TRAIN_ID_ARG) {
                                 type = NavType.StringType
                             })
                         ) { _ ->

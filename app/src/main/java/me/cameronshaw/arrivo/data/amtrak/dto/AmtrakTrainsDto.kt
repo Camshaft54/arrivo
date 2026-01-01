@@ -6,6 +6,7 @@ import me.cameronshaw.arrivo.data.model.Train
 import me.cameronshaw.arrivo.data.util.StationNameLookup
 import me.cameronshaw.arrivo.data.util.parseAmtrakDate
 import java.time.OffsetDateTime
+import java.time.temporal.ChronoUnit
 
 data class AmtrakTrainRootResponse(
     @SerializedName("features") val features: List<AmtrakTrainFeature>
@@ -44,11 +45,14 @@ fun Map<String, Any?>.toTrainDomain(
         .map { jsonString ->
             val stopDto = gson.fromJson(jsonString as String, AmtrakStopDto::class.java)
             val fullName = StationNameLookup.stationNames[stopDto.code] ?: stopDto.code
-            stopDto.toStopDomain(fullName) // TODO replace with fullname
+            stopDto.toStopDomain(fullName)
         }
+
+    val originDate = stops.firstOrNull()?.departure?.truncatedTo(ChronoUnit.DAYS)
 
     return Train(
         num = trainNum,
+        originDate = originDate,
         routeName = routeName,
         stops = stops,
         provider = "Amtrak",

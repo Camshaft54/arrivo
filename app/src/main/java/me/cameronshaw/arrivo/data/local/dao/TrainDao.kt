@@ -10,7 +10,7 @@ import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import me.cameronshaw.arrivo.data.local.model.StopEntity
 import me.cameronshaw.arrivo.data.local.model.TrainEntity
-import me.cameronshaw.arrivo.data.local.model.TrainWithStops
+import me.cameronshaw.arrivo.data.local.model.TrainWithStopsEntity
 
 @Dao
 interface TrainDao {
@@ -35,8 +35,8 @@ interface TrainDao {
     @Transaction
     suspend fun deleteTrain(train: TrainEntity)
 
-    @Query("DELETE FROM StopEntity WHERE trainOwnerNum = :trainNum")
-    suspend fun deleteStopsForTrain(trainNum: String)
+    @Query("DELETE FROM StopEntity WHERE trainOwnerId = :trainId")
+    suspend fun deleteStopsForTrain(trainId: String)
 
     @Query("DELETE FROM TrainEntity")
     suspend fun deleteAllTrains()
@@ -45,32 +45,32 @@ interface TrainDao {
      * To be used when updating a single train's data from remote
      */
     @Transaction
-    suspend fun updateTrainData(train: TrainWithStops) {
+    suspend fun updateTrainData(train: TrainWithStopsEntity) {
         insertOrReplaceTrain(train.train)
-        deleteStopsForTrain(train.train.num)
+        deleteStopsForTrain(train.train.id)
         insertOrReplaceStops(train.stops)
     }
 
     /**
      * For UI to load all the trains the user has
      */
-    @Query("SELECT * FROM TrainEntity ORDER BY num ASC")
+    @Query("SELECT * FROM TrainEntity ORDER BY num ASC, originDate ASC")
     fun getAllTrains(): Flow<List<TrainEntity>>
 
     /**
      * For UI to load detailed view of a train
      */
     @Transaction
-    @Query("SELECT * FROM TrainEntity WHERE num = :num")
-    fun getTrainWithStops(num: String): Flow<TrainWithStops>
+    @Query("SELECT * FROM TrainEntity WHERE id = :id")
+    fun getTrainWithStops(id: String): Flow<TrainWithStopsEntity>
 
     /**
      * For widget to load all trains
      */
     @Transaction
-    @Query("SELECT * FROM TrainEntity ORDER BY num ASC")
-    fun getAllTrainsWithStops(): Flow<List<TrainWithStops>>
+    @Query("SELECT * FROM TrainEntity ORDER BY num ASC, originDate ASC")
+    fun getAllTrainsWithStops(): Flow<List<TrainWithStopsEntity>>
 
-    @Query("SELECT * FROM StopEntity WHERE trainOwnerNum = :trainNum ORDER BY code ASC") // Example ordering
-    fun getStopsByTrain(trainNum: String): Flow<List<StopEntity>>
+    @Query("SELECT * FROM StopEntity WHERE trainOwnerId = :trainId ORDER BY code ASC")
+    fun getStopsByTrain(trainId: String): Flow<List<StopEntity>>
 }

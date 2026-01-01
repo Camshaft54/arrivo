@@ -1,13 +1,16 @@
 package me.cameronshaw.arrivo.data.local.model
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import me.cameronshaw.arrivo.data.model.Train
 import me.cameronshaw.arrivo.data.util.toOffsetDateTime
 
-@Entity
+@Entity(
+    primaryKeys = ["id"]
+)
 data class TrainEntity(
-    @PrimaryKey val num: String,
+    val id: String,
+    val num: String,
+    val originDate: String,
     val routeName: String,
     val provider: String,
     val velocity: Double,
@@ -19,6 +22,7 @@ data class TrainEntity(
  */
 fun TrainEntity.toDomain() = Train(
     num = num,
+    originDate = if (originDate.isNotBlank()) originDate.toOffsetDateTime() else null,
     routeName = routeName,
     stops = emptyList(),
     provider = provider,

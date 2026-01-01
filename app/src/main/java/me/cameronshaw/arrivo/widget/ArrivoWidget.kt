@@ -120,7 +120,7 @@ class ArrivoWidget : GlanceAppWidget() {
                 LazyColumn(
                     modifier = GlanceModifier.fillMaxSize()
                 ) {
-                    items(state.schedule, { it.train.num.toLong() }) { datum ->
+                    items(state.schedule, { state.schedule.indexOf(it).toLong() }) { datum ->
                         Box(
                             modifier = GlanceModifier.fillMaxWidth().padding(vertical = 4.dp)
                                 .background(GlanceTheme.colors.surface)

@@ -15,8 +15,10 @@ import me.cameronshaw.arrivo.data.amtraker.api.AmtrakerApiService
 import me.cameronshaw.arrivo.data.amtraker.datasource.StationAmtrakerDataSource
 import me.cameronshaw.arrivo.data.amtraker.datasource.TrainAmtrakerDataSource
 import me.cameronshaw.arrivo.data.local.dao.StationDao
+import me.cameronshaw.arrivo.data.local.dao.TrackedTrainDao
 import me.cameronshaw.arrivo.data.local.dao.TrainDao
 import me.cameronshaw.arrivo.data.local.datasource.StationLocalDataSource
+import me.cameronshaw.arrivo.data.local.datasource.TrackedTrainLocalDataSource
 import me.cameronshaw.arrivo.data.local.datasource.TrainLocalDataSource
 import me.cameronshaw.arrivo.data.repository.ScheduleRepository
 import me.cameronshaw.arrivo.data.repository.ScheduleRepositoryImpl
@@ -24,6 +26,8 @@ import me.cameronshaw.arrivo.data.repository.SettingsRepository
 import me.cameronshaw.arrivo.data.repository.SettingsRepositoryImpl
 import me.cameronshaw.arrivo.data.repository.StationRepository
 import me.cameronshaw.arrivo.data.repository.StationRepositoryImpl
+import me.cameronshaw.arrivo.data.repository.TrackedTrainRepository
+import me.cameronshaw.arrivo.data.repository.TrackedTrainRepositoryImpl
 import me.cameronshaw.arrivo.data.repository.TrainRepository
 import me.cameronshaw.arrivo.data.repository.TrainRepositoryImpl
 import javax.inject.Singleton
@@ -33,6 +37,12 @@ import javax.inject.Singleton
 object AppModule {
 
     // --- DATA SOURCES ---
+
+    @Provides
+    @Singleton
+    fun provideTrackedTrainLocalDataSource(trackedTrainDao: TrackedTrainDao): TrackedTrainLocalDataSource {
+        return TrackedTrainLocalDataSource(trackedTrainDao)
+    }
 
     @Provides
     @Singleton
@@ -84,10 +94,16 @@ object AppModule {
         remoteDataSource: TrainAmtrakerDataSource,
         amtrakTrainDataSource: AmtrakTrainDataSource,
         gson: Gson,
-        settingsRepository: SettingsRepository
+        settingsRepository: SettingsRepository,
+        trackedTrainRepository: TrackedTrainRepository
     ): TrainRepository {
         return TrainRepositoryImpl(
-            localDataSource, remoteDataSource, amtrakTrainDataSource, gson, settingsRepository
+            localDataSource,
+            remoteDataSource,
+            amtrakTrainDataSource,
+            gson,
+            settingsRepository,
+            trackedTrainRepository
         )
     }
 
@@ -118,5 +134,13 @@ object AppModule {
         @ApplicationContext context: Context
     ): SettingsRepository {
         return SettingsRepositoryImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTrackedTrainRepository(
+        localDataSource: TrackedTrainLocalDataSource
+    ): TrackedTrainRepository {
+        return TrackedTrainRepositoryImpl(localDataSource)
     }
 }

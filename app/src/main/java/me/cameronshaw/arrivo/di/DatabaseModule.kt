@@ -9,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.cameronshaw.arrivo.data.local.AppDatabase
 import me.cameronshaw.arrivo.data.local.dao.StationDao
+import me.cameronshaw.arrivo.data.local.dao.TrackedTrainDao
 import me.cameronshaw.arrivo.data.local.dao.TrainDao
 import javax.inject.Singleton
 
@@ -32,5 +33,10 @@ object DatabaseModule {
     @Provides
     fun provideStationDao(appDatabase: AppDatabase): StationDao {
         return appDatabase.stationDao()
+    }
+
+    @Provides
+    fun provideTrackedTrainDao(appDatabase: AppDatabase): TrackedTrainDao {
+        return appDatabase.trackedTrainDao()
     }
 }

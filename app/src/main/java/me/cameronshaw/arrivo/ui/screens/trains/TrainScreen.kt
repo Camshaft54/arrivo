@@ -30,6 +30,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.cameronshaw.arrivo.R
+import me.cameronshaw.arrivo.data.model.TrackedTrain
 import me.cameronshaw.arrivo.data.model.Train
 import me.cameronshaw.arrivo.ui.common.ListPlaceholder
 import me.cameronshaw.arrivo.ui.dialogs.AddItemDialog
@@ -69,7 +70,7 @@ fun TrainScreenContent(
     modifier: Modifier = Modifier,
     validateTrainNum: (String) -> Boolean,
     onAddTrain: (String) -> Boolean,
-    onDeleteTrain: (Train) -> Unit,
+    onDeleteTrain: (TrackedTrain) -> Unit,
     onRefresh: () -> Unit
 ) {
     var showAddDialog by remember { mutableStateOf(false) }
@@ -130,8 +131,19 @@ fun TrainScreenContent(
 fun TrainListPopulatedPreview() {
     var isLoading by remember { mutableStateOf(false) }
     val trains = List(20) {
-        Train(
-            "$it", "Route $it", emptyList(), "Amtrak", 30.0, lastUpdated = OffsetDateTime.now()
+        TrackedTrainWithInstance(
+            TrackedTrain("$it", null),
+            listOf(
+                Train(
+                    "$it",
+                    null,
+                    "Route $it",
+                    emptyList(),
+                    "Amtrak",
+                    30.0,
+                    lastUpdated = OffsetDateTime.now()
+                )
+            )
         )
     }
     val trainUiState = TrainUiState(isRefreshing = isLoading, trains = trains)

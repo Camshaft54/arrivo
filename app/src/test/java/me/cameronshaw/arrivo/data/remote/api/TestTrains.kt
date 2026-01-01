@@ -7,6 +7,7 @@ import me.cameronshaw.arrivo.data.util.toOffsetDateTime
 
 val expected727TrainDomain = Train(
     num = "727",
+    originDate = "2025-06-29T00:00:00-07:00".toOffsetDateTime(),
     routeName = "Capitol Corridor",
     stops = listOf(
         Train.Stop(
@@ -167,6 +168,7 @@ val expected727TrainDto = TrainDto(
 
 val expected1TrainDomain = Train(
     num = "1",
+    originDate = "2025-06-28T00:00:00-05:00".toOffsetDateTime(),
     routeName = "Sunset Limited",
     stops = listOf(
         Train.Stop(
@@ -318,6 +320,7 @@ val expected546TrainDto = TrainDto(
 
 val expected546TrainDomain = Train(
     num = "546",
+    originDate = "2025-07-15T00:00:00-07:00".toOffsetDateTime(),
     routeName = "Capitol Corridor",
     stops = listOf(
         Train.Stop(

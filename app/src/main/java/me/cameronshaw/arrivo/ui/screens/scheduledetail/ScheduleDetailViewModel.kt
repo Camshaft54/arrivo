@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.cameronshaw.arrivo.TRAIN_NUM_ARG
+import me.cameronshaw.arrivo.TRAIN_ID_ARG
 import me.cameronshaw.arrivo.data.model.Train
 import me.cameronshaw.arrivo.data.repository.TrainRepository
 import javax.inject.Inject
@@ -28,7 +28,7 @@ class ScheduleDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val trainRepository: TrainRepository
 ) : ViewModel() {
-    private val trainNum: String = checkNotNull(savedStateHandle[TRAIN_NUM_ARG])
+    private val trainId: String = checkNotNull(savedStateHandle[TRAIN_ID_ARG])
     private val _eventFlow = MutableSharedFlow<String>()
     val eventFlow = _eventFlow.asSharedFlow()
     private val _uiState = MutableStateFlow(ScheduleDetailUiState())
@@ -42,7 +42,7 @@ class ScheduleDetailViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             trainRepository
-                .getTrain(trainNum)
+                .getTrain(trainId)
                 .catch { cause ->
                     Log.e("TrainViewModel", "Failed to load trains.", cause)
                     _uiState.update {

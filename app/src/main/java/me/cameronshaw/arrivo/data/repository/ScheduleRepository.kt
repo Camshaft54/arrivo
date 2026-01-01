@@ -28,7 +28,7 @@ class ScheduleRepositoryImpl @Inject constructor(
         stationRepository.refreshAllStations()
     }
 
-    override fun getScheduleData(): Flow<List<ScheduleDatum>> = trainRepository.getTrackedTrains()
+    override fun getScheduleData(): Flow<List<ScheduleDatum>> = trainRepository.getTrains()
         .zip(stationRepository.getStations()) { trains: List<Train>, stations: List<Station> ->
             val stationCodes = stations.map { station -> station.code }
             trains.map { train ->

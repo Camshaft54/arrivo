@@ -5,7 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import me.cameronshaw.arrivo.data.local.dao.TrainDao
 import me.cameronshaw.arrivo.data.local.model.TrainEntity
-import me.cameronshaw.arrivo.data.local.model.TrainWithStops
+import me.cameronshaw.arrivo.data.local.model.TrainWithStopsEntity
 
 class TrainLocalDataSource(
     private val trainDao: TrainDao,
@@ -16,7 +16,7 @@ class TrainLocalDataSource(
             trainDao.insertOrReplaceTrain(train)
         }
 
-    suspend fun updateTrainData(train: TrainWithStops) =
+    suspend fun updateTrainData(train: TrainWithStopsEntity) =
         withContext(ioDispatcher) {
             trainDao.updateTrainData(train)
         }
@@ -26,7 +26,7 @@ class TrainLocalDataSource(
             trainDao.updateTrain(train)
         }
 
-    suspend fun deleteTrain(train: TrainWithStops) =
+    suspend fun deleteTrain(train: TrainWithStopsEntity) =
         withContext(ioDispatcher) {
             trainDao.deleteTrain(train.train)
         }
@@ -37,7 +37,7 @@ class TrainLocalDataSource(
         }
     }
 
-    fun getTrainWithStops(num: String) = trainDao.getTrainWithStops(num)
+    fun getTrainWithStops(id: String) = trainDao.getTrainWithStops(id)
 
     fun getAllTrains() = trainDao.getAllTrains()
 

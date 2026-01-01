@@ -3,7 +3,7 @@ package me.cameronshaw.arrivo.data.model
 import kotlinx.serialization.Serializable
 import me.cameronshaw.arrivo.data.local.model.StopEntity
 import me.cameronshaw.arrivo.data.local.model.TrainEntity
-import me.cameronshaw.arrivo.data.local.model.TrainWithStops
+import me.cameronshaw.arrivo.data.local.model.TrainWithStopsEntity
 import me.cameronshaw.arrivo.data.util.NEVER
 import me.cameronshaw.arrivo.data.util.OffsetDateTimeSerializer
 import me.cameronshaw.arrivo.data.util.toDbString
@@ -13,12 +13,16 @@ import java.time.temporal.ChronoUnit
 @Serializable
 data class Train(
     val num: String,
+    @Serializable(with = OffsetDateTimeSerializer::class) val originDate: OffsetDateTime?,
     val routeName: String,
     val stops: List<Stop>,
     val provider: String,
     val velocity: Double,
     @Serializable(with = OffsetDateTimeSerializer::class) val lastUpdated: OffsetDateTime
 ) {
+    val id: String
+        get() = "$num (${originDate.toDbString()})"
+
     /**
      * Data is considered "stale" if it hasn't been refreshed in over an hour.
      */
@@ -37,9 +41,19 @@ data class Train(
         val status: Status
             get() = if ((arrival == null || scheduledArrival == null) && (departure == null || scheduledDeparture == null)) {
                 Status.UNKNOWN
-            } else if ((arrival != null && scheduledArrival != null && arrival.isEqual(scheduledArrival)) || (departure != null && scheduledDeparture != null && departure.isEqual(scheduledDeparture))) {
+            } else if ((arrival != null && scheduledArrival != null && arrival.isEqual(
+                    scheduledArrival
+                )) || (departure != null && scheduledDeparture != null && departure.isEqual(
+                    scheduledDeparture
+                ))
+            ) {
                 Status.ON_TIME
-            } else if ((arrival != null && scheduledArrival != null && arrival.isAfter(scheduledArrival)) || (departure != null && scheduledDeparture != null && departure.isEqual(scheduledDeparture))) {
+            } else if ((arrival != null && scheduledArrival != null && arrival.isAfter(
+                    scheduledArrival
+                )) || (departure != null && scheduledDeparture != null && departure.isEqual(
+                    scheduledDeparture
+                ))
+            ) {
                 Status.LATE
             } else {
                 Status.EARLY
@@ -52,12 +66,17 @@ data class Train(
             get() = departure?.isBefore(OffsetDateTime.now()) ?: false
     }
 
-    constructor(num: String) : this(num, "", emptyList(), "", 0.0, NEVER)
+    constructor(
+        num: String,
+        originDate: OffsetDateTime = OffsetDateTime.now().truncatedTo(ChronoUnit.DAYS)
+    ) : this(num, originDate, "", emptyList(), "", 0.0, NEVER)
 }
 
-fun Train.toEntity() = TrainWithStops(
+fun Train.toEntity() = TrainWithStopsEntity(
     TrainEntity(
+        id = id,
         num = num,
+        originDate = originDate.toDbString(),
         routeName = routeName,
         provider = provider,
         velocity = velocity,
@@ -71,6 +90,6 @@ fun Train.toEntity() = TrainWithStops(
             departure = it.departure.toDbString(),
             scheduledArrival = it.scheduledArrival.toDbString(),
             scheduledDeparture = it.scheduledDeparture.toDbString(),
-            trainOwnerNum = num
+            trainOwnerId = id
         )
     })

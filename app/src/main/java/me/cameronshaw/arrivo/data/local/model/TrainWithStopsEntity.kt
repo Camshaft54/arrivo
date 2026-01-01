@@ -5,18 +5,19 @@ import androidx.room.Relation
 import me.cameronshaw.arrivo.data.model.Train
 import me.cameronshaw.arrivo.data.util.toOffsetDateTime
 
-data class TrainWithStops(
+data class TrainWithStopsEntity(
     @Embedded val train: TrainEntity,
     @Relation(
-        parentColumn = "num",
-        entityColumn = "trainOwnerNum"
+        parentColumn = "id",
+        entityColumn = "trainOwnerId"
     )
     val stops: List<StopEntity>
 )
 
-fun TrainWithStops.toDomain(): Train =
+fun TrainWithStopsEntity.toDomain(): Train =
     Train(
         num = train.num,
+        originDate = train.originDate.toOffsetDateTime(),
         routeName = train.routeName,
         stops = stops.map { it.toDomain() },
         provider = train.provider,

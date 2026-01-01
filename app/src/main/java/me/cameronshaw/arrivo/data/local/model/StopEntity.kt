@@ -7,16 +7,16 @@ import me.cameronshaw.arrivo.data.model.Train
 import me.cameronshaw.arrivo.data.util.toOffsetDateTime
 
 @Entity(
-    primaryKeys = ["code", "trainOwnerNum"],
+    primaryKeys = ["code", "trainOwnerId"],
     foreignKeys = [
         ForeignKey(
             entity = TrainEntity::class,
-            parentColumns = ["num"],
-            childColumns = ["trainOwnerNum"],
+            parentColumns = ["id"],
+            childColumns = ["trainOwnerId"],
             onDelete = ForeignKey.CASCADE // Delete stops when train is deleted
         )
     ],
-    indices = [Index(value = ["trainOwnerNum"])]
+    indices = [Index(value = ["trainOwnerId"])]
 )
 data class StopEntity(
     val code: String,
@@ -25,7 +25,7 @@ data class StopEntity(
     val departure: String,
     val scheduledArrival: String,
     val scheduledDeparture: String,
-    val trainOwnerNum: String // Foreign key referencing the train this stop belongs to
+    val trainOwnerId: String, // Foreign key referencing the train this stop belongs to
 )
 
 fun StopEntity.toDomain(): Train.Stop =

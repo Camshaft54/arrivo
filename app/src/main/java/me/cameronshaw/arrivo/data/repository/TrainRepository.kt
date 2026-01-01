@@ -14,8 +14,11 @@ import me.cameronshaw.arrivo.data.amtraker.datasource.TrainAmtrakerDataSource
 import me.cameronshaw.arrivo.data.amtraker.dto.toDomain
 import me.cameronshaw.arrivo.data.local.datasource.TrainLocalDataSource
 import me.cameronshaw.arrivo.data.local.model.toDomain
+import me.cameronshaw.arrivo.data.model.TrackedTrain
 import me.cameronshaw.arrivo.data.model.Train
 import me.cameronshaw.arrivo.data.model.toEntity
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,13 +41,13 @@ interface TrainRepository {
     /**
      * Gets a continuously updated train from the local database.
      */
-    fun getTrain(num: String): Flow<Train>
+    fun getTrain(id: String): Flow<Train>
 
     /**
      * Gets a continuous stream of all trains from the local database.
      * The UI will observe this to get real-time updates.
      */
-    fun getTrackedTrains(): Flow<List<Train>>
+    fun getTrains(): Flow<List<Train>>
 
     /**
      * Adds a new train to the local database. Assumes the domain model
@@ -76,7 +79,8 @@ class TrainRepositoryImpl @Inject constructor(
     private val remoteDataSource: TrainAmtrakerDataSource,
     private val amtrakDataSource: AmtrakTrainDataSource,
     private val gson: Gson,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val trackedTrainRepository: TrackedTrainRepository
 ) : TrainRepository {
 
     private suspend fun useAmtrakApi() =
@@ -89,6 +93,8 @@ class TrainRepositoryImpl @Inject constructor(
     /**
      * Fetches a train from the remote API, converts it to a domain model,
      * then converts that to the necessary entities and saves it to the local database.
+     *
+     * TODO: deprecate this in favor of refreshAllTrains()
      */
     override suspend fun refreshTrain(num: String) {
         if (useAmtrakApi()) {
@@ -97,8 +103,7 @@ class TrainRepositoryImpl @Inject constructor(
         } else {
             val trainDto = remoteDataSource.getTrain(num)
             if (trainDto != null) {
-                val domainTrain =
-                    trainDto.toDomain()
+                val domainTrain = trainDto.toDomain()
                 val trainWithStopsEntity = domainTrain.toEntity()
                 localDataSource.updateTrainData(trainWithStopsEntity)
             }
@@ -109,28 +114,38 @@ class TrainRepositoryImpl @Inject constructor(
      * Fetches all trains from the remote API, converts to the necessary entities, and saves it to the local database.
      */
     override suspend fun refreshAllTrains() {
-        val trainsToRefresh = localDataSource.getAllTrains().first()
+        val trackedTrains = trackedTrainRepository.getTrackedTrains().first()
         if (useAmtrakApi()) {
             val allTrains = amtrakDataSource.getTrains().associate {
                 val domain = it.toTrainDomain(gson)
-                domain.num to domain
+                val trackedTrain = TrackedTrain(
+                    domain.num, domain.stops.firstOrNull()?.departure?.truncatedTo(
+                        ChronoUnit.DAYS
+                    )?.withOffsetSameLocal(ZoneOffset.UTC)
+                )
+                trackedTrain to domain
             }
+            localDataSource.deleteAllTrains()
             coroutineScope {
-                trainsToRefresh.map {
+                trackedTrains.map {
                     async {
-                        val domainTrain = allTrains[it.num]
-                        if (domainTrain != null) {
-                            val trainWithStopsEntity = domainTrain.toEntity()
-                            localDataSource.updateTrainData(trainWithStopsEntity)
-                        }
+                        allTrains
+                            .filter { (tracked, _) ->
+                                it.num == tracked.num && (it.originDate == null || it.originDate == tracked.originDate)
+                            }
+                            .forEach { (_, domainTrain) ->
+                                val trainWithStopsEntity = domainTrain.toEntity()
+                                localDataSource.updateTrainData(trainWithStopsEntity)
+                            }
                         Log.d("refreshAllTrains", "Refreshed train: ${it.num}")
                     }
                 }
             }.awaitAll()
         } else {
             // TODO: change this to use the trains endpoint instead of each specific one
+            // TODO: fix ignoring of different dates
             coroutineScope {
-                trainsToRefresh.map {
+                trackedTrains.map {
                     async {
                         refreshTrain(it.num)
                         Log.d("refreshAllTrains", "Refreshed train: ${it.num}")
@@ -143,15 +158,15 @@ class TrainRepositoryImpl @Inject constructor(
     /**
      * Gets a continuously updated train from the local database.
      */
-    override fun getTrain(num: String): Flow<Train> {
-        return localDataSource.getTrainWithStops(num).map { it.toDomain() }
+    override fun getTrain(id: String): Flow<Train> {
+        return localDataSource.getTrainWithStops(id).map { it.toDomain() }
     }
 
     /**
      * Retrieves a Flow of train data from the local data source and maps
      * the list of entities to a list of clean domain models.
      */
-    override fun getTrackedTrains(): Flow<List<Train>> {
+    override fun getTrains(): Flow<List<Train>> {
         return localDataSource.getAllTrainsWithStops().map { listOfTrainsWithStops ->
             listOfTrainsWithStops.map { it.toDomain() }
         }

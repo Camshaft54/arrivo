@@ -9,16 +9,25 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import me.cameronshaw.arrivo.data.model.TrackedTrain
 import me.cameronshaw.arrivo.data.model.Train
+import me.cameronshaw.arrivo.data.repository.TrackedTrainRepository
 import me.cameronshaw.arrivo.data.repository.TrainRepository
+import java.time.OffsetDateTime
 import javax.inject.Inject
 
 data class TrainUiState(
     val isRefreshing: Boolean = false,
-    val trains: List<Train> = emptyList(),
+    val trains: List<TrackedTrainWithInstance> = emptyList(),
     val errorMessage: String? = null
+)
+
+data class TrackedTrainWithInstance(
+    val trackedTrain: TrackedTrain,
+    val trains: List<Train>
 )
 
 /**
@@ -30,6 +39,7 @@ data class TrainUiState(
  */
 @HiltViewModel
 class TrainViewModel @Inject constructor(
+    private val trackedTrainRepository: TrackedTrainRepository,
     private val trainRepository: TrainRepository
 ) : ViewModel() {
     private val trainNumRegex = Regex("^[0-1]?[1-9][0-9]{0,2}$")
@@ -46,7 +56,7 @@ class TrainViewModel @Inject constructor(
 
     private fun loadTrains() {
         viewModelScope.launch {
-            trainRepository
+            trackedTrainRepository
                 .getTrackedTrains()
                 .catch { cause ->
                     Log.e("TrainViewModel", "Failed to load trains.", cause)
@@ -57,22 +67,31 @@ class TrainViewModel @Inject constructor(
                         )
                     }
                 }
+                .combine(trainRepository.getTrains()) {
+                    trackedTrains, trains ->
+                    trackedTrains.map { trackedTrain ->
+                        TrackedTrainWithInstance(
+                            trackedTrain = trackedTrain,
+                            trains = trains.filter { it.num == trackedTrain.num } // TODO only include trains with matching origin date too
+                        )
+                    }
+                }
                 .collect { trains ->
                     _uiState.update { it.copy(trains = trains, isRefreshing = false) }
                 }
         }
     }
 
-    fun addTrain(num: String): Boolean {
+    fun addTrain(num: String, date: OffsetDateTime? = null): Boolean {
         if (!isValidTrainNum(num)) return false
         val newTrain = Train(num)
         viewModelScope.launch {
             try {
-                trainRepository.addTrain(newTrain)
+                trackedTrainRepository.insertTrackedTrain(TrackedTrain(newTrain.num, date))
                 try {
                     trainRepository.refreshTrain(num)
                 } catch (_: Exception) {
-                    _eventFlow.emit("Failed to get train information. Please try again.")
+                    _eventFlow.emit("Failed to fetch information about train.")
                 }
             } catch (_: Exception) {
                 _uiState.update { it.copy(errorMessage = "Failed to add train.") }
@@ -81,10 +100,10 @@ class TrainViewModel @Inject constructor(
         return true
     }
 
-    fun deleteTrain(train: Train) {
+    fun deleteTrain(train: TrackedTrain) {
         viewModelScope.launch {
             try {
-                trainRepository.deleteTrain(train)
+                trackedTrainRepository.deleteTrackedTrain(train)
             } catch (_: Exception) {
                 _uiState.update { it.copy(errorMessage = "Failed to delete train.") }
             }

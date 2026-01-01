@@ -1,16 +1,21 @@
 package me.cameronshaw.arrivo.data.repository
 
+import android.util.Log
 import com.google.gson.Gson
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit4.MockKRule
+import io.mockk.mockkStatic
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import me.cameronshaw.arrivo.data.amtrak.datasource.AmtrakTrainDataSource
 import me.cameronshaw.arrivo.data.amtraker.datasource.TrainAmtrakerDataSource
 import me.cameronshaw.arrivo.data.local.datasource.TrainLocalDataSource
+import me.cameronshaw.arrivo.data.local.model.AppSettings
+import me.cameronshaw.arrivo.data.model.TrackedTrain
 import me.cameronshaw.arrivo.data.remote.api.expected1TrainDomain
 import me.cameronshaw.arrivo.data.remote.api.expected1TrainEntity
 import me.cameronshaw.arrivo.data.remote.api.expected727TrainDomain
@@ -20,8 +25,14 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 
-class TrainRepositoryImplTest {
+// TODO fix these tests once refreshAllTrains is fully switched to from refreshTrain()
+@RunWith(Parameterized::class)
+class TrainRepositoryImplTest(
+    private val dataProvider: String
+) {
 
     @get:Rule
     val mockkRule = MockKRule(this)
@@ -43,20 +54,56 @@ class TrainRepositoryImplTest {
 
     private lateinit var repository: TrainRepositoryImpl
 
+    @RelaxedMockK
+    private lateinit var trackedTrainRepository: TrackedTrainRepositoryImpl
+
+    companion object {
+        @JvmStatic
+        @Parameterized.Parameters(name = "Provider = {0}") // This names the test runs
+        fun providers(): Collection<Array<Any>> {
+            return listOf(
+                arrayOf("AMTRAK"),
+                arrayOf("AMTRAKER")
+            )
+        }
+    }
+
     @Before
     fun setUp() {
-        repository = TrainRepositoryImpl(localDataSource, remoteDataSource, amtrakDataSource, gson, settingsRepository)
+        mockkStatic(Log::class)
+
+        every { Log.d(any(), any()) } returns 0
+
+        repository = TrainRepositoryImpl(
+            localDataSource,
+            remoteDataSource,
+            amtrakDataSource,
+            gson,
+            settingsRepository,
+            trackedTrainRepository
+        )
+        val mockAppSettings = AppSettings(dataProvider = dataProvider)
+        coEvery { settingsRepository.appSettingsFlow() } returns flowOf(mockAppSettings)
     }
 
     @Test
     fun `refreshTrain WHEN remote source has data THEN it is saved to local source`() = runTest {
         // Arrange
-        val fakeTrainId = "727"
+        val fakeTrainId = "727 (2025-06-29T00:00:00-07:00)"
         val fakeDto = expected727TrainDto
         coEvery { remoteDataSource.getTrain(fakeTrainId) } returns fakeDto
 
+        coEvery { trackedTrainRepository.getTrackedTrains() } returns flowOf(
+            listOf(
+                TrackedTrain(
+                    num = fakeTrainId,
+                    originDate = null
+                )
+            )
+        )
+
         // Act
-        repository.refreshTrain(fakeTrainId)
+        repository.refreshAllTrains(fakeTrainId)
 
         // Assert
         coVerify(exactly = 1) { remoteDataSource.getTrain(fakeTrainId) }
@@ -68,6 +115,8 @@ class TrainRepositoryImplTest {
         // Arrange
         val fakeTrainId = "456"
         coEvery { remoteDataSource.getTrain(fakeTrainId) } returns null
+
+        coEvery { trackedTrainRepository.getTrackedTrains() } returns flowOf(emptyList())
 
         // Act
         repository.refreshTrain(fakeTrainId)
@@ -90,7 +139,7 @@ class TrainRepositoryImplTest {
         coEvery { localDataSource.getAllTrainsWithStops() } returns flowOf(fakeTrainEntities)
 
         // Act
-        val resultFlow = repository.getTrackedTrains()
+        val resultFlow = repository.getTrains()
 
         // Assert
         assertEquals(expectedTrains, resultFlow.first())

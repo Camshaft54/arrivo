@@ -64,6 +64,9 @@ fun ScheduleDetailStopItem(
         Spacer(modifier = Modifier.width(16.dp))
 
         // Right column for the station details
+        val arrivalDescription = stop.determineArrivalStopFullDescription()
+        val departureDescription = stop.determineDepartureStopFullDescription()
+
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -75,16 +78,20 @@ fun ScheduleDetailStopItem(
                 color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = stop.determineArrivalStopFullDescription(),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = stop.determineDepartureStopFullDescription(),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            if (arrivalDescription != null) {
+                Text(
+                    text = arrivalDescription,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            if (departureDescription != null) {
+                Text(
+                    text = departureDescription,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
@@ -164,9 +171,9 @@ private fun TrainStopItemPreview() {
     val stop1 = Train.Stop(
         code = "OKJ",
         name = "Oakland - Jack London",
-        arrival = OffsetDateTime.now(),
+        arrival = null,
         departure = OffsetDateTime.now().plusMinutes(2),
-        scheduledArrival = OffsetDateTime.now(),
+        scheduledArrival = null,
         scheduledDeparture = OffsetDateTime.now().plusMinutes(2)
     )
     val stop2 = Train.Stop(
@@ -181,9 +188,9 @@ private fun TrainStopItemPreview() {
         code = "GAC",
         name = "Santa Clara - Great America",
         arrival = null,
-        departure = OffsetDateTime.now().plusHours(1).plusMinutes(2),
+        departure = null,
         scheduledArrival = OffsetDateTime.now().plusHours(1),
-        scheduledDeparture = OffsetDateTime.now().plusHours(1).plusMinutes(2)
+        scheduledDeparture = null
     )
 
     MaterialTheme { // Replace with your app's theme

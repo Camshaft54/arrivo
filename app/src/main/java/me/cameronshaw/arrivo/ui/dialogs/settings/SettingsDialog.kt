@@ -12,15 +12,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -56,6 +61,26 @@ fun SettingsDialogContent(
     onProviderChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showProviderHelp by remember { mutableStateOf(false) }
+
+    if (showProviderHelp) {
+        AlertDialog(
+            onDismissRequest = { showProviderHelp = false },
+            title = { Text(stringResource(R.string.provider_help)) },
+            text = {
+                Column {
+                    Text(stringResource(R.string.provider_help_amtrak_description))
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(stringResource(R.string.provider_help_amtraker_description))
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showProviderHelp = false }) {
+                    Text(stringResource(R.string.got_it))
+                }
+            })
+    }
+
     Dialog(
         onDismissRequest = onDismissRequest,
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -133,6 +158,9 @@ fun SettingsDialogContent(
                                     else -> "AMTRAK"
                                 }
                             )
+                        },
+                        onHelpClick = {
+                            showProviderHelp = true
                         })
                 }
             }

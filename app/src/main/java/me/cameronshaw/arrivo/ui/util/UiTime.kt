@@ -59,18 +59,22 @@ fun Train.Stop.determineArrivalStopDescription(): String {
     }
 }
 
-fun Train.Stop.determineDepartureStopFullDescription(): String {
+fun Train.Stop.determineDepartureStopFullDescription(): String? {
     return if (departure != null) {
         "${determineDepartureStopDescription()} ${departure.toUiString()}"
+    } else if (scheduledDeparture != null) {
+        "${determineDepartureStopDescription()} ${scheduledDeparture.toUiString()}"
     } else {
-        "${determineDepartureStopDescription()} ${scheduledDeparture?.toUiString() ?: "--:--"}"
+        null
     }
 }
 
-fun Train.Stop.determineArrivalStopFullDescription(): String {
+fun Train.Stop.determineArrivalStopFullDescription(): String? {
     return if (arrival != null) {
         "${determineArrivalStopDescription()} ${arrival.toUiString()}"
+    } else if (scheduledArrival != null) {
+        "${determineArrivalStopDescription()} ${scheduledArrival.toUiString()}"
     } else {
-        "${determineArrivalStopDescription()} ${scheduledArrival?.toUiString() ?: "--:--"}"
+        null
     }
 }

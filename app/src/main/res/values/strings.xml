@@ -11,4 +11,8 @@
     <string name="no_stations_tracked">No stations are being tracked.\nTap the \'+\' button to add a new station.</string>
     <string name="choose_provider">Choose your data provider</string>
     <string name="widget_name">Arrivo Schedule</string>
+    <string name="provider_help_amtrak_description">Amtrak (Default): API used by the official Amtrak Track a Train Map.</string>
+    <string name="provider_help_amtraker_description">Amtraker: Fast, community-run API. Consider using this if the Amtrak API is failing.</string>
+    <string name="provider_help">About Providers</string>
+    <string name="got_it">Got it</string>
 </resources>

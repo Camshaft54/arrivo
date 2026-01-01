@@ -1,7 +1,7 @@
 package me.cameronshaw.arrivo.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.zip
+import kotlinx.coroutines.flow.combine
 import me.cameronshaw.arrivo.data.model.ScheduleDatum
 import me.cameronshaw.arrivo.data.model.Station
 import me.cameronshaw.arrivo.data.model.Train
@@ -29,7 +29,7 @@ class ScheduleRepositoryImpl @Inject constructor(
     }
 
     override fun getScheduleData(): Flow<List<ScheduleDatum>> = trainRepository.getTrains()
-        .zip(stationRepository.getStations()) { trains: List<Train>, stations: List<Station> ->
+        .combine(stationRepository.getStations()) { trains: List<Train>, stations: List<Station> ->
             val stationCodes = stations.map { station -> station.code }
             trains.map { train ->
                 val stops = train.stops.filter {

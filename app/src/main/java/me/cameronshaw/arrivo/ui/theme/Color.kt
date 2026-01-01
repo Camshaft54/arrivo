@@ -3,7 +3,7 @@ import androidx.compose.ui.graphics.Color
 
 val StatusGreen = Color(0xFF34A853)
 val StatusRed = Color(0xFFE53935)
-val StatusAmber = Color(0xFFF57C00)
+val StatusBlue = Color(0xFF1E88E5)
 
 val primaryLight = Color(0xFF66558F)
 val onPrimaryLight = Color(0xFFFFFFFF)

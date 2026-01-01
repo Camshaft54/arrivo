@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.cameronshaw.arrivo.data.model.Status
 import me.cameronshaw.arrivo.data.model.Train
-import me.cameronshaw.arrivo.ui.theme.StatusAmber
+import me.cameronshaw.arrivo.ui.theme.StatusBlue
 import me.cameronshaw.arrivo.ui.theme.StatusGreen
 import me.cameronshaw.arrivo.ui.theme.StatusRed
 import me.cameronshaw.arrivo.ui.util.determineArrivalStopDescription
@@ -121,7 +121,7 @@ private fun StationInfoColumn(
     time: OffsetDateTime?
 ) {
     val statusColor = when (status) {
-        Status.EARLY -> StatusAmber
+        Status.EARLY -> StatusBlue
         Status.ON_TIME -> StatusGreen
         Status.LATE -> StatusRed
         Status.UNKNOWN -> MaterialTheme.colorScheme.onSurfaceVariant

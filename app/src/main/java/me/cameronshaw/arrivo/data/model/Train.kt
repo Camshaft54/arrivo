@@ -10,6 +10,9 @@ import me.cameronshaw.arrivo.data.util.toDbString
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 
+val LATE_THRESHOLD_SECONDS = 179L
+val EARLY_THRESHOLD_SECONDS = 119L
+
 @Serializable
 data class Train(
     val num: String,
@@ -43,24 +46,11 @@ data class Train(
         @Serializable(with = OffsetDateTimeSerializer::class) val scheduledDeparture: OffsetDateTime?,
     ) {
         val status: Status
-            get() = if ((arrival == null || scheduledArrival == null) && (departure == null || scheduledDeparture == null)) {
-                Status.UNKNOWN
-            } else if ((arrival != null && scheduledArrival != null && arrival.isEqual(
-                    scheduledArrival
-                )) || (departure != null && scheduledDeparture != null && departure.isEqual(
-                    scheduledDeparture
-                ))
-            ) {
-                Status.ON_TIME
-            } else if ((arrival != null && scheduledArrival != null && arrival.isAfter(
-                    scheduledArrival
-                )) || (departure != null && scheduledDeparture != null && departure.isEqual(
-                    scheduledDeparture
-                ))
-            ) {
-                Status.LATE
-            } else {
-                Status.EARLY
+            get() {
+                val arrivalStatus = computeStatus(scheduledArrival, arrival)
+                val departureStatus = computeStatus(scheduledDeparture, departure)
+
+                return if (arrivalStatus != Status.UNKNOWN) arrivalStatus else departureStatus
             }
 
         val arrivedAt: Boolean
@@ -96,3 +86,14 @@ fun Train.toEntity() = TrainWithStopsEntity(
             trainOwnerId = id
         )
     })
+
+private fun computeStatus(scheduled: OffsetDateTime?, actual: OffsetDateTime?): Status =
+    if (actual == null || scheduled == null) {
+        Status.UNKNOWN
+    } else if (scheduled.minus(EARLY_THRESHOLD_SECONDS, ChronoUnit.SECONDS).isAfter(actual)) {
+        Status.EARLY
+    } else if (scheduled.plus(LATE_THRESHOLD_SECONDS, ChronoUnit.SECONDS).isBefore(actual)) {
+        Status.LATE
+    } else {
+        Status.ON_TIME
+    }

@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -8,6 +9,12 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.room)
+}
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { localProperties.load(it) }
 }
 
 android {
@@ -26,10 +33,19 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file(project.findProperty("android.injected.signing.store.file") ?: "debug.keystore")
-            storePassword = project.findProperty("android.injected.signing.store.password") as String?
-            keyAlias = project.findProperty("android.injected.signing.key.alias") as String?
-            keyPassword = project.findProperty("android.injected.signing.key.password") as String?
+            val keystorePath = localProperties.getProperty("RELEASE_STORE_FILE")
+                ?: project.findProperty("RELEASE_STORE_FILE")?.toString()
+                ?: "release.jks"
+            storeFile = file(keystorePath)
+
+            storePassword = localProperties.getProperty("RELEASE_STORE_PASSWORD")
+                ?: project.findProperty("RELEASE_STORE_PASSWORD")?.toString()
+
+            keyAlias = localProperties.getProperty("RELEASE_KEY_ALIAS")
+                ?: project.findProperty("RELEASE_KEY_ALIAS")?.toString()
+
+            keyPassword = localProperties.getProperty("RELEASE_KEY_PASSWORD")
+                ?: project.findProperty("RELEASE_KEY_PASSWORD")?.toString()
         }
     }
 

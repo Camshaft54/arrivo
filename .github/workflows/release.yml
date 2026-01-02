@@ -22,13 +22,12 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Decode Keystore
-        run: |
-          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 --decode > app/release.jks
+        run: echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 --decode > app/release.jks
 
-      - name: Build and Sign Release AAB
+      - name: Build Release Bundle
         run: |
           ./gradlew bundleRelease \
-            -Pandroid.injected.signing.store.file=release.jks \
-            -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} \
-            -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
-            -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+            -PRELEASE_STORE_FILE=release.jks \
+            -PRELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }} \
+            -PRELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }} \
+            -PRELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}

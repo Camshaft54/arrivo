@@ -1,13 +1,13 @@
 package me.cameronshaw.arrivo.data.remote.api
 
 import me.cameronshaw.arrivo.data.amtraker.dto.TrainDto
+import me.cameronshaw.arrivo.data.local.model.TrainWithStopsEntity
 import me.cameronshaw.arrivo.data.model.Train
 import me.cameronshaw.arrivo.data.model.toEntity
 import me.cameronshaw.arrivo.data.util.toOffsetDateTime
 
-val expected727TrainDomain = Train(
+val expected727TrainDomain: Train = Train(
     num = "727",
-    originDate = "2025-06-29T00:00:00-07:00".toOffsetDateTime(),
     routeName = "Capitol Corridor",
     stops = listOf(
         Train.Stop(
@@ -56,9 +56,9 @@ val expected727TrainDomain = Train(
     lastUpdated = "2025-06-29T10:13:26-07:00".toOffsetDateTime()!!
 )
 
-val expected727TrainEntity = expected727TrainDomain.toEntity()
+val expected727TrainEntity: TrainWithStopsEntity = expected727TrainDomain.toEntity()
 
-val expected727TrainDto = TrainDto(
+val expected727TrainDto: TrainDto = TrainDto(
     routeName = "Capitol Corridor",
     trainNum = "727",
     trainNumRaw = "727",
@@ -166,9 +166,8 @@ val expected727TrainDto = TrainDto(
     )
 )
 
-val expected1TrainDomain = Train(
+val expected1TrainDomain: Train = Train(
     num = "1",
-    originDate = "2025-06-28T00:00:00-05:00".toOffsetDateTime(),
     routeName = "Sunset Limited",
     stops = listOf(
         Train.Stop(
@@ -193,9 +192,9 @@ val expected1TrainDomain = Train(
     lastUpdated = "2025-06-29T10:13:26-07:00".toOffsetDateTime()!!
 )
 
-val expected1TrainEntity = expected1TrainDomain.toEntity()
+val expected1TrainEntity: TrainWithStopsEntity = expected1TrainDomain.toEntity()
 
-val expected1TrainDto = TrainDto(
+val expected1TrainDto: TrainDto = TrainDto(
     routeName = "Sunset Limited",
     trainNum = "1",
     trainNumRaw = "1",
@@ -318,9 +317,8 @@ val expected546TrainDto = TrainDto(
     )
 )
 
-val expected546TrainDomain = Train(
+val expected546TrainDomain: Train = Train(
     num = "546",
-    originDate = "2025-07-15T00:00:00-07:00".toOffsetDateTime(),
     routeName = "Capitol Corridor",
     stops = listOf(
         Train.Stop(

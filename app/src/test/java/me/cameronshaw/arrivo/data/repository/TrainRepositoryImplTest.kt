@@ -28,7 +28,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
-// TODO fix these tests once refreshAllTrains is fully switched to from refreshTrain()
+// TODO fix these tests once refreshAllTrains is fully switched away from refreshTrain()
 @RunWith(Parameterized::class)
 class TrainRepositoryImplTest(
     private val dataProvider: String

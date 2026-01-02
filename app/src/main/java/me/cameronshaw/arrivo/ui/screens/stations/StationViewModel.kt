@@ -27,7 +27,7 @@ data class StationUiState(
 class StationViewModel @Inject constructor(
     private val stationRepository: StationRepository
 ) : ViewModel() {
-    private val stationCodeRegex = Regex("^[a-zA-Z]{3}\$")
+    private val stationCodeRegex = Regex("^[a-zA-Z]{3}$")
 
     private val _eventFlow = MutableSharedFlow<String>()
     val eventFlow = _eventFlow.asSharedFlow()

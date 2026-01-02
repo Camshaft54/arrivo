@@ -72,7 +72,7 @@ class TrainViewModel @Inject constructor(
                     trackedTrains.map { trackedTrain ->
                         TrackedTrainWithInstance(
                             trackedTrain = trackedTrain,
-                            trains = trains.filter { it.num == trackedTrain.num } // TODO only include trains with matching origin date too
+                            trains = trains.filter { it.num == trackedTrain.num && (trackedTrain.originDate == null || it.originDate == trackedTrain.originDate) }
                         )
                     }
                 }

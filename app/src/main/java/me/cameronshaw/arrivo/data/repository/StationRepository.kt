@@ -113,7 +113,6 @@ class StationRepositoryImpl @Inject constructor(
                 }
             }.awaitAll()
         } else {
-            // TODO: change this to use the stations endpoint instead of each specific one
             coroutineScope {
                 stationsToRefresh.map {
                     async {

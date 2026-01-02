@@ -1,6 +1,5 @@
 package me.cameronshaw.arrivo.ui.screens.schedule.components
 
-import ScheduleCard
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items

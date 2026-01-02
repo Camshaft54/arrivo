@@ -10,8 +10,8 @@ import me.cameronshaw.arrivo.data.util.toDbString
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 
-val LATE_THRESHOLD_SECONDS = 179L
-val EARLY_THRESHOLD_SECONDS = 119L
+const val LATE_THRESHOLD_SECONDS = 179L
+const val EARLY_THRESHOLD_SECONDS = 119L
 
 @Serializable
 data class Train(

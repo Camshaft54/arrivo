@@ -1,15 +1,20 @@
 package me.cameronshaw.arrivo.data.repository
 
+import android.util.Log
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit4.MockKRule
+import io.mockk.mockkStatic
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import me.cameronshaw.arrivo.data.amtrak.datasource.AmtrakStationDataSource
 import me.cameronshaw.arrivo.data.amtraker.datasource.StationAmtrakerDataSource
 import me.cameronshaw.arrivo.data.local.datasource.StationLocalDataSource
+import me.cameronshaw.arrivo.data.local.model.AppSettings
+import me.cameronshaw.arrivo.data.remote.api.expectedAmtrakApiStations
 import me.cameronshaw.arrivo.data.remote.api.expectedGACStationDomain
 import me.cameronshaw.arrivo.data.remote.api.expectedGACStationDto
 import me.cameronshaw.arrivo.data.remote.api.expectedGACStationEntity
@@ -19,15 +24,17 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 
+@RunWith(Parameterized::class)
+class StationRepositoryImplTest(
+    private val dataProvider: String
+) {
 
-class StationRepositoryImplTest {
-
-    // This rule automatically creates mock instances for annotated properties.
     @get:Rule
     val mockkRule = MockKRule(this)
 
-    // Using @RelaxedMockK to avoid having to stub every single function call.
     @RelaxedMockK
     private lateinit var localDataSource: StationLocalDataSource
 
@@ -40,45 +47,115 @@ class StationRepositoryImplTest {
     @RelaxedMockK
     private lateinit var settingsRepository: SettingsRepositoryImpl
 
-    // The class we are actually testing.
     private lateinit var repository: StationRepositoryImpl
+
+    companion object {
+        @JvmStatic
+        @Parameterized.Parameters(name = "Provider = {0}")
+        fun providers(): Collection<Array<Any>> {
+            return listOf(
+                arrayOf("AMTRAK"),
+                arrayOf("AMTRAKER")
+            )
+        }
+    }
 
     @Before
     fun setUp() {
-        // Create a new instance of the repository before each test,
-        // injecting the mock data sources.
+        mockkStatic(Log::class)
+
+        every { Log.d(any(), any()) } returns 0
+
         repository = StationRepositoryImpl(localDataSource, remoteDataSource, amtrakDataSource, settingsRepository)
+        // Mock the settings repository to return the provider for the current test run
+        val mockAppSettings = AppSettings(dataProvider = dataProvider)
+        coEvery { settingsRepository.appSettingsFlow() } returns flowOf(mockAppSettings)
     }
 
     @Test
     fun `refreshStation WHEN remote source has data THEN it is saved to local source`() = runTest {
-        // Arrange: Define what our fakes should do.
+        // Arrange
         val fakeStationId = "GAC"
         val fakeDto = expectedGACStationDto
+        // For AMTRAK provider, refreshStation triggers refreshAllStations, so we need to mock the list
+        coEvery { localDataSource.getAllStations() } returns flowOf(listOf(expectedGACStationEntity))
+        coEvery { amtrakDataSource.getStations() } returns expectedAmtrakApiStations
         coEvery { remoteDataSource.getStation(fakeStationId) } returns fakeDto
 
-        // Act: Call the method we are testing.
+        // Act
         repository.refreshStation(fakeStationId)
 
-        // Assert: Verify that the correct methods were called on our mocks.
-        coVerify(exactly = 1) { remoteDataSource.getStation(fakeStationId) }
-        coVerify(exactly = 1) {
-            localDataSource.updateStation(
-                match { it.code == fakeDto.code && it.name == fakeDto.name }
-            )
+        // Assert
+        if (dataProvider == "AMTRAKER") {
+            coVerify(exactly = 1) { remoteDataSource.getStation(fakeStationId) }
+            coVerify(exactly = 0) { amtrakDataSource.getStations() }
+            coVerify(exactly = 1) { localDataSource.updateStation(any()) }
+        } else { // AMTRAK
+            coVerify(exactly = 0) { remoteDataSource.getStation(any()) }
+            coVerify(exactly = 1) { amtrakDataSource.getStations() }
+            coVerify(exactly = 1) { localDataSource.updateStation(any()) }
         }
     }
 
     @Test
     fun `refreshStation WHEN remote source is null THEN local source is NOT updated`() = runTest {
-        // Arrange: Define the failure case where the remote source finds nothing.
+        // Arrange
         val fakeStationId = "XYZ"
         coEvery { remoteDataSource.getStation(fakeStationId) } returns null
+        // For AMTRAK provider, ensure getStations returns an empty list for this test
+        coEvery { amtrakDataSource.getStations() } returns expectedAmtrakApiStations
+        coEvery { localDataSource.getAllStations() } returns flowOf(listOf(expectedGACStationEntity.copy(code = fakeStationId)))
+
 
         // Act
         repository.refreshStation(fakeStationId)
 
-        // Assert: Verify that the local data source was never called.
+        // Assert
+        if (dataProvider == "AMTRAKER") {
+            coVerify(exactly = 1) { remoteDataSource.getStation(fakeStationId) }
+        } else { // AMTRAK
+            coVerify(exactly = 1) { amtrakDataSource.getStations() }
+        }
+        // In both cases, no station should be updated
+        coVerify(exactly = 0) { localDataSource.updateStation(any()) }
+    }
+
+    @Test
+    fun `refreshAllStations WHEN local stations exist THEN remote sources are called`() = runTest {
+        // Arrange
+        val fakeStationId = "GAC"
+        val fakeDto = expectedGACStationDto
+        val fakeEntity = expectedGACStationEntity
+        coEvery { localDataSource.getAllStations() } returns flowOf(listOf(fakeEntity))
+        coEvery { amtrakDataSource.getStations() } returns expectedAmtrakApiStations
+        coEvery { remoteDataSource.getStation(fakeStationId) } returns fakeDto
+
+        // Act
+        repository.refreshAllStations()
+
+        // Assert
+        if (dataProvider == "AMTRAKER") {
+            coVerify(exactly = 1) { remoteDataSource.getStation(fakeStationId) }
+            coVerify(exactly = 0) { amtrakDataSource.getStations() }
+        } else {
+            coVerify(exactly = 0) { remoteDataSource.getStation(any()) }
+            coVerify(exactly = 1) { amtrakDataSource.getStations() }
+        }
+        coVerify(exactly = 1) { localDataSource.updateStation(any()) }
+    }
+
+    @Test
+    fun `refreshAllStations WHEN no local stations THEN remote sources are NOT called`() = runTest {
+        // Arrange
+        coEvery { localDataSource.getAllStations() } returns flowOf(emptyList())
+
+        // Act
+        repository.refreshAllStations()
+
+        // Assert
+        coVerify(exactly = 1) { localDataSource.getAllStations() }
+        coVerify(exactly = 0) { remoteDataSource.getStation(any()) }
+        coVerify(exactly = 0) { amtrakDataSource.getStations() }
         coVerify(exactly = 0) { localDataSource.updateStation(any()) }
     }
 
@@ -98,10 +175,8 @@ class StationRepositoryImplTest {
         // Act
         val resultFlow = repository.getStations()
 
-        // Assert: Use Turbine library to easily test Flow emissions.
-        kotlinx.coroutines.test.runTest {
-            assertEquals(expectedStations, resultFlow.first())
-        }
+        // Assert
+        assertEquals(expectedStations, resultFlow.first())
     }
 
     @Test

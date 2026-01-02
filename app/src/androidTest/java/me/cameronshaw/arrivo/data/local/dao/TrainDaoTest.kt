@@ -47,7 +47,7 @@ class TrainDaoTest {
     }
 
     private fun createTestTrain(id: String, routeName: String) =
-        TrainEntity(id, routeName, "Amtrak", 30.0, OffsetDateTime.now().toDbString())
+        TrainEntity(id, id, OffsetDateTime.now().toDbString(), routeName, "Amtrak", 30.0, OffsetDateTime.now().toDbString())
 
     private fun TrainEntity.createTestStop(
         code: String,
@@ -63,7 +63,7 @@ class TrainDaoTest {
         departure.toDbString(),
         scheduledArrival.toDbString(),
         scheduledDeparture.toDbString(),
-        num
+        id
     )
 
     private val normalTrain1 = createTestTrain("101", "Test Route")
@@ -114,7 +114,7 @@ class TrainDaoTest {
     fun testInsertTrain_noRoute() = runTest {
         trainDao.insertOrReplaceTrain(normalTrain1.copy(routeName = ""))
         trainDao.insertOrReplaceStops(normalStops1)
-        val withStops = trainDao.getTrainWithStops(normalTrain1.num)
+        val withStops = trainDao.getTrainWithStops(normalTrain1.id)
         assertThat(
             withStops.first(),
             equalTo(normalTrainWithStops1.copy(train = normalTrain1.copy(routeName = "")))
@@ -127,9 +127,9 @@ class TrainDaoTest {
         trainDao.insertOrReplaceStops(normalStops1)
         trainDao.insertOrReplaceTrain(normalTrain2)
         trainDao.insertOrReplaceStops(normalStops2)
-        val withStops1 = trainDao.getTrainWithStops(normalTrain1.num)
+        val withStops1 = trainDao.getTrainWithStops(normalTrain1.id)
         assertThat(withStops1.first(), equalTo(normalTrainWithStops1))
-        val withStops2 = trainDao.getTrainWithStops(normalTrain2.num)
+        val withStops2 = trainDao.getTrainWithStops(normalTrain2.id)
         assertThat(withStops2.first(), equalTo(normalTrainWithStops2))
     }
 
@@ -139,14 +139,14 @@ class TrainDaoTest {
         trainDao.insertOrReplaceTrain(duplicateNumTrain)
         trainDao.insertOrReplaceTrain(normalTrain1)
         trainDao.insertOrReplaceStops(normalStops1)
-        val withStops1 = trainDao.getTrainWithStops(normalTrain1.num)
+        val withStops1 = trainDao.getTrainWithStops(normalTrain1.id)
         assertThat(withStops1.first(), equalTo(normalTrainWithStops1))
     }
 
     @Test
     fun testInsertTrain_withoutStops() = runTest {
         trainDao.insertOrReplaceTrain(normalTrain1)
-        val withStops1 = trainDao.getTrainWithStops(normalTrain1.num)
+        val withStops1 = trainDao.getTrainWithStops(normalTrain1.id)
         assertThat(withStops1.first(), equalTo(TrainWithStopsEntity(normalTrain1, emptyList())))
     }
 
@@ -159,7 +159,7 @@ class TrainDaoTest {
     fun deleteStopsFromTrain_trainWithoutStops() = runTest {
         trainDao.insertOrReplaceTrain(normalTrain1)
         trainDao.deleteStopsForTrain(normalTrain1.id)
-        val withStops1 = trainDao.getTrainWithStops(normalTrain1.num)
+        val withStops1 = trainDao.getTrainWithStops(normalTrain1.id)
         assertThat(withStops1.first(), equalTo(TrainWithStopsEntity(normalTrain1, emptyList())))
     }
 
@@ -170,14 +170,14 @@ class TrainDaoTest {
         trainDao.insertOrReplaceTrain(normalTrain2)
         trainDao.insertOrReplaceStops(normalStops2)
         trainDao.deleteStopsForTrain(normalTrain1.id)
-        val withStops1 = trainDao.getTrainWithStops(normalTrain1.num)
+        val withStops1 = trainDao.getTrainWithStops(normalTrain1.id)
         assertThat(withStops1.first(), equalTo(TrainWithStopsEntity(normalTrain1, emptyList())))
 
-        var withStops2 = trainDao.getTrainWithStops(normalTrain2.num)
+        var withStops2 = trainDao.getTrainWithStops(normalTrain2.id)
         assertThat(withStops2.first(), equalTo(normalTrainWithStops2))
 
         trainDao.deleteStopsForTrain(normalTrain2.id)
-        withStops2 = trainDao.getTrainWithStops(normalTrain2.num)
+        withStops2 = trainDao.getTrainWithStops(normalTrain2.id)
         assertThat(withStops2.first(), equalTo(TrainWithStopsEntity(normalTrain2, emptyList())))
     }
 
@@ -186,7 +186,7 @@ class TrainDaoTest {
         trainDao.insertOrReplaceTrain(normalTrain1)
         val updatedTrain = normalTrain1.copy(routeName = "Updated Route")
         trainDao.updateTrain(updatedTrain)
-        val withStops = trainDao.getTrainWithStops(normalTrain1.num)
+        val withStops = trainDao.getTrainWithStops(normalTrain1.id)
         assertThat(withStops.first().train, equalTo(updatedTrain))
     }
 
@@ -197,7 +197,7 @@ class TrainDaoTest {
         trainDao.deleteTrain(normalTrain1)
         val allTrains = trainDao.getAllTrains().first()
         assertThat(allTrains, empty())
-        val stops = trainDao.getStopsByTrain(normalTrain1.num).first()
+        val stops = trainDao.getStopsByTrain(normalTrain1.id).first()
         assertThat(stops, empty())
     }
 
@@ -233,7 +233,7 @@ class TrainDaoTest {
             )
         )
         trainDao.updateTrainData(TrainWithStopsEntity(normalTrain1, newStops))
-        val withStops = trainDao.getTrainWithStops(normalTrain1.num).first()
+        val withStops = trainDao.getTrainWithStops(normalTrain1.id).first()
         assertThat(withStops.stops, equalTo(newStops))
     }
 
@@ -242,7 +242,7 @@ class TrainDaoTest {
         trainDao.insertOrReplaceTrain(normalTrain1)
         trainDao.insertOrReplaceTrain(normalTrain2)
         val allTrains = trainDao.getAllTrains().first()
-        assertThat(allTrains.sortedBy { it.num }, equalTo(listOf(normalTrain1, normalTrain2)))
+        assertThat(allTrains.sortedBy { it.num }, equalTo(listOf(normalTrain1, normalTrain2).sortedBy { it.num }))
     }
 
     @Test
@@ -254,7 +254,7 @@ class TrainDaoTest {
         val allTrainsWithStops = trainDao.getAllTrainsWithStops().first()
         assertThat(
             allTrainsWithStops.sortedBy { it.train.num },
-            equalTo(listOf(normalTrainWithStops1, normalTrainWithStops2))
+            equalTo(listOf(normalTrainWithStops1, normalTrainWithStops2).sortedBy { it.train.num })
         )
     }
 }

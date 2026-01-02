@@ -97,6 +97,11 @@ class StationRepositoryImpl @Inject constructor(
      */
     override suspend fun refreshAllStations() {
         val stationsToRefresh = localDataSource.getAllStations().first()
+
+        if (stationsToRefresh.isEmpty()) {
+            return
+        }
+
         if (useAmtrakApi()) {
             val allStations = amtrakDataSource.getStations().associate {
                 it.code to it.toDomain()

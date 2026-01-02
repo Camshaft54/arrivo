@@ -1,5 +1,6 @@
 package me.cameronshaw.arrivo.data.remote.api
 
+import me.cameronshaw.arrivo.data.amtrak.dto.AmtrakStationProperties
 import me.cameronshaw.arrivo.data.amtraker.dto.StationDto
 import me.cameronshaw.arrivo.data.local.model.StationEntity
 import me.cameronshaw.arrivo.data.model.Station
@@ -70,5 +71,52 @@ val expectedSJCStationDto = StationDto(
         "736-29",
         "741-29",
         "743-29"
+    )
+)
+
+val expectedAmtrakApiStations: List<AmtrakStationProperties> = listOf(
+    AmtrakStationProperties(
+        name = "Albuquerque, NM",
+        code = "ABQ",
+        lat = 35.082061,
+        lon = -106.647975,
+        address1 = "320 1st Street SW",
+        address2 = " ",
+        city = "Albuquerque",
+        state = "NM",
+        zip = "87102"
+    ),
+    AmtrakStationProperties(
+        name = "Antioch-Pittsburg, CA",
+        code = "ACA",
+        lat = 38.0177,
+        lon = -121.816024,
+        address1 = "100 I Street",
+        address2 = " ",
+        city = "Antioch",
+        state = "CA",
+        zip = "94509"
+    ),
+    AmtrakStationProperties(
+        name = "Santa Clara-Great America, CA",
+        code = "GAC",
+        lat = 37.405321,
+        lon = -121.977457,
+        address1 = "5099 Stars and Stripes Drive",
+        address2 = "",
+        city = "Santa Clara",
+        state = "CA",
+        zip = "95054"
+    ),
+    AmtrakStationProperties(
+        name = "Arcadia, MO",
+        code = "ACD",
+        lat = 37.592161,
+        lon = -90.624403,
+        address1 = "13700 Highway 21",
+        address2 = null,
+        city = "Arcadia",
+        state = "MO",
+        zip = "63621"
     )
 )

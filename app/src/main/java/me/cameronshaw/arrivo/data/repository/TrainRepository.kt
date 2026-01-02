@@ -84,6 +84,10 @@ class TrainRepositoryImpl @Inject constructor(
     override suspend fun refreshAllTrains() {
         val trackedTrains = trackedTrainRepository.getTrackedTrains().first()
 
+        if (trackedTrains.isEmpty()) {
+            return
+        }
+
         val allRemoteTrains = if (useAmtrakApi()) {
             amtrakDataSource.getTrains().map { it.toTrainDomain(gson) }
         } else {

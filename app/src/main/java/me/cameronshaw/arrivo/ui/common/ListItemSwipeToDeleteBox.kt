@@ -14,10 +14,11 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.filter
 
 @Composable
 fun <T> ListItemSwipeToDeleteBox(
@@ -25,10 +26,16 @@ fun <T> ListItemSwipeToDeleteBox(
 ) {
     val dismissState = rememberSwipeToDismissBoxState(positionalThreshold = { it * 0.2F })
 
-    LaunchedEffect(dismissState.currentValue) {
-        if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
-            onSwipeToDelete(item)
+    LaunchedEffect(Unit) {
+        if (dismissState.currentValue != SwipeToDismissBoxValue.Settled) {
+            dismissState.snapTo(SwipeToDismissBoxValue.Settled)
         }
+
+        snapshotFlow { dismissState.currentValue }
+            .filter { it == SwipeToDismissBoxValue.EndToStart }
+            .collect {
+                onSwipeToDelete(item)
+            }
     }
 
     SwipeToDismissBox(
@@ -36,28 +43,22 @@ fun <T> ListItemSwipeToDeleteBox(
         enableDismissFromStartToEnd = false,
         enableDismissFromEndToStart = true,
         backgroundContent = {
-            val color = when (dismissState.targetValue) {
-                SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.errorContainer
-                else -> Color.Transparent
-            }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp)
-                    .background(color),
+                    .padding(horizontal = 16.dp, vertical = 16.dp)
+                    .background(MaterialTheme.colorScheme.errorContainer),
                 contentAlignment = Alignment.CenterEnd
             ) {
-                if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart) {
-                    Icon(
-                        Icons.Filled.Delete,
-                        contentDescription = "Delete",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .wrapContentSize(Alignment.CenterEnd)
-                            .padding(12.dp),
-                        tint = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                }
+                Icon(
+                    Icons.Filled.Delete,
+                    contentDescription = "Delete",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.CenterEnd)
+                        .padding(12.dp),
+                    tint = MaterialTheme.colorScheme.onErrorContainer
+                )
             }
         }) {
         listItem(item)

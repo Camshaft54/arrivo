@@ -12,7 +12,6 @@ import androidx.glance.action.actionParametersOf
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
-import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
@@ -46,7 +45,6 @@ fun GlanceScheduleCard(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(GlanceTheme.colors.surfaceVariant)
             .cornerRadius(12.dp)
             .clickable(
                 actionStartActivity(

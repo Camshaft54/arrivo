@@ -1,11 +1,13 @@
 package me.cameronshaw.arrivo.widget.theme
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.glance.GlanceTheme
+import androidx.glance.color.DynamicThemeColorProviders
 import androidx.glance.material3.ColorProviders
-import androidx.compose.material3.darkColorScheme as m3DarkColorScheme
-import androidx.compose.material3.lightColorScheme as m3LightColorScheme
+import androidx.glance.unit.ColorProvider
 import me.cameronshaw.arrivo.ui.theme.darkScheme as appDarkScheme
 import me.cameronshaw.arrivo.ui.theme.lightScheme as appLightScheme
 
@@ -16,11 +18,8 @@ fun GlanceArrivoTheme(
     content: @Composable () -> Unit
 ) {
     GlanceTheme(
-        colors = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            ColorProviders(
-                light = if (darkTheme && overrideSystemTheme) m3DarkColorScheme() else m3LightColorScheme(),
-                dark = if (darkTheme || !overrideSystemTheme) m3DarkColorScheme() else m3LightColorScheme()
-            )
+        colors = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !overrideSystemTheme) {
+            DynamicThemeColorProviders
         } else {
             ColorProviders(
                 light = if (darkTheme && overrideSystemTheme) appDarkScheme else appLightScheme,
@@ -31,3 +30,6 @@ fun GlanceArrivoTheme(
         content()
     }
 }
+
+@SuppressLint("RestrictedApi")
+fun ColorProvider.withAlpha(context: Context) = ColorProvider(this.getColor(context).copy(alpha = 0.75f))

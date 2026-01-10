@@ -66,7 +66,7 @@ interface TrainDao {
     /**
      * For UI to load all the trains the user has
      */
-    @Query("SELECT * FROM TrainEntity ORDER BY num ASC, originDate ASC")
+    @Query("SELECT * FROM TrainEntity ORDER BY CAST(num AS INTEGER) ASC, originDate ASC")
     fun getAllTrains(): Flow<List<TrainEntity>>
 
     /**
@@ -80,7 +80,7 @@ interface TrainDao {
      * For widget to load all trains
      */
     @Transaction
-    @Query("SELECT * FROM TrainEntity ORDER BY num ASC, originDate ASC")
+    @Query("SELECT * FROM TrainEntity ORDER BY CAST(num AS INTEGER) ASC, originDate ASC")
     fun getAllTrainsWithStops(): Flow<List<TrainWithStopsEntity>>
 
     @Query("SELECT * FROM StopEntity WHERE trainOwnerId = :trainId ORDER BY code ASC")

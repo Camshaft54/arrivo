@@ -33,10 +33,9 @@ import androidx.glance.text.TextStyle
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import me.cameronshaw.arrivo.data.local.model.THEMES
+import me.cameronshaw.arrivo.ui.util.toUiString
 import me.cameronshaw.arrivo.widget.components.GlanceScheduleCard
 import me.cameronshaw.arrivo.widget.theme.GlanceArrivoTheme
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 class ArrivoWidget : GlanceAppWidget() {
     override val stateDefinition = WidgetStateDefinition(
@@ -85,11 +84,7 @@ class ArrivoWidget : GlanceAppWidget() {
                     )
                     Text(
                         text = "Last updated: ${
-                            state.lastUpdated.format(
-                                DateTimeFormatter.ofLocalizedTime(
-                                    FormatStyle.SHORT
-                                )
-                            )
+                            state.appSettings.trainsLastUpdated.toUiString()
                         }", style = TextStyle(
                             fontSize = 12.sp, color = GlanceTheme.colors.onSurfaceVariant
                         )

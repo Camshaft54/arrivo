@@ -23,6 +23,6 @@ interface StationDao {
     @Query("SELECT * FROM StationEntity WHERE code = :code")
     fun getStationByCode(code: String): Flow<StationEntity>
 
-    @Query("SELECT * FROM StationEntity")
+    @Query("SELECT * FROM StationEntity ORDER BY code")
     fun getAllStations(): Flow<List<StationEntity>>
 }

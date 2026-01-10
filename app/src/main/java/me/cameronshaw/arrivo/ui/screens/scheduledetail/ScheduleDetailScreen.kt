@@ -14,11 +14,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
+import me.cameronshaw.arrivo.R
 import me.cameronshaw.arrivo.data.model.Train
 import me.cameronshaw.arrivo.ui.screens.scheduledetail.components.ScheduleDetailStopList
 import me.cameronshaw.arrivo.ui.util.toUiString
@@ -67,7 +69,7 @@ fun ScheduleDetailScreenContent(
             style = MaterialTheme.typography.headlineSmall
         )
         Text(
-            text = "Last Updated: ${train.lastUpdated.toUiString()}",
+            text = "${stringResource(R.string.last_updated)} ${train.lastUpdated.toUiString()}",
             style = MaterialTheme.typography.bodySmall,
             fontStyle = FontStyle.Italic,
             modifier = Modifier.padding(bottom = 8.dp)

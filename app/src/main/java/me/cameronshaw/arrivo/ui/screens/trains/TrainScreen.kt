@@ -1,6 +1,9 @@
 package me.cameronshaw.arrivo.ui.screens.trains
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -10,6 +13,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
@@ -83,7 +87,15 @@ fun TrainScreenContent(
             onDismissRequest = { showAddDialog = false },
             validateInput = validateTrainNum,
             onConfirm = onAddTrain,
-            addFailedMessage = stringResource(R.string.add_train_fail_msg)
+            addFailedMessage = stringResource(R.string.add_train_fail_msg),
+            helpTitle = "Locating your train number",
+            helpContent = {
+                Column {
+                    Text(stringResource(R.string.add_train_help_description1))
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(stringResource(R.string.add_train_help_description2))
+                }
+            }
         )
     }
 

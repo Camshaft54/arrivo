@@ -13,6 +13,7 @@ import me.cameronshaw.arrivo.data.local.datasource.TrainLocalDataSource
 import me.cameronshaw.arrivo.data.local.model.toDomain
 import me.cameronshaw.arrivo.data.model.Train
 import me.cameronshaw.arrivo.data.model.toEntity
+import java.time.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -111,6 +112,8 @@ class TrainRepositoryImpl @Inject constructor(
         trainsToKeep.forEach {
             Log.d("refreshAllTrains", "Refreshed train: ${it.num}")
         }
+
+        settingsRepository.updateTrainsLastUpdated(OffsetDateTime.now())
     }
 
     /**

@@ -12,7 +12,6 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
 import me.cameronshaw.arrivo.data.repository.ScheduleRepository
 import me.cameronshaw.arrivo.data.repository.SettingsRepository
-import java.time.OffsetDateTime
 
 @HiltWorker
 class RefreshWidgetWorker @AssistedInject constructor(
@@ -30,7 +29,7 @@ class RefreshWidgetWorker @AssistedInject constructor(
         scheduleRepository.refreshSchedule()
         val scheduleData = scheduleRepository.getScheduleData().first()
         val appSettings = settingsRepository.appSettingsFlow().first()
-        val newWidgetState = WidgetState(OffsetDateTime.now(), appSettings, scheduleData)
+        val newWidgetState = WidgetState(appSettings, scheduleData)
 
         val arrivoWidget = ArrivoWidget()
         val manager = GlanceAppWidgetManager(context)

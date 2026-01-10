@@ -22,6 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import dagger.hilt.android.AndroidEntryPoint
 import me.cameronshaw.arrivo.ui.ArrivoBottomBar
 import me.cameronshaw.arrivo.ui.ArrivoTopBar
@@ -69,7 +70,10 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
                     topBar = {
-                        ArrivoTopBar(navController = navController) {
+                        ArrivoTopBar(
+                            navController = navController,
+                            trainsLastUpdated = appSettings.trainsLastUpdated
+                        ) {
                             @Suppress("AssignedValueIsNeverRead")
                             showSettingsDialog = true
                         }
@@ -98,6 +102,9 @@ class MainActivity : ComponentActivity() {
 
                         composable(
                             route = "${Screen.ScheduleDetail.route}/{$TRAIN_ID_ARG}",
+                            deepLinks = listOf(navDeepLink {
+                                uriPattern = "arrivo://${Screen.ScheduleDetail.route}/{$TRAIN_ID_ARG}"
+                            }),
                             arguments = listOf(navArgument(TRAIN_ID_ARG) {
                                 type = NavType.StringType
                             })

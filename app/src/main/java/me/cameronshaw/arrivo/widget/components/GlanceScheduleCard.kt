@@ -1,10 +1,16 @@
 package me.cameronshaw.arrivo.widget.components
 
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
+import androidx.glance.action.ActionParameters
+import androidx.glance.action.actionParametersOf
+import androidx.glance.action.clickable
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -19,9 +25,13 @@ import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import me.cameronshaw.arrivo.TRAIN_ID_ARG
 import me.cameronshaw.arrivo.data.model.Train
+import me.cameronshaw.arrivo.ui.Screen
 import me.cameronshaw.arrivo.ui.util.determineArrivalStopDescription
 import me.cameronshaw.arrivo.ui.util.determineDepartureStopDescription
+
+val TrainIdKey = ActionParameters.Key<String>(TRAIN_ID_ARG)
 
 @Composable
 fun GlanceScheduleCard(
@@ -30,11 +40,25 @@ fun GlanceScheduleCard(
     departureStop: Train.Stop?,
     arrivalStop: Train.Stop?
 ) {
+    val route = "${Screen.ScheduleDetail.route}/${train.id}"
+    val deepLinkUri  = "arrivo://$route".toUri()
+
     Box(
         modifier = modifier
             .fillMaxWidth()
             .background(GlanceTheme.colors.surfaceVariant)
             .cornerRadius(12.dp)
+            .clickable(
+                actionStartActivity(
+                    Intent(Intent.ACTION_VIEW, deepLinkUri).apply {
+                        `package` = "me.cameronshaw.arrivo"
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    },
+                    actionParametersOf(
+                        TrainIdKey to train.id
+                    )
+                )
+            )
     ) {
         Row(
             modifier = GlanceModifier.padding(16.dp).fillMaxWidth(),

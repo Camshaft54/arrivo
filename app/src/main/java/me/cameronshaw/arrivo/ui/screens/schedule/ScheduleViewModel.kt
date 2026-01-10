@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.cameronshaw.arrivo.data.model.ScheduleDatum
 import me.cameronshaw.arrivo.data.repository.ScheduleRepository
+import me.cameronshaw.arrivo.data.repository.SettingsRepository
+import me.cameronshaw.arrivo.data.util.isTimeStale
 import javax.inject.Inject
 
 data class ScheduleUiState(
@@ -23,7 +25,8 @@ data class ScheduleUiState(
 
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
-    private val scheduleRepository: ScheduleRepository
+    private val scheduleRepository: ScheduleRepository,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
     private val _eventFlow = MutableSharedFlow<String>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -32,6 +35,7 @@ class ScheduleViewModel @Inject constructor(
 
     init {
         loadSchedule()
+        checkStaleness()
     }
 
     fun loadSchedule() {
@@ -48,6 +52,18 @@ class ScheduleViewModel @Inject constructor(
                     }
                 }.collect { scheduleData ->
                     _uiState.update { it.copy(scheduleData = scheduleData, isRefreshing = false) }
+                }
+        }
+    }
+
+    fun checkStaleness() {
+        viewModelScope.launch {
+            settingsRepository
+                .appSettingsFlow().collect {
+                    if (it.trainsLastUpdated.isTimeStale()) {
+                        _eventFlow.emit("Schedule data is stale. Refreshing...")
+                        refreshSchedule()
+                    }
                 }
         }
     }

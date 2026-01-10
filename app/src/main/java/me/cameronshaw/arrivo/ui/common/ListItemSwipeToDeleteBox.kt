@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.filter
 fun <T> ListItemSwipeToDeleteBox(
     onSwipeToDelete: (T) -> Unit, item: T, listItem: @Composable (T) -> Unit
 ) {
-    val dismissState = rememberSwipeToDismissBoxState(positionalThreshold = { it * 0.2F })
+    val dismissState = rememberSwipeToDismissBoxState()
 
     LaunchedEffect(Unit) {
         if (dismissState.currentValue != SwipeToDismissBoxValue.Settled) {

@@ -16,6 +16,6 @@ interface TrackedTrainDao {
     @Delete
     suspend fun deleteTrackedTrain(trackedTrain: TrackedTrainEntity)
 
-    @Query("SELECT * FROM TrackedTrainEntity ORDER BY num, originDate ASC")
+    @Query("SELECT * FROM TrackedTrainEntity ORDER BY CAST(num as INTEGER), originDate ASC")
     fun getTrackedTrains(): Flow<List<TrackedTrainEntity>>
 }

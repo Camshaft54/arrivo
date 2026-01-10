@@ -104,6 +104,11 @@ class TrainViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 trackedTrainRepository.deleteTrackedTrain(train)
+                try {
+                    trainRepository.refreshAllTrains()
+                } catch (_: Exception) {
+                    _eventFlow.emit("Failed to fetch information about trains.")
+                }
             } catch (_: Exception) {
                 _uiState.update { it.copy(errorMessage = "Failed to delete train.") }
             }

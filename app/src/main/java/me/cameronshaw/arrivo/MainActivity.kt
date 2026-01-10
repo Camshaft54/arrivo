@@ -27,6 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import me.cameronshaw.arrivo.ui.ArrivoBottomBar
 import me.cameronshaw.arrivo.ui.ArrivoTopBar
 import me.cameronshaw.arrivo.ui.Screen
+import me.cameronshaw.arrivo.ui.dialogs.AppHelpDialog
 import me.cameronshaw.arrivo.ui.dialogs.settings.SettingsDialog
 import me.cameronshaw.arrivo.ui.dialogs.settings.SettingsViewModel
 import me.cameronshaw.arrivo.ui.screens.schedule.ScheduleScreen
@@ -57,6 +58,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val snackbarHostState = remember { SnackbarHostState() }
                 var showSettingsDialog by remember { mutableStateOf(false) }
+                var showHelpDialog by remember { mutableStateOf(false) }
 
                 if (showSettingsDialog) {
                     SettingsDialog(
@@ -67,16 +69,30 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
+                if (showHelpDialog) {
+                    AppHelpDialog(
+                        onDismissRequest = {
+                            @Suppress("AssignedValueIsNeverRead")
+                            showHelpDialog = false
+                        }
+                    )
+                }
+
                 Scaffold(
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
                     topBar = {
                         ArrivoTopBar(
                             navController = navController,
-                            trainsLastUpdated = appSettings.trainsLastUpdated
-                        ) {
-                            @Suppress("AssignedValueIsNeverRead")
-                            showSettingsDialog = true
-                        }
+                            trainsLastUpdated = appSettings.trainsLastUpdated,
+                            onSettingsClick = {
+                                @Suppress("AssignedValueIsNeverRead")
+                                showSettingsDialog = true
+                            },
+                            onHelpClick = {
+                                @Suppress("AssignedValueIsNeverRead")
+                                showHelpDialog = true
+                            }
+                        )
                     },
                     bottomBar = { ArrivoBottomBar(navController = navController) }
                 ) { innerPadding ->

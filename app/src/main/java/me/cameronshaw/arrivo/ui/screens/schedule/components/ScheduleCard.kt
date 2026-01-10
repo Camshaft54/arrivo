@@ -18,10 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import me.cameronshaw.arrivo.R
 import me.cameronshaw.arrivo.data.model.Status
 import me.cameronshaw.arrivo.data.model.Train
 import me.cameronshaw.arrivo.ui.theme.StatusBlue
@@ -73,7 +75,7 @@ fun ScheduleCard(
 
             if (departureStop == null || arrivalStop == null) { // O stops
                 Text(
-                    text = "Offline or no stations added on this route.",
+                    text = stringResource(R.string.no_stations_added),
                     style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant

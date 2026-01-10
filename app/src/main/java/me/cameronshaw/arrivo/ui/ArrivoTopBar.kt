@@ -3,6 +3,7 @@ package me.cameronshaw.arrivo.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,7 +25,8 @@ import java.time.OffsetDateTime
 fun ArrivoTopBar(
     navController: NavController,
     trainsLastUpdated: OffsetDateTime,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    onHelpClick: () -> Unit
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = navBackStackEntry?.destination?.route.routeToScreen()
@@ -63,6 +65,12 @@ fun ArrivoTopBar(
             }
         },
         actions = {
+            IconButton(onClick = onHelpClick) {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = "Help"
+                )
+            }
             IconButton(onClick = onSettingsClick) {
                 Icon(
                     imageVector = Screen.Settings.icon,

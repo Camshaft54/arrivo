@@ -25,8 +25,8 @@ android {
         applicationId = "me.cameronshaw.arrivo"
         minSdk = 26
         targetSdk = 36
-        versionCode = 6
-        versionName = "1.0.0-rc2"
+        versionCode = 7
+        versionName = "1.0.0-beta"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

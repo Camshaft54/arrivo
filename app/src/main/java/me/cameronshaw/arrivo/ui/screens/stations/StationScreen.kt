@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.cameronshaw.arrivo.R
 import me.cameronshaw.arrivo.data.model.Station
+import me.cameronshaw.arrivo.data.util.StationNameLookup
 import me.cameronshaw.arrivo.ui.common.ListPlaceholder
 import me.cameronshaw.arrivo.ui.dialogs.AddItemDialog
 import me.cameronshaw.arrivo.ui.screens.stations.components.StationList
@@ -89,7 +90,8 @@ fun StationScreenContent(
             onDismissRequest = { showAddDialog = false },
             validateInput = validateStationCode,
             onConfirm = onAddStation,
-            addFailedMessage = "Failed to add station. Please try again."
+            addFailedMessage = "Failed to add station. Please try again.",
+            suggestions = StationNameLookup.stationNames
         )
     }
 

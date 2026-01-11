@@ -15,4 +15,8 @@
     <string name="provider_help_amtraker_description">Amtraker: Fast, community-run API. Consider using this if the Amtrak API is failing.</string>
     <string name="provider_help">About Providers</string>
     <string name="got_it">Got it</string>
+    <string name="add_train_help_description1">Your train number is provided to you by Amtrak in your reservation confirmation.</string>
+    <string name="add_train_help_description2">There may be multiple trains in operation with the same train number, but the Arrivo Schedule will show all of these.</string>
+    <string name="last_updated">Last updated:</string>
+    <string name="no_stations_added">No stations added</string>
 </resources>

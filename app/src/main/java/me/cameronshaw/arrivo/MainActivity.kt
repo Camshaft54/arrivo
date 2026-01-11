@@ -22,10 +22,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import dagger.hilt.android.AndroidEntryPoint
 import me.cameronshaw.arrivo.ui.ArrivoBottomBar
 import me.cameronshaw.arrivo.ui.ArrivoTopBar
 import me.cameronshaw.arrivo.ui.Screen
+import me.cameronshaw.arrivo.ui.dialogs.AppHelpDialog
 import me.cameronshaw.arrivo.ui.dialogs.settings.SettingsDialog
 import me.cameronshaw.arrivo.ui.dialogs.settings.SettingsViewModel
 import me.cameronshaw.arrivo.ui.screens.schedule.ScheduleScreen
@@ -56,6 +58,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val snackbarHostState = remember { SnackbarHostState() }
                 var showSettingsDialog by remember { mutableStateOf(false) }
+                var showHelpDialog by remember { mutableStateOf(false) }
 
                 if (showSettingsDialog) {
                     SettingsDialog(
@@ -66,13 +69,30 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
+                if (showHelpDialog) {
+                    AppHelpDialog(
+                        onDismissRequest = {
+                            @Suppress("AssignedValueIsNeverRead")
+                            showHelpDialog = false
+                        }
+                    )
+                }
+
                 Scaffold(
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
                     topBar = {
-                        ArrivoTopBar(navController = navController) {
-                            @Suppress("AssignedValueIsNeverRead")
-                            showSettingsDialog = true
-                        }
+                        ArrivoTopBar(
+                            navController = navController,
+                            trainsLastUpdated = appSettings.trainsLastUpdated,
+                            onSettingsClick = {
+                                @Suppress("AssignedValueIsNeverRead")
+                                showSettingsDialog = true
+                            },
+                            onHelpClick = {
+                                @Suppress("AssignedValueIsNeverRead")
+                                showHelpDialog = true
+                            }
+                        )
                     },
                     bottomBar = { ArrivoBottomBar(navController = navController) }
                 ) { innerPadding ->
@@ -98,6 +118,9 @@ class MainActivity : ComponentActivity() {
 
                         composable(
                             route = "${Screen.ScheduleDetail.route}/{$TRAIN_ID_ARG}",
+                            deepLinks = listOf(navDeepLink {
+                                uriPattern = "arrivo://${Screen.ScheduleDetail.route}/{$TRAIN_ID_ARG}"
+                            }),
                             arguments = listOf(navArgument(TRAIN_ID_ARG) {
                                 type = NavType.StringType
                             })

@@ -33,10 +33,10 @@ import androidx.glance.text.TextStyle
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import me.cameronshaw.arrivo.data.local.model.THEMES
+import me.cameronshaw.arrivo.ui.util.toUiString
 import me.cameronshaw.arrivo.widget.components.GlanceScheduleCard
 import me.cameronshaw.arrivo.widget.theme.GlanceArrivoTheme
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
+import me.cameronshaw.arrivo.widget.theme.withAlpha
 
 class ArrivoWidget : GlanceAppWidget() {
     override val stateDefinition = WidgetStateDefinition(
@@ -58,15 +58,15 @@ class ArrivoWidget : GlanceAppWidget() {
             }
 
             GlanceArrivoTheme(overrideSystemTheme, useDarkTheme) {
-                WidgetContent(widgetState)
+                WidgetContent(context, widgetState)
             }
         }
     }
 
     @Composable
-    fun WidgetContent(state: WidgetState) {
+    fun WidgetContent(context: Context, state: WidgetState) {
         Column(
-            modifier = GlanceModifier.fillMaxSize().background(GlanceTheme.colors.surface)
+            modifier = GlanceModifier.fillMaxSize().background(GlanceTheme.colors.widgetBackground.withAlpha(context))
                 .cornerRadius(16.dp).padding(vertical = 20.dp, horizontal = 16.dp),
             horizontalAlignment = Alignment.Horizontal.CenterHorizontally
         ) {
@@ -85,11 +85,7 @@ class ArrivoWidget : GlanceAppWidget() {
                     )
                     Text(
                         text = "Last updated: ${
-                            state.lastUpdated.format(
-                                DateTimeFormatter.ofLocalizedTime(
-                                    FormatStyle.SHORT
-                                )
-                            )
+                            state.appSettings.trainsLastUpdated.toUiString()
                         }", style = TextStyle(
                             fontSize = 12.sp, color = GlanceTheme.colors.onSurfaceVariant
                         )
@@ -99,8 +95,8 @@ class ArrivoWidget : GlanceAppWidget() {
                 Button(
                     text = "Refresh", onClick = actionRunCallback<RefreshWidgetAction>(),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = GlanceTheme.colors.secondary, // Use primary for background
-                        contentColor = GlanceTheme.colors.onSecondary    // Use onPrimary for text
+                        backgroundColor = GlanceTheme.colors.primary,
+                        contentColor = GlanceTheme.colors.onPrimary
                     )
                 )
             }
@@ -123,9 +119,9 @@ class ArrivoWidget : GlanceAppWidget() {
                     items(state.schedule, { state.schedule.indexOf(it).toLong() }) { datum ->
                         Box(
                             modifier = GlanceModifier.fillMaxWidth().padding(vertical = 4.dp)
-                                .background(GlanceTheme.colors.surface)
                         ) {
                             GlanceScheduleCard(
+                                modifier = GlanceModifier.background(GlanceTheme.colors.surfaceVariant.withAlpha(context)),
                                 train = datum.train,
                                 departureStop = datum.departureStop,
                                 arrivalStop = datum.arrivalStop

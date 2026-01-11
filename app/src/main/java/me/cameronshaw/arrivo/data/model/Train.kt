@@ -6,6 +6,7 @@ import me.cameronshaw.arrivo.data.local.model.TrainEntity
 import me.cameronshaw.arrivo.data.local.model.TrainWithStopsEntity
 import me.cameronshaw.arrivo.data.util.NEVER
 import me.cameronshaw.arrivo.data.util.OffsetDateTimeSerializer
+import me.cameronshaw.arrivo.data.util.isTimeStale
 import me.cameronshaw.arrivo.data.util.toDbString
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
@@ -34,7 +35,7 @@ data class Train(
      * Data is considered "stale" if it hasn't been refreshed in over an hour.
      */
     val isStale: Boolean
-        get() = ChronoUnit.HOURS.between(lastUpdated, OffsetDateTime.now()) >= 1
+        get() = lastUpdated.isTimeStale()
 
     @Serializable
     data class Stop(

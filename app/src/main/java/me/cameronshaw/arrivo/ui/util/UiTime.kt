@@ -1,6 +1,7 @@
 package me.cameronshaw.arrivo.ui.util
 
 import me.cameronshaw.arrivo.data.model.Train
+import me.cameronshaw.arrivo.data.util.NEVER
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -26,6 +27,10 @@ private fun Long.toSuperscript(): String {
 }
 
 fun OffsetDateTime.toUiString(): String {
+    if (this == NEVER) {
+        return "--:--"
+    }
+
     val nowAtOffset = OffsetDateTime.now().withOffsetSameInstant(this.offset).toLocalDate()
     val daysDifference = ChronoUnit.DAYS.between(nowAtOffset, this.toLocalDate())
     val dayModifier = if (daysDifference == 0L) {
@@ -44,7 +49,7 @@ fun OffsetDateTime.toUiString(): String {
 fun Train.Stop.determineDepartureStopDescription(): String {
     val dep = this.departure ?: this.scheduledDeparture
     return if (dep == null || dep.isAfter(OffsetDateTime.now())) {
-        "Departing"
+        "Departs"
     } else {
         "Departed"
     }
@@ -53,7 +58,7 @@ fun Train.Stop.determineDepartureStopDescription(): String {
 fun Train.Stop.determineArrivalStopDescription(): String {
     val arr = this.arrival ?: this.scheduledArrival
     return if (arr == null || arr.isAfter(OffsetDateTime.now())) {
-        "Arriving"
+        "Arrives"
     } else {
         "Arrived"
     }

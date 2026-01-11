@@ -12,14 +12,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,6 +34,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import me.cameronshaw.arrivo.R
 import me.cameronshaw.arrivo.data.local.model.AppSettings
+import me.cameronshaw.arrivo.ui.dialogs.HelpDialog
 import me.cameronshaw.arrivo.ui.dialogs.settings.components.DropdownSetting
 import me.cameronshaw.arrivo.ui.dialogs.settings.components.SettingItem
 import me.cameronshaw.arrivo.ui.theme.ArrivoTheme
@@ -64,21 +63,17 @@ fun SettingsDialogContent(
     var showProviderHelp by remember { mutableStateOf(false) }
 
     if (showProviderHelp) {
-        AlertDialog(
-            onDismissRequest = { showProviderHelp = false },
-            title = { Text(stringResource(R.string.provider_help)) },
-            text = {
+        HelpDialog(
+            title = stringResource(R.string.provider_help),
+            content = {
                 Column {
                     Text(stringResource(R.string.provider_help_amtrak_description))
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(stringResource(R.string.provider_help_amtraker_description))
                 }
             },
-            confirmButton = {
-                TextButton(onClick = { showProviderHelp = false }) {
-                    Text(stringResource(R.string.got_it))
-                }
-            })
+            onDismissRequest = { showProviderHelp = false }
+        )
     }
 
     Dialog(

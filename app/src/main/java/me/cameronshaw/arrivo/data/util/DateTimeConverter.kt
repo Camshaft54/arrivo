@@ -4,6 +4,7 @@ import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 fun OffsetDateTime?.toDbString(): String =
     this?.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME) ?: ""
@@ -16,6 +17,9 @@ fun String.toOffsetDateTime(): OffsetDateTime? =
 
 // Used to indicate a station/train has never been updated (lastUpdated = NEVER)
 val NEVER: OffsetDateTime = OffsetDateTime.parse("1970-01-01T00:00:00+00:00")
+
+// Returns true if time was an hour before now
+fun OffsetDateTime.isTimeStale() = ChronoUnit.HOURS.between(this, OffsetDateTime.now()) >= 1
 
 private val amtrakFormatter = DateTimeFormatter.ofPattern("M/d/yyyy H:mm:ss")
 

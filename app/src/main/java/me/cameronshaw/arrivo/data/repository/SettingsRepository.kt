@@ -9,6 +9,10 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.cameronshaw.arrivo.data.local.model.AppSettings
+import me.cameronshaw.arrivo.data.util.NEVER
+import me.cameronshaw.arrivo.data.util.toDbString
+import me.cameronshaw.arrivo.data.util.toOffsetDateTime
+import java.time.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,6 +23,8 @@ interface SettingsRepository {
     suspend fun updateTheme(theme: String)
 
     suspend fun updateProvider(provider: String)
+
+    suspend fun updateTrainsLastUpdated(time: OffsetDateTime)
 }
 
 @Singleton
@@ -28,6 +34,7 @@ class SettingsRepositoryImpl @Inject constructor(private val context: Context) :
     private object PreferencesKeys {
         val APP_THEME = stringPreferencesKey("app_theme")
         val DATA_PROVIDER = stringPreferencesKey("data_provider")
+        val TRAINS_LAST_UPDATED = stringPreferencesKey("trains_last_updated")
     }
 
     override fun appSettingsFlow(): Flow<AppSettings> = context.settingsDataStore.data
@@ -47,9 +54,20 @@ class SettingsRepositoryImpl @Inject constructor(private val context: Context) :
         }
     }
 
+    override suspend fun updateTrainsLastUpdated(time: OffsetDateTime) {
+        context.settingsDataStore.edit { preferences ->
+            preferences[PreferencesKeys.TRAINS_LAST_UPDATED] = time.toDbString()
+        }
+    }
+
     private fun mapAppSettings(preferences: Preferences): AppSettings {
         val theme = preferences[PreferencesKeys.APP_THEME] ?: "SYSTEM"
         val provider = preferences[PreferencesKeys.DATA_PROVIDER] ?: "AMTRAK"
-        return AppSettings(theme = theme, dataProvider = provider)
+        val trainsLastUpdated = preferences[PreferencesKeys.TRAINS_LAST_UPDATED] ?: ""
+        return AppSettings(
+            theme = theme,
+            dataProvider = provider,
+            trainsLastUpdated = trainsLastUpdated.toOffsetDateTime() ?: NEVER
+        )
     }
 }
